@@ -1,0 +1,13 @@
+{
+ "case": {
+  "name": "t2L0_hybrid_final_k0",
+  "design": "hybrid_final",
+  "k": 0,
+  "bg_div": 9.524
+ },
+ "converged": false,
+ "adjoint_repo_sha": "9ab9092debd0e0297b290d886bf45a765045448c",
+ "protocol": "fresh wall-resolved mesh, production linearUpwind, cold, 1000 its, score its 200-1000",
+ "wall_s": 719.8,
+ "error": "solve: =run_config)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/part2-simulation/cfd_wrapper.py\", line 142, in _invoke_openfoam_pipeline\n    raise CFDRunError(\ncfd_wrapper.CFDRunError: OpenFOAM stage failed (exit -8): decomposePar -force. See logs/ in the run directory (kept on failure).\n"
+}

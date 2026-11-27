@@ -1,0 +1,29 @@
+[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/part2-simulation/cfd_case_template/runs/run_4954_267b3c848f5f
+Traceback (most recent call last):
+  File "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/part2-simulation/cfd_wrapper.py", line 138, in _invoke_openfoam_pipeline
+    return openfoam_case.invoke(stl_path, case_dir, cfg=run_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/part2-simulation/openfoam_case.py", line 2273, in invoke
+    logs = run_stages(run_dir, cfg, resolved_bashrc, resume=bool(resume_dir))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/part2-simulation/openfoam_case.py", line 1975, in run_stages
+    _run("decomposePar -force", run, bashrc, "decomposePar.log", timeout_s)
+  File "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/part2-simulation/openfoam_case.py", line 1540, in _run
+    raise subprocess.CalledProcessError(proc.returncode, cmd, output=proc.stdout)
+subprocess.CalledProcessError: Command 'decomposePar -force' died with <Signals.SIGFPE: 8>.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/research/sidepod_opt/prodcheck.py", line 39, in <module>
+    half, health, secs = gate.solve(folder, n, iters, extra=extra, keep=True)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/research/sidepod_opt/gate.py", line 69, in solve
+    half, health = run_half_car_cfd(str(body), n_subdomains=n_sub, extra_surfaces=SW.extra_surfaces(folder),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/part2-simulation/cfd_wrapper.py", line 307, in run_half_car_cfd
+    result = _invoke_openfoam_pipeline(str(path), str(case_dir), run_config=run_config)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/part2-simulation/cfd_wrapper.py", line 142, in _invoke_openfoam_pipeline
+    raise CFDRunError(
+cfd_wrapper.CFDRunError: OpenFOAM stage failed (exit -8): decomposePar -force. See logs/ in the run directory (kept on failure).
