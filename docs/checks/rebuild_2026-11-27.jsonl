@@ -1,0 +1,36 @@
+{"id": "L0003", "legal": false, "failed": ["P4.P4.fw_supported", "attached_fwing"], "cfd_ok": false, "fw_z": 17.928090206813067, "fw_struts": 0, "held": false, "root_in_nose": false, "lead_g": 8.556878985342998}
+{"id": "L0000", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 14.91163336765021, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 1.9333761303168586}
+{"id": "L0004", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 11.224541320465505, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 1.2998306258656172}
+{"id": "L0007", "legal": false, "failed": ["P4.P4.fw_supported", "attached_fwing"], "cfd_ok": false, "fw_z": 8.478317271452397, "fw_struts": 0, "held": false, "root_in_nose": false, "lead_g": 6.37710675050856}
+{"id": "L0005", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 15.521084918174893, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 0.0}
+{"id": "L0006", "legal": false, "failed": ["T7.9.4_zone_clear"], "cfd_ok": false, "fw_z": 12.877339217811823, "fw_struts": 0, "held": true, "root_in_nose": false, "lead_g": 5.704122798093664}
+{"id": "L0002", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 10.794800393283367, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 0.0}
+{"id": "L0009", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 16.01746479095891, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 0.0}
+{"id": "L0012", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 13.700981647707522, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 0.9754903625165099}
+{"id": "L0008", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 11.626867731101811, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 2.7615866202802906}
+{"id": "L0014", "legal": false, "failed": ["block_body_inside_official_block"], "cfd_ok": false, "fw_z": 9.581343112513423, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 0.0}
+{"id": "L0015", "legal": false, "failed": ["P4.P4.fw_supported"], "cfd_ok": false, "fw_z": 16.805878771003336, "fw_struts": 0, "held": false, "root_in_nose": false, "lead_g": 6.366310477385113}
+{"id": "L0019", "legal": false, "failed": ["T7.9.4_zone_clear"], "cfd_ok": false, "fw_z": 13.48659194400534, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 4.5347612849882495}
+{"id": "L0016", "legal": false, "failed": ["block_body_inside_official_block"], "cfd_ok": false, "fw_z": 16.5009434344247, "fw_struts": 0, "held": true, "root_in_nose": true, "lead_g": 1.9070483522058126}
+{"id": "L0010", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 13.282471189275384, "fw_struts": 0, "held": true, "root_in_nose": false, "lead_g": 4.425643049645437}
+{"id": "L0023", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 9.820557197090238, "fw_struts": 0, "held": true, "root_in_nose": false, "lead_g": 6.9210612976505885}
+{"id": "L0018", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 9.126877130940557, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 0.0}
+{"id": "L0020", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 7.075035416521132, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 1.364257095945021}
+{"id": "L0022", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 16.925770988687873, "fw_struts": 0, "held": true, "root_in_nose": false, "lead_g": 3.3713320423755917}
+{"id": "L0028", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 14.91163336765021, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 1.9333761303168586}
+{"id": "L0027", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 13.282471189275384, "fw_struts": 0, "held": true, "root_in_nose": false, "lead_g": 4.425643049645437}
+{"id": "L0036", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 10.228654304269151, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 1.5425256047351326}
+{"id": "L0029", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 10.794800393283367, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 0.0}
+{"id": "L0032", "legal": false, "failed": ["P4.P4.fw_supported", "T4.4.4_halo_fits_pocket", "attached_fwing", "block_body_inside_official_block", "team_halo_face_joined"], "cfd_ok": false, "fw_z": 14.006289647067785, "fw_struts": 0, "held": false, "root_in_nose": false, "lead_g": 3.1955971407516373}
+{"id": "L0031", "legal": false, "failed": ["P4.P4.fw_supported", "attached_fwing", "block_body_inside_official_block"], "cfd_ok": false, "fw_z": 11.824988976406283, "fw_struts": 0, "held": false, "root_in_nose": false, "lead_g": 4.395167693878911}
+{"id": "L0034", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 8.07745435081315, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 1.2630033413250814}
+{"id": "L0037", "legal": false, "failed": ["P4.P4.fw_supported", "attached_fwing"], "cfd_ok": false, "fw_z": 13.043775901231726, "fw_struts": 0, "held": false, "root_in_nose": false, "lead_g": 4.098593958412458}
+{"id": "L0030", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 8.864292591833046, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 2.543640360785467}
+{"id": "L0040", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 16.517610273947454, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 0.0}
+{"id": "L0043", "legal": false, "failed": ["block_body_inside_official_block"], "cfd_ok": false, "fw_z": 8.67364084899204, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 0.7539229842613793}
+{"id": "L0046", "legal": false, "failed": ["T7.3_W_max"], "cfd_ok": false, "fw_z": 10.761993761472688, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 0.0}
+{"id": "L0045", "legal": false, "failed": ["P4.P4.fw_supported", "attached_fwing"], "cfd_ok": false, "fw_z": 16.515863007287653, "fw_struts": 0, "held": false, "root_in_nose": false, "lead_g": 3.8634890352184}
+{"id": "L0042", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 7.549091577238904, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 0.0}
+{"id": "L0044", "legal": false, "failed": ["P4.P4.fw_supported", "attached_fwing"], "cfd_ok": false, "fw_z": 17.914558145083028, "fw_struts": 0, "held": false, "root_in_nose": false, "lead_g": 5.330151530027635}
+{"id": "L0039", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 16.648048119831973, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 0.8430297801012898}
+{"id": "L0041", "legal": true, "failed": [], "cfd_ok": true, "fw_z": 14.555043449827437, "fw_struts": 1, "held": false, "root_in_nose": false, "lead_g": 0.0}
