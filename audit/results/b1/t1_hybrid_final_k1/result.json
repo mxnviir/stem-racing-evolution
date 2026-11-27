@@ -1,0 +1,49 @@
+{
+ "case": {
+  "name": "t1_hybrid_final_k1",
+  "design": "hybrid_final",
+  "k": 1,
+  "bg_div": 12
+ },
+ "converged": true,
+ "adjoint_repo_sha": "9ab9092debd0e0297b290d886bf45a765045448c",
+ "protocol": "fresh wall-resolved mesh, production linearUpwind, cold, 1000 its, score its 200-1000",
+ "wall_s": 7147.4,
+ "prodcheck": {
+  "D20_half_N": 0.1713793579966102,
+  "wall_s": 7147.0,
+  "converged": true,
+  "residual_p": 0.0026930138896968324,
+  "force_osc": 0.103237424471611,
+  "force_drift": 0.0032947947934064904,
+  "run_dir": "",
+  "force_mean_stderr": 0.005146842046488802,
+  "morph_fallback": false,
+  "folder": "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/research/sidepod_opt/gate/hybrid_final",
+  "scheme": "production linearUpwind",
+  "mesh": "fresh",
+  "resolution": "resolved",
+  "iterations": 1000,
+  "n_proc": 4,
+  "y_plus_min": 0.06042677479985365,
+  "y_plus_max": 54.72506554968981,
+  "n_cells": 2123194,
+  "run_dir_kept": "/home/runner/work/stem-racing-evolution/stem-racing-evolution/out/t1_hybrid_final_k1/state"
+ },
+ "cells": 2123194,
+ "y_plus_min": 0.06042677479985365,
+ "y_plus_max": 54.72506554968981,
+ "solver_converged": true,
+ "iterations_run": 1000,
+ "drag_mN": 171.2282713698384,
+ "drag_block_se_mN": 0.05372228743407788,
+ "drag_blocks_mN": [
+  171.22244493390502,
+  171.13092657899753,
+  171.18035596984075,
+  171.37935799661034
+ ],
+ "lift_mN": 84.53718480038582,
+ "body_drag_mN": 29.55222856632889,
+ "wheels_drag_mN": 141.67604280350952
+}
