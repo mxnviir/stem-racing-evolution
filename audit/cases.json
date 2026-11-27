@@ -1,5 +1,5 @@
 {
- "launch": "b1",
+ "launch": "b1r",
  "batches": {
   "b1": [
    {
@@ -135,6 +135,26 @@
     "k": 0,
     "bg_div": 12,
     "turb": "kOmegaSSTLM"
+   }
+  ],
+  "b1r": [
+   {
+    "name": "t2L0_team_rm_k0",
+    "design": "team_rm",
+    "k": 0,
+    "bg_div": 9.524
+   },
+   {
+    "name": "t2L0_team_rm_k1",
+    "design": "team_rm",
+    "k": 1,
+    "bg_div": 9.524
+   },
+   {
+    "name": "t2L0_hybrid_final_k0",
+    "design": "hybrid_final",
+    "k": 0,
+    "bg_div": 9.524
    }
   ]
  }

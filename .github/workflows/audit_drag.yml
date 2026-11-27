@@ -92,6 +92,9 @@ jobs:
           source /usr/lib/openfoam/openfoam2412/etc/bashrc || true
           python -W ignore audit/run_case.py adj "$CASE" out/${{ matrix.case.name }} | tail -1 || true
           cat out/${{ matrix.case.name }}/result.json >> "$GITHUB_STEP_SUMMARY" || true
+          echo "=== result.json"; cat out/${{ matrix.case.name }}/result.json || true
+          echo "=== prodcheck.log (tail)"; tail -c 6000 out/${{ matrix.case.name }}/prodcheck.log || true
+          echo "=== OpenFOAM logs (tails)"; for f in out/${{ matrix.case.name }}/logs/*.log; do echo "--- $f"; tail -n 25 "$f"; done 2>/dev/null || true
           find out -name "*.log" -size +2M -exec sh -c 'tail -c 2000000 "$1" > "$1.t" && mv "$1.t" "$1"' _ {} \;
       - uses: actions/upload-artifact@v4
         if: always()
