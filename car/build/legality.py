@@ -248,8 +248,7 @@ def _visibility_checks(assembly: dict, solids: dict) -> dict:
         # one that arcs back over or under the wing is measured
         sups = [p for p in pieces if p is not wing]
         for p in sups:
-            jy = p.vertices[trimesh.proximity.closest_point(wing, p.vertices)[1] < 0.5, 1]
-            lo, hi = (jy.min(), jy.max()) if len(jy) else (p.bounds[0, 1], p.bounds[1, 1])
+            lo, hi = support_joint_y(wing, p)
             pts = pts[(pts[:, 1] < lo - 5.5) | (pts[:, 1] > hi + 5.5)]
         others = {k: m for k, m in solids.items() if k != "printed_rwing"}
         others.update({f"rwing_support_{i}": p for i, p in enumerate(sups)})
@@ -326,6 +325,15 @@ def _visibility_checks(assembly: dict, solids: dict) -> dict:
                                                 "8 mm number fits ahead of the halo" if ok
                                                 else "no 8 x 14 mm patch of body between Ref A and the halo")
     return r
+
+
+def support_joint_y(wing, support, tol_mm: float = 0.5):
+    """(lo, hi) y of where a support joins a wing (mm): its vertices on the wing's surface OR buried in it.
+    A pylon's top sits up to its own depth inside the wing; by surface distance alone only its centre-plane
+    corners were found, so T9.6's fillet was measured from y = 0 instead of the pylon's face (team car, 4.51 mm)."""
+    import trimesh
+    jy = support.vertices[trimesh.proximity.signed_distance(wing, support.vertices) > -tol_mm, 1]
+    return (float(jy.min()), float(jy.max())) if len(jy) else (float(support.bounds[0, 1]), float(support.bounds[1, 1]))
 
 
 def _clear_air(pts, others: dict, need_mm: float = 5.0) -> dict:
