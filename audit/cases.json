@@ -1,5 +1,5 @@
 {
- "launch": "b1r",
+ "launch": "b1r2",
  "batches": {
   "b1": [
    {
@@ -154,6 +154,38 @@
     "name": "t2L0_hybrid_final_k0",
     "design": "hybrid_final",
     "k": 0,
+    "bg_div": 9.524
+   }
+  ],
+  "b1r2": [
+   {
+    "name": "t2L0_team_rm_k0",
+    "design": "team_rm",
+    "k": 0,
+    "bg_div": 9.524
+   },
+   {
+    "name": "t2L0_hybrid_final_k0",
+    "design": "hybrid_final",
+    "k": 0,
+    "bg_div": 9.524
+   },
+   {
+    "name": "t2L0_hybrid_final_k1",
+    "design": "hybrid_final",
+    "k": 1,
+    "bg_div": 9.524
+   },
+   {
+    "name": "t2L0_team_rm_k2",
+    "design": "team_rm",
+    "k": 2,
+    "bg_div": 9.524
+   },
+   {
+    "name": "t2L0_hybrid_final_k2",
+    "design": "hybrid_final",
+    "k": 2,
     "bg_div": 9.524
    }
   ]

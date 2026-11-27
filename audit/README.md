@@ -46,3 +46,10 @@ split or lift sits apart from its design's other frames is flagged as a possible
   indicative, not a verdict.
 
 Results land in `audit/results/b1/<case>/result.json` (plus force histories), committed by the workflow's collect job.
+
+## Log of deviations (added as they happen)
+
+- 2026-11-27 20:40 UTC: L0 frame-0 cases died in `decomposePar` with SIGFPE on the runner (the same case decomposes cleanly
+  locally; L0 team_rm frame 1 ran: 183.06 mN, 1.20 M cells). Relaunched as batch b1r2 with frames 0-1 retried plus frame 2
+  for both designs as a backup. If a frame-0 case fails again, L0 uses frames 1-2 (frames are interchangeable repeat
+  meshes; the mark itself is unchanged).
