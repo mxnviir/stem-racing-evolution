@@ -1,0 +1,121 @@
+name: audit_drag
+run-name: "Drag audit: ${{ github.event.inputs.batch || 'cases file' }}"
+
+# Independent checks of the drag model used by the sidepod searches in mxnviir/stem-racing-adjoint (audit/README.md).
+# The CFD code is that repository at a pinned commit, used unchanged except for two env hooks added below
+# (background-cell divisor for the mesh ladder; turbulence model for the transition check). Defaults reproduce it exactly.
+# Launch: commit audit/cases.json on this branch (or dispatch with batch=<key in cases.json>).
+on:
+  push:
+    branches: [claude/wizardly-brahmagupta-1edalc]
+    paths: ["audit/cases.json"]
+  workflow_dispatch:
+    inputs:
+      batch: { description: "key in audit/cases.json", required: true }
+
+permissions: { contents: write }
+
+env:
+  ADJ_SHA: 9ab9092debd0e0297b290d886bf45a765045448c
+  PY_DEPS: scikit-learn==1.9.1 numpy==2.4.6 scipy==1.17.1 pandas trimesh==5.2.0 scikit-image shapely rtree==1.4.1 mapbox-earcut manifold3d==3.5.4 fast_simplification==0.2.0 jax jaxlib matplotlib pymeshlab==2025.7.post1 numba cadquery-ocp
+  OMPI_MCA_rmaps_base_oversubscribe: "1"
+  OMPI_MCA_hwloc_base_use_hwthreads_as_cpus: "1"
+  OMPI_ALLOW_RUN_AS_ROOT: "1"
+  OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: "1"
+
+jobs:
+  init:
+    runs-on: ubuntu-24.04
+    outputs:
+      cases: ${{ steps.r.outputs.cases }}
+      batch: ${{ steps.r.outputs.batch }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: r
+        env: { I_BATCH: "${{ github.event.inputs.batch }}" }
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os
+          c = json.load(open("audit/cases.json"))
+          b = os.environ.get("I_BATCH") or c["launch"]
+          print("cases=" + json.dumps(c["batches"][b])); print("batch=" + b)
+          PY
+
+  case:
+    name: "${{ matrix.case.name }}"
+    needs: init
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        case: ${{ fromJSON(needs.init.outputs.cases) }}
+    steps:
+      - name: room (free disk, 10 GB swap)
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          sudo fallocate -l 10G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with: { repository: mxnviir/stem-racing-adjoint, ref: "${{ env.ADJ_SHA }}", path: adj }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - uses: actions/cache@v4
+        with: { path: ~/ofdebs, key: openfoam2412-260127-noble-debs }
+      - name: OpenFOAM v2412 + python deps
+        timeout-minutes: 30
+        run: |
+          (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
+          for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
+          bash adj/.github/scripts/install_openfoam.sh
+          pip install $PY_DEPS
+      - name: env hooks (defaults unchanged) and the team-pod surfaces
+        working-directory: adj
+        run: |
+          OC=part2-simulation/openfoam_case.py
+          grep -c 'max(lx / 12.0, 1e-4)' $OC && grep -c 'max(ref_len / 12.0, 1e-4)' $OC
+          sed -i 's|max(lx / 12.0, 1e-4)|max(lx / float(os.environ.get("P2_BG_DIV", "12")), 1e-4)|; s|max(ref_len / 12.0, 1e-4)|max(ref_len / float(os.environ.get("P2_BG_DIV", "12")), 1e-4)|' $OC
+          grep -n 'P2_BG_DIV' $OC
+          PC=research/sidepod_opt/prodcheck.py
+          sed -i 's|^extra\["stage_timeout_s"\] = .*|&\nif os.environ.get("PRODCHECK_TURB", "kOmegaSST") != "kOmegaSST":\n    extra["turbulence_model"] = os.environ["PRODCHECK_TURB"]|' $PC
+          grep -n -A2 'stage_timeout_s' $PC
+          cd research/sidepod_opt
+          python -W ignore -c "
+          from pathlib import Path; from geometry import Car
+          c = Car(); c.export_car_folder(c.body_mesh, Path('gate/original'), 'original')" 2>&1 | grep -v "Qt\|plugin\|Cannot load\|^$" | tail -3
+          python -W ignore gate.py remesh 2>&1 | grep -v "Qt\|plugin\|Cannot load\|^$" | tail -2
+      - name: solve and score
+        timeout-minutes: 320
+        env: { CASE: "${{ toJSON(matrix.case) }}" }
+        run: |
+          source /usr/lib/openfoam/openfoam2412/etc/bashrc || true
+          python -W ignore audit/run_case.py adj "$CASE" out/${{ matrix.case.name }} | tail -1 || true
+          cat out/${{ matrix.case.name }}/result.json >> "$GITHUB_STEP_SUMMARY" || true
+          find out -name "*.log" -size +2M -exec sh -c 'tail -c 2000000 "$1" > "$1.t" && mv "$1.t" "$1"' _ {} \;
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: "audit-${{ matrix.case.name }}", path: out/, retention-days: 90 }
+
+  collect:
+    needs: [init, case]
+    if: always() && needs.init.result == 'success'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "${{ github.ref_name }}", fetch-depth: 0 }
+      - uses: actions/download-artifact@v4
+        with: { pattern: "audit-*", path: /tmp/r }
+      - name: commit the results (result.json and force histories only)
+        run: |
+          R=audit/results/${{ needs.init.outputs.batch }}
+          mkdir -p $R
+          for d in /tmp/r/audit-*/*/; do n=$(basename $d); mkdir -p $R/$n
+            cp $d/result.json $R/$n/ 2>/dev/null || true
+            cp $d/prodcheck.log $R/$n/ 2>/dev/null || true
+            (cd $d && find postProcessing -name "*.dat" 2>/dev/null | while read f; do mkdir -p $OLDPWD/$R/$n/$(dirname $f); cp $f $OLDPWD/$R/$n/$f; done) || true
+          done
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit/results
+          git commit -m "Drag audit ${{ needs.init.outputs.batch }}: results (run ${{ github.run_id }})" || exit 0
+          for i in 1 2 3 4 5; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((i*10)); done

@@ -1,0 +1,141 @@
+{
+ "launch": "b1",
+ "batches": {
+  "b1": [
+   {
+    "name": "t1_team_rm_k0",
+    "design": "team_rm",
+    "k": 0,
+    "bg_div": 12
+   },
+   {
+    "name": "t1_team_rm_k1",
+    "design": "team_rm",
+    "k": 1,
+    "bg_div": 12
+   },
+   {
+    "name": "t1_team_rm_k2",
+    "design": "team_rm",
+    "k": 2,
+    "bg_div": 12
+   },
+   {
+    "name": "t1_team_rm_k3",
+    "design": "team_rm",
+    "k": 3,
+    "bg_div": 12
+   },
+   {
+    "name": "t1_hybrid_final_k0",
+    "design": "hybrid_final",
+    "k": 0,
+    "bg_div": 12
+   },
+   {
+    "name": "t1_hybrid_final_k1",
+    "design": "hybrid_final",
+    "k": 1,
+    "bg_div": 12
+   },
+   {
+    "name": "t1_hybrid_final_k2",
+    "design": "hybrid_final",
+    "k": 2,
+    "bg_div": 12
+   },
+   {
+    "name": "t1_hybrid_final_k3",
+    "design": "hybrid_final",
+    "k": 3,
+    "bg_div": 12
+   },
+   {
+    "name": "t1_d7_k2",
+    "design": "seedevo:7",
+    "k": 2,
+    "bg_div": 12
+   },
+   {
+    "name": "t1_d7_k3",
+    "design": "seedevo:7",
+    "k": 3,
+    "bg_div": 12
+   },
+   {
+    "name": "t1_d10_k2",
+    "design": "seedevo:10",
+    "k": 2,
+    "bg_div": 12
+   },
+   {
+    "name": "t1_d10_k3",
+    "design": "seedevo:10",
+    "k": 3,
+    "bg_div": 12
+   },
+   {
+    "name": "t2L0_team_rm_k0",
+    "design": "team_rm",
+    "k": 0,
+    "bg_div": 9.524
+   },
+   {
+    "name": "t2L0_team_rm_k1",
+    "design": "team_rm",
+    "k": 1,
+    "bg_div": 9.524
+   },
+   {
+    "name": "t2L0_hybrid_final_k0",
+    "design": "hybrid_final",
+    "k": 0,
+    "bg_div": 9.524
+   },
+   {
+    "name": "t2L0_hybrid_final_k1",
+    "design": "hybrid_final",
+    "k": 1,
+    "bg_div": 9.524
+   },
+   {
+    "name": "t2L2_team_rm_k0",
+    "design": "team_rm",
+    "k": 0,
+    "bg_div": 15.12
+   },
+   {
+    "name": "t2L2_team_rm_k1",
+    "design": "team_rm",
+    "k": 1,
+    "bg_div": 15.12
+   },
+   {
+    "name": "t2L2_hybrid_final_k0",
+    "design": "hybrid_final",
+    "k": 0,
+    "bg_div": 15.12
+   },
+   {
+    "name": "t2L2_hybrid_final_k1",
+    "design": "hybrid_final",
+    "k": 1,
+    "bg_div": 15.12
+   },
+   {
+    "name": "t4_sstlm_team_rm_k0",
+    "design": "team_rm",
+    "k": 0,
+    "bg_div": 12,
+    "turb": "kOmegaSSTLM"
+   },
+   {
+    "name": "t4_sstlm_hybrid_final_k0",
+    "design": "hybrid_final",
+    "k": 0,
+    "bg_div": 12,
+    "turb": "kOmegaSSTLM"
+   }
+  ]
+ }
+}
