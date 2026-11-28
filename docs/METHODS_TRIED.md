@@ -405,7 +405,7 @@ All on the audit protocol: fresh wall-resolved mesh (~2.1 M cells), production s
 | T3: flow states | team pod two groups 1.9 mN apart (body drag); hybrid one group | Label states per run |
 | T4: transition model (one frame) | -10.14 vs -9.56 (SST) | Same answer |
 | Gain breakdown | wheels -6.85 +- 0.06, body -3.54 +- 0.59 | Two thirds of the gain is wheel drag the pod shape removes |
-| b2: the hybrid's final design legalised | running | Measures how much survives the milling rules |
+| b2: the hybrid's final design legalised | -7.62 +- 0.85 mN vs the CAD team pod, but **-0.43 +- 0.53 vs the team pod legalised the same way**; wheel-drag gain gone (+12.7 mN vs unlegalised) | The original hybrid's shape gain does not survive legalisation (`audit/RESULTS_b2.md`); b3 separates out-of-region moves from milling loss |
 
 The audit also found, in code: a velocity-extension bug in the level-set update (normals built from magnitudes,
 `adj:part1-simulation/phi_updater.py:339-369`), seed evolution's driver dropping children and forcing `converged = True`
