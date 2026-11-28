@@ -1,0 +1,129 @@
+name: evo_tests
+run-name: "Builder test suite (pinned evolution builder + evo_patches)"
+
+# The pinned evolution builder's own test suite (claude/loving-keller-q72mvv at EVO_SHA, read only), with this branch's
+# runtime fixes (evo_patches/apply.py, when present) applied, split finer and given longer than the repo's own CI
+# (whose two parts shards stop at 90 minutes). Also runs evo_patches/tests. Results: evo_tests/results/<run id>/.
+# Launch: commit evo_tests/request.json.
+on:
+  push:
+    branches: [claude/wizardly-brahmagupta-1edalc]
+    paths: ["evo_tests/request.json"]
+  workflow_dispatch:
+
+permissions: { contents: write }
+
+env:
+  EVO_SHA: e9c896b9774622eb53552db5b1e2d36d4108b5a1
+
+jobs:
+  tests:
+    name: "${{ matrix.dir }} ${{ matrix.shard }}/${{ matrix.of }}"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        include:
+          - { dir: car/body/tests, shard: 0, of: 6 }
+          - { dir: car/body/tests, shard: 1, of: 6 }
+          - { dir: car/body/tests, shard: 2, of: 6 }
+          - { dir: car/body/tests, shard: 3, of: 6 }
+          - { dir: car/body/tests, shard: 4, of: 6 }
+          - { dir: car/body/tests, shard: 5, of: 6 }
+          - { dir: car/parts/tests, shard: 0, of: 8 }
+          - { dir: car/parts/tests, shard: 1, of: 8 }
+          - { dir: car/parts/tests, shard: 2, of: 8 }
+          - { dir: car/parts/tests, shard: 3, of: 8 }
+          - { dir: car/parts/tests, shard: 4, of: 8 }
+          - { dir: car/parts/tests, shard: 5, of: 8 }
+          - { dir: car/parts/tests, shard: 6, of: 8 }
+          - { dir: car/parts/tests, shard: 7, of: 8 }
+          - { dir: car/build/tests, shard: 0, of: 1 }
+          - { dir: car/race/tests, shard: 0, of: 1 }
+          - { dir: search/sidepod, shard: 0, of: 1 }
+          - { dir: search/shape, shard: 0, of: 1 }
+          - { dir: cfd, shard: 0, of: 1 }
+          - { dir: _patches, shard: 0, of: 1 }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with: { repository: mxnviir/stem-racing-evolution, ref: "${{ env.EVO_SHA }}", path: evo }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: libraries and requirements
+        run: |
+          (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
+          for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
+          pip install -r evo/requirements.txt pytest-timeout
+      - name: runtime fixes (evo_patches)
+        run: |
+          if [ -f evo_patches/apply.py ]; then python evo_patches/apply.py evo; else echo "no patches"; fi
+      - name: pytest
+        timeout-minutes: 320
+        run: |
+          mkdir -p out
+          T=out/${{ strategy.job-index }}
+          if [ "${{ matrix.dir }}" = "_patches" ]; then
+            if [ -d evo_patches/tests ]; then
+              EVO_CHECKOUT=$PWD/evo python -m pytest evo_patches/tests -q --tb=short -p no:cacheprovider --junitxml=$T.xml || true
+            else echo "no patch tests"; fi
+          else
+            cd evo
+            files=$(ls ${{ matrix.dir }}/test_*.py | awk -v s=${{ matrix.shard }} -v n=${{ matrix.of }} 'NR % n == s')
+            echo "files: $files"
+            python -m pytest $files -q --tb=short --durations=15 --timeout=3600 --junitxml=../$T.xml || true
+            cd ..
+          fi
+          python3 - <<'PY' "$T.xml" "${{ matrix.dir }}" "${{ matrix.shard }}"
+          import sys, json, xml.etree.ElementTree as ET, os
+          p, d, s = sys.argv[1:4]
+          out = {"dir": d, "shard": int(s), "tests": []}
+          if os.path.exists(p):
+              for tc in ET.parse(p).getroot().iter("testcase"):
+                  st = "passed"
+                  for tag in ("failure", "error", "skipped"):
+                      e = tc.find(tag)
+                      if e is not None:
+                          st = tag; out.setdefault("details", {})[f"{tc.get('classname')}::{tc.get('name')}"] = (e.get("message") or "")[:400]
+                  out["tests"].append({"id": f"{tc.get('classname')}::{tc.get('name')}", "status": st, "s": float(tc.get("time") or 0)})
+          c = {}
+          for t in out["tests"]:
+              c[t["status"]] = c.get(t["status"], 0) + 1
+          out["counts"] = c
+          json.dump(out, open(p.replace(".xml", ".json"), "w"), indent=1)
+          print(json.dumps(c))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: "evo-tests-${{ strategy.job-index }}", path: out/, retention-days: 30 }
+
+  collect:
+    needs: tests
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "${{ github.ref_name }}", fetch-depth: 0 }
+      - uses: actions/download-artifact@v4
+        with: { pattern: "evo-tests-*", merge-multiple: true, path: /tmp/r }
+      - name: summary and commit
+        run: |
+          R=evo_tests/results/${{ github.run_id }}; mkdir -p $R
+          cp /tmp/r/*.json $R/ 2>/dev/null || true
+          python3 - <<'PY' $R
+          import json, glob, sys
+          R = sys.argv[1]; tot = {}; fails = []
+          for f in sorted(glob.glob(f"{R}/*.json")):
+              d = json.load(open(f))
+              for k, v in d.get("counts", {}).items(): tot[k] = tot.get(k, 0) + v
+              for t in d.get("tests", []):
+                  if t["status"] in ("failure", "error"): fails.append((t["id"], d.get("details", {}).get(t["id"], "")))
+          L = ["# Builder test suite, run " + R.split("/")[-1], "", "Totals: " + json.dumps(tot), "", "## Failures", ""]
+          L += [f"- `{i}`: {m}" for i, m in fails] or ["none"]
+          open(f"{R}/SUMMARY.md", "w").write("\n".join(L) + "\n"); print("\n".join(L))
+          PY
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evo_tests/results && git commit -m "evo_tests: results of run ${{ github.run_id }}" || exit 0
+          for i in 1 2 3 4 5; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((i*10)); done
