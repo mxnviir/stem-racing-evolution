@@ -51,7 +51,7 @@ Seeds (`config.json`): `team` = the team pod's legal field rebuild (174.75 mN on
   loop used an ESI continuous-adjoint map as a second guide; it failed its own validation (wrong signs at 2 of 3
   wall-resolved bumps, 7/11 signs vs DAFoam's 10/11 in hybrid round 1) and computing it after each parent re-run
   added 1-2 h to every generation's slowest job. Guides are now DAFoam only, plus random and recombined moves.
-- **Change log**: 2026-11-28 06:40 UTC, before any generation result: ablation arms added (PROTOCOL.md E2):
+- **Change log**: 2026-11-28 06:09 UTC (commit e93631b), before any generation result: ablation arms added (PROTOCOL.md E2):
   `team_noadj` (always), `d7_noadj` (if DAFoam converged at d7), `window_noadj` (if not, and it converged at window).
   Every arm now gets the same number of children per generation (6 in generation 1, 7 after), random moves filling up.
 - **G (each generation)**: the acceptance rule above. Steady-model numbers on the morphed mesh are the loop's

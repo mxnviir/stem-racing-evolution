@@ -54,7 +54,7 @@ Results land in `audit/results/b1/<case>/result.json` (plus force histories), co
   for both designs as a backup. If a frame-0 case fails again, L0 uses frames 1-2 (frames are interchangeable repeat
   meshes; the mark itself is unchanged).
 
-## Batch b2: does the original hybrid's gain survive legalisation? (added 2026-11-28 07:10 UTC, before its result)
+## Batch b2: does the original hybrid's gain survive legalisation? (added 2026-11-28 06:15 UTC, commit a2f4dd7, before its result)
 
 `legal:hybrid_final`: `hybrid/final_design/car_half.stl` put through the legal builder (`seedhybrid/legalise.py`:
 3-axis 6.35 mm ball-end mill, 3 mm walls, one piece, cargo, clearance, outside-region reset to the team CAD). Local

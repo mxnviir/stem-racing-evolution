@@ -1,6 +1,6 @@
 # Seeded hybrid: experimental protocol
 
-Written 2026-11-28 06:30 UTC, while the setup stage (run 46113354235) was still solving and **before any generation
+Written 2026-11-28 06:09 UTC (commit e93631b), while the setup stage (run 46113354235) was still solving and **before any generation
 result existed**. Every mark below is fixed here; any later change goes into the change log at the end with its date
 and reason, and the original mark is still reported.
 
@@ -143,7 +143,9 @@ These cannot be closed inside this campaign. Each says what would close it.
 `analyze.py` applies every mark mechanically after each stage and writes `RESULTS.md`.
 
 ## Change log
-- 2026-11-28 06:30 UTC: protocol written (before any generation result).
-- 2026-11-28 07:40 UTC (before any generation result): the unlegalised seed is scored on frames 0-3 (not only 0-1), so
+
+Times are commit times (UTC); the commit history is the authoritative record of when each line was written.
+- 2026-11-28 06:09 UTC (commit e93631b): protocol written (before any generation result).
+- 2026-11-28 06:2x UTC (the commit that adds this line; before any generation result): the unlegalised seed is scored on frames 0-3 (not only 0-1), so
   E4's "gain kept" uses the same four frames on both sides. Flow-state flag made concrete: a frame whose body drag is
   more than 1.0 mN from the median body drag of that design's frames.
