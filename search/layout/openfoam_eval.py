@@ -75,10 +75,13 @@ def write_cfd_car(car_dir: Path, dest: Path) -> dict:
     return {"faces_half": int(len(half.faces)), "watertight": bool(half.is_watertight)}
 
 
-def run_cfd(cfd_car: Path, out: Path, adjoint_root: Path, k: int, n_proc: int = 4) -> dict:
+def run_cfd(cfd_car: Path, out: Path, adjoint_root: Path, k: int, n_proc: int = 4, res: str = "resolved",
+            wall_resolved: bool = True) -> dict:
+    """res / wall_resolved: the route's mesh (resolved, wall-resolved) unless a test asks for another (the coarse
+    end-to-end adjoint test, search/adjoint)."""
     sp = Path(adjoint_root) / "research" / "sidepod_opt"
     keep = out / "state_prod"
-    env = dict(os.environ, GATE_DOMAIN=json.dumps(DOMAIN), GATE_DOMAIN_DX_MM=f"{k * FRAME_MM:.4f}", PRODCHECK_WALL_RESOLVED="1", PRODCHECK_RES="resolved",
+    env = dict(os.environ, GATE_DOMAIN=json.dumps(DOMAIN), GATE_DOMAIN_DX_MM=f"{k * FRAME_MM:.4f}", PRODCHECK_WALL_RESOLVED="1" if wall_resolved else "0", PRODCHECK_RES=res,
                PRODCHECK_RESULTS=str(out), PRODCHECK_KEEP=str(keep), PRODCHECK_ITERS=str(ITERS),
                PRODCHECK_TIMEOUT=os.environ.get("PRODCHECK_TIMEOUT", "16000"))
     env.pop("CFD_DIV_U", None)
@@ -109,10 +112,18 @@ def case(x_json, out, adjoint_root, k=0, cid=None):
     import layout_car as LC
     import simscale_layout as SL
     out = Path(out).resolve(); out.mkdir(parents=True, exist_ok=True)
-    x = np.array(json.loads(Path(x_json).read_text()) if Path(x_json).exists() else json.loads(x_json), float)
+    spec = json.loads(Path(x_json).read_text()) if len(str(x_json)) < 4096 and Path(x_json).exists() else json.loads(x_json)
+    # a layout car (the genes), or a stage-2 car (simscale_shape.ShapeCampaign.job: genes + free-form body, wings,
+    # supports)
+    if isinstance(spec, dict):
+        x = np.array(spec["x"], float)
+        kw = {k: spec.get(k) for k in ("freeform", "support", "fwing", "rwing")}
+    else:
+        x, kw = np.array(spec, float), {}
     car = out / "car"
-    rec = LC.build(x, car)
+    rec = LC.build(x, car, **kw)
     res = {"id": cid or out.name, "k": int(k), "route": ROUTE, "genes": [float(v) for v in x], "legal": bool(rec.get("legal")),
+           "v": spec.get("v") if isinstance(spec, dict) else None,
            "failed": rec.get("failed"), "why": (rec.get("why") or "")[:500], "build_s": rec.get("build_s"),
            "mass": rec.get("mass"), "layout": rec.get("layout")}
     if res["legal"]:

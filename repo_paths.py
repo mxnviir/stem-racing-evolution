@@ -19,6 +19,7 @@ FOLDERS = {
     "sidepod": ROOT / "search" / "sidepod", # CMA on the team car's sidepods
     "layout": ROOT / "search" / "layout",   # stage 1: the layout numbers (Bayesian)
     "shape": ROOT / "search" / "shape",     # stage 2: free-form body (CMA)
+    "adjoint": ROOT / "search" / "adjoint", # the adjoint link and the fine (AWS) adjoint job
 }
 
 

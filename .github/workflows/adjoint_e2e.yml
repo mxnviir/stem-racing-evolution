@@ -1,0 +1,138 @@
+name: adjoint_e2e
+run-name: "Adjoint chain end to end on a coarse mesh (search/adjoint/E2E_TEST.md)"
+
+# The fine adjoint's whole chain, in the AWS container, on a coarse mesh: image -> adjoint (car, production, steady,
+# DAFoam, link) -> six forward checks of the three largest gradients -> verdict (marks in E2E_TEST.md).
+# Launch: commit .github/adjoint_e2e_request.json {"go": <anything>}.
+on:
+  push:
+    branches: [claude/loving-keller-q72mvv]
+    paths: [".github/adjoint_e2e_request.json"]
+
+permissions: { contents: write, packages: write }
+
+env:
+  IMG: ghcr.io/mxnviir/stem-adjoint:${{ github.sha }}
+  ADJOINT_REF: claude/loving-keller-q72mvv
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  image:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: room
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true; df -h / | tail -1
+      - uses: actions/checkout@v4
+      - name: build and push the AWS container
+        run: |
+          echo "${{ github.token }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          for i in 1 2 3; do docker pull dafoam/opt-packages:v5.1.1 && break; sleep 60; done
+          docker build -t $IMG -f search/adjoint/aws/Dockerfile . 2>&1 | tail -40
+          docker run --rm --entrypoint bash $IMG -c 'source $OF_BASHRC && simpleFoam -help >/dev/null && echo OF2412 ok; . $DAFOAM_LOAD >/dev/null && python -c "import dafoam; print(\"dafoam ok\")"; /opt/venv/bin/python -c "import trimesh, manifold3d, skimage, scipy; print(\"venv ok\")"'
+          docker push $IMG
+          docker images $IMG
+
+  adjoint:
+    needs: image
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    outputs:
+      fd: ${{ steps.fd.outputs.fd }}
+    steps:
+      - name: room (free disk, 16 GB swap)
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          sudo fallocate -l 16G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2
+          free -g; df -h / | tail -1
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with: { repository: mxnviir/stem-racing-adjoint, ref: "${{ env.ADJOINT_REF }}", path: _adjoint }
+      - name: pull the container
+        run: |
+          echo "${{ github.token }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          for i in 1 2 3; do docker pull $IMG && break; sleep 30; done
+      - name: the job (team car, v = 0, coarse), packaged as for AWS
+        run: |
+          mkdir -p io
+          docker run --rm -e PYTHONDONTWRITEBYTECODE=1 -v $PWD:/w -w /w --entrypoint python $IMG -W ignore search/adjoint/e2e_job.py base io/job.json
+          python3 search/adjoint/aws/batch.py package io/job.json io/in.tgz --adjoint-repo _adjoint
+          ls -la io
+      - name: the chain in the container (car, production, steady, DAFoam, link)
+        timeout-minutes: 330
+        run: |
+          docker run --rm --shm-size=8g -e IN_TGZ=/io/in.tgz -e OUT_DIR=/io/out -e NP=4 -e PROGRESS_S=100000 -v $PWD/io:/io $IMG || echo "chain exit $?"
+          mkdir -p io/out/run && tar xzf io/out/out.tgz -C io/out/run 2>/dev/null || true
+          cat io/out/result.json | head -c 3000 || true
+          { echo '## adjoint'; head -c 3000 io/out/result.json 2>/dev/null | sed 's/^/    /'; } >> "$GITHUB_STEP_SUMMARY"
+      - id: fd
+        name: the forward checks' jobs
+        run: |
+          if [ -f io/out/run/gradient.json ]; then
+            docker run --rm -e PYTHONDONTWRITEBYTECODE=1 -v $PWD:/w -w /w --entrypoint python $IMG -W ignore search/adjoint/e2e_job.py fd io/out/run/gradient.json io/fd
+            echo "fd=$(python3 -c "import json;print(json.dumps([c['id'] for c in json.load(open('io/fd/fd_cases.json'))]))")" >> "$GITHUB_OUTPUT"
+          else
+            echo 'fd=[]' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: adjoint, path: io/, retention-days: 30 }
+
+  fd:
+    needs: adjoint
+    if: needs.adjoint.outputs.fd != '[]' && needs.adjoint.outputs.fd != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      matrix:
+        id: ${{ fromJSON(needs.adjoint.outputs.fd) }}
+    steps:
+      - name: room (free disk, 10 GB swap)
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          sudo fallocate -l 10G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with: { repository: mxnviir/stem-racing-adjoint, ref: "${{ env.ADJOINT_REF }}", path: _adjoint }
+      - uses: actions/download-artifact@v4
+        with: { name: adjoint, path: adj }
+      - name: run the car to its steady state in the container
+        timeout-minutes: 330
+        run: |
+          echo "${{ github.token }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          for i in 1 2 3; do docker pull $IMG && break; sleep 30; done
+          mkdir -p io
+          python3 search/adjoint/aws/batch.py package adj/fd/${{ matrix.id }}.json io/in.tgz --adjoint-repo _adjoint
+          docker run --rm --shm-size=8g -e IN_TGZ=/io/in.tgz -e OUT_DIR=/io/out -e NP=4 -e PROGRESS_S=100000 -v $PWD/io:/io $IMG || echo "exit $?"
+          mkdir -p out/${{ matrix.id }} && cp io/out/result.json io/out/fine_adjoint.log out/${{ matrix.id }}/ 2>/dev/null || true
+          tar xzf io/out/out.tgz -C out/${{ matrix.id }} steady/steady.json production.json 2>/dev/null || true
+          head -c 1500 io/out/result.json || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: "fd-${{ matrix.id }}", path: out/, retention-days: 30 }
+
+  verdict:
+    needs: [adjoint, fd]
+    if: always() && needs.adjoint.result != 'skipped'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "${{ github.ref_name }}" }
+      - uses: actions/download-artifact@v4
+        with: { path: /tmp/a }
+      - name: marks, and the results into the repository
+        run: |
+          D=docs/checks/adjoint_e2e/${{ github.run_id }}
+          mkdir -p $D/adjoint $D/fd
+          cp /tmp/a/adjoint/out/result.json /tmp/a/adjoint/out/fine_adjoint.log $D/adjoint/ 2>/dev/null || true
+          cp /tmp/a/adjoint/out/run/gradient.json /tmp/a/adjoint/out/run/dafoam.json /tmp/a/adjoint/out/run/production.json $D/adjoint/ 2>/dev/null || true
+          cp /tmp/a/adjoint/out/run/steady/steady.json $D/adjoint/ 2>/dev/null || true
+          tail -c 200000 /tmp/a/adjoint/out/run/dafoam_case/log.dafoam > $D/adjoint/log.dafoam.tail 2>/dev/null || true
+          cp /tmp/a/adjoint/fd/fd_cases.json $D/ 2>/dev/null || true
+          for d in /tmp/a/fd-*; do [ -d "$d" ] && cp -r "$d"/. $D/fd/; done
+          python3 search/adjoint/e2e_verdict.py $D $D/verdict.json | tee -a "$GITHUB_STEP_SUMMARY" || true
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add $D
+          git commit -m "adjoint_e2e: results of run ${{ github.run_id }} [skip ci]" || exit 0
+          for i in 1 2 3 4 5; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((i*10)); done
