@@ -1,0 +1,91 @@
+name: adjoint_aws
+run-name: "Fine adjoint on AWS Batch (${{ github.event.inputs.dir }}${{ github.event.inputs.job_id && format(' job {0}', github.event.inputs.job_id) || '' }})"
+
+# The adjoint step of a guided stage-2 campaign (search/shape/actions_shape.py, guided.py): the job in
+# <dir>/adjoint_request.json (the car at CMA's mean) goes to AWS Batch (search/adjoint/aws: DAFoam on the 2.1 M-cell
+# wall-resolved mesh). This run waits up to ~5 h 30; a longer job is picked up by a fresh run of this workflow
+# (dispatched with its job id). When the job ends its result goes to `actions_shape.py gradient` (a failed or
+# unusable gradient makes the next generation a plain one), and the next generation is started (shape_openfoam.yml).
+#
+# Needs (repository settings, from the CloudFormation stack, search/adjoint/aws/README.md):
+#   secret AWS_ROLE_ARN (the stack's GitHubRoleArn; OIDC, no keys), variables AWS_REGION, AWS_BUCKET, AWS_JOB_QUEUE,
+#   AWS_JOB_DEFINITION.
+on:
+  workflow_dispatch:
+    inputs:
+      dir: { description: "campaign run dir (repo-relative)", required: true }
+      job_id: { description: "an AWS Batch job already submitted (continue waiting)", default: "" }
+      auto: { default: "true" }
+
+permissions: { contents: write, actions: write, id-token: write }
+
+concurrency:
+  group: adjoint-aws-${{ github.event.inputs.dir }}
+  cancel-in-progress: false
+
+jobs:
+  adjoint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "${{ github.ref_name }}", fetch-depth: 0 }
+      - uses: actions/checkout@v4
+        with: { repository: mxnviir/stem-racing-adjoint, ref: claude/loving-keller-q72mvv, path: _adjoint, fetch-depth: 1 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - uses: aws-actions/configure-aws-credentials@v4
+        with: { role-to-assume: "${{ secrets.AWS_ROLE_ARN }}", aws-region: "${{ vars.AWS_REGION }}" }
+      - name: submit (once) and wait
+        id: w
+        env:
+          D: ${{ github.event.inputs.dir }}
+          JOB: ${{ github.event.inputs.job_id }}
+        run: |
+          pip install -q boto3
+          python3 - <<PY
+          import json, os
+          json.dump({"region": os.environ.get("AWS_REGION") or "${{ vars.AWS_REGION }}", "bucket": "${{ vars.AWS_BUCKET }}",
+                     "prefix": "fine-adjoint", "job_queue": "${{ vars.AWS_JOB_QUEUE }}", "job_definition": "${{ vars.AWS_JOB_DEFINITION }}",
+                     "vcpus": 64, "memory_mib": 480000, "np": 64, "ledger": "$D/aws_jobs.jsonl", "adjoint_repo": "_adjoint"},
+                    open("/tmp/aws_config.json", "w"))
+          PY
+          if [ -z "$JOB" ]; then
+            python3 -c "import json; r=json.load(open('$D/adjoint_request.json')); json.dump(r['job'], open('/tmp/job.json','w'))"
+            JOB=$(python3 search/adjoint/aws/batch.py submit /tmp/job.json --config /tmp/aws_config.json | python3 -c "import json,sys; print(json.loads(sys.stdin.read().strip().splitlines()[-1])['job_id'])")
+            git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add $D/aws_jobs.jsonl && git commit -qm "adjoint_aws $D: submitted $JOB [skip ci]" && \
+              for i in 1 2 3 4 5; do git pull -q --rebase origin ${{ github.ref_name }} && git push -q origin HEAD:${{ github.ref_name }} && break; sleep $((i*10)); done
+          fi
+          echo "job=$JOB" >> "$GITHUB_OUTPUT"
+          end=$(( $(date +%s) + 19500 ))
+          while [ $(date +%s) -lt $end ]; do
+            S=$(python3 search/adjoint/aws/batch.py status $JOB --config /tmp/aws_config.json | tail -1)
+            echo "$(date -u +%H:%M) $S"
+            st=$(echo "$S" | python3 -c "import json,sys; print(json.load(sys.stdin)['status'])")
+            if [ "$st" = SUCCEEDED ] || [ "$st" = FAILED ]; then echo "done=$st" >> "$GITHUB_OUTPUT"; exit 0; fi
+            sleep 300
+          done
+          echo "done=" >> "$GITHUB_OUTPUT"
+      - name: still running -> a fresh run keeps waiting
+        if: steps.w.outputs.done == ''
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: gh workflow run adjoint_aws.yml -R ${{ github.repository }} --ref ${{ github.ref_name }} -f dir=${{ github.event.inputs.dir }} -f job_id=${{ steps.w.outputs.job }} -f auto=${{ github.event.inputs.auto }}
+      - name: fetch the gradient, start the guided generation
+        if: steps.w.outputs.done != ''
+        env: { GH_TOKEN: "${{ github.token }}", D: "${{ github.event.inputs.dir }}" }
+        run: |
+          G=$D/adjoint/gen_$(python3 -c "import json; print(json.load(open('$D/adjoint_request.json'))['gen'])")
+          python3 search/adjoint/aws/batch.py fetch ${{ steps.w.outputs.job }} /tmp/adj --config /tmp/aws_config.json || true
+          mkdir -p $G && cp /tmp/adj/result.json /tmp/adj/fine_adjoint.log $G/ 2>/dev/null || true
+          cp /tmp/adj/gradient.json /tmp/adj/grad_core.json /tmp/adj/dafoam.json /tmp/adj/production.json $G/ 2>/dev/null || true
+          pip install -q -r requirements.txt
+          python -W ignore search/shape/actions_shape.py gradient $D $G/result.json | tail -1
+          python -W ignore search/shape/actions_shape.py next $D | tail -1
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add $D
+          git commit -m "adjoint_aws $D: gradient of job ${{ steps.w.outputs.job }} (${{ steps.w.outputs.done }}) [skip ci]" || true
+          for i in 1 2 3 4 5; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((i*10)); done
+          if [ "${{ github.event.inputs.auto }}" = "true" ] && [ ! -f $D/STOP ] && [ -f $D/request.json ]; then
+            gh workflow run shape_openfoam.yml -R ${{ github.repository }} --ref ${{ github.ref_name }} -f dir=$D -f auto=true
+          fi

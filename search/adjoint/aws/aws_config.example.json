@@ -1,0 +1,13 @@
+{
+ "_comment": "Copy to aws_config.json (not committed) and fill in from the CloudFormation stack's outputs.",
+ "region": "us-east-2",
+ "bucket": "<stack output Bucket>",
+ "prefix": "fine-adjoint",
+ "job_queue": "<stack output JobQueue>",
+ "job_definition": "<stack output JobDefinition>",
+ "vcpus": 64,
+ "memory_mib": 480000,
+ "np": 64,
+ "keep_state": false,
+ "adjoint_repo": "../stem-racing-adjoint"
+}

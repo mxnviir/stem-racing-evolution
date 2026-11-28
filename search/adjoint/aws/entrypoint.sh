@@ -21,7 +21,7 @@ say "job $(python -c "import json;print(json.load(open('$W/in/job.json')).get('i
 
 pack() {   # the results (small) and, with KEEP_STATE=1, the steady flow
   cd $W/run
-  files=$(ls -d result.json fine_adjoint.log gradient.json production.json dafoam.json steady/steady.json \
+  files=$(ls -d result.json fine_adjoint.log gradient.json grad_core.json production.json dafoam.json steady/steady.json \
           dafoam_case/dafoam_sens.npz dafoam_case/dafoam_sens.json dafoam_case/log.* \
           steady/steady_*/log.* production/prodcheck.log car/layout_car.json car/run_car.log 2>/dev/null)
   tar czf $W/out.tgz $files

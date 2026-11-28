@@ -42,7 +42,7 @@ Parameters:
   GitHubOidcProviderArn:
     Type: String
     Default: ""
-    Description: ARN of an existing token.actions.githubusercontent.com OIDC provider (empty: one is created if GitHubRepo is set).
+    Description: "ARN of an existing token.actions.githubusercontent.com OIDC provider (empty: one is created if GitHubRepo is set)."
 
 Conditions:
   WithGitHub: !Not [!Equals [!Ref GitHubRepo, ""]]

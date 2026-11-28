@@ -1,0 +1,129 @@
+name: shape_openfoam
+run-name: "Stage 2 on OpenFOAM: one generation (${{ github.event.inputs.dir || 'request file' }})"
+
+# search/shape/actions_shape.py: one CMA generation of the free-form body search (guided by the adjoint when the
+# campaign says so). Each case builds its car from its spec (<dir>/specs/<id>.json), meshes it with the team's
+# wall-resolved OpenFOAM pipeline and scores drag, lift and race time. The collect job ingests the generation, tells
+# CMA, and asks for the next step: an adjoint at CMA's mean (adjoint_aws.yml) or the next generation (this workflow).
+# Launch: commit .github/shape_openfoam_request.json {"dir": "runs/<name>", "auto": true} after
+#   python search/shape/actions_shape.py init runs/<name> ... && python search/shape/actions_shape.py next runs/<name>
+on:
+  push:
+    branches: [claude/loving-keller-q72mvv]
+    paths: [".github/shape_openfoam_request.json"]
+  workflow_dispatch:
+    inputs:
+      dir: { description: "run dir (repo-relative)", required: true }
+      auto: { default: "false" }
+
+permissions: { contents: write, actions: write }
+
+env:
+  ADJOINT_REF: claude/loving-keller-q72mvv
+  OMPI_MCA_rmaps_base_oversubscribe: "1"
+  OMPI_MCA_hwloc_base_use_hwthreads_as_cpus: "1"
+  OMPI_ALLOW_RUN_AS_ROOT: "1"
+  OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: "1"
+
+jobs:
+  init:
+    runs-on: ubuntu-24.04
+    outputs:
+      cases: ${{ steps.r.outputs.cases }}
+      dir: ${{ steps.r.outputs.dir }}
+      auto: ${{ steps.r.outputs.auto }}
+      gen: ${{ steps.r.outputs.gen }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: r
+        env: { I_DIR: "${{ github.event.inputs.dir }}", I_AUTO: "${{ github.event.inputs.auto }}" }
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os
+          if os.environ.get("I_DIR"):
+              d, auto = os.environ["I_DIR"], os.environ.get("I_AUTO") == "true"
+          else:
+              r = json.load(open(".github/shape_openfoam_request.json")); d, auto = r["dir"], r.get("auto", False)
+          req = json.load(open(f"{d}/request.json"))
+          print("cases=" + json.dumps([{"id": c["id"], "k": c["k"], "spec": c["spec"]} for c in req["cases"]]))
+          print("dir=" + d); print("auto=" + ("true" if auto else "false")); print("gen=" + str(req["gen"]))
+          PY
+
+  case:
+    name: "${{ matrix.case.id }} ~${{ matrix.case.k }}"
+    needs: init
+    runs-on: ubuntu-24.04
+    timeout-minutes: 358
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        case: ${{ fromJSON(needs.init.outputs.cases) }}
+    steps:
+      - name: room (free disk, 10 GB swap)
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          sudo fallocate -l 10G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with: { repository: mxnviir/stem-racing-adjoint, ref: "${{ env.ADJOINT_REF }}", path: adjoint, sparse-checkout: "part2-simulation\npart4-simulation\nresearch/sidepod_opt" }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - uses: actions/cache@v4
+        with: { path: ~/ofdebs, key: openfoam2412-260127-noble-debs }
+      - name: OpenFOAM v2412 + python deps
+        timeout-minutes: 40
+        run: |
+          (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
+          for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
+          bash .github/scripts/install_openfoam.sh
+          pip install -r requirements.txt
+      - name: build the car, mesh, solve, score
+        timeout-minutes: 310
+        run: |
+          source /usr/lib/openfoam/openfoam2412/etc/bashrc || true
+          export QT_QPA_PLATFORM=offscreen
+          D=${{ needs.init.outputs.dir }}
+          O=/tmp/case/${{ matrix.case.id }}_k${{ matrix.case.k }}
+          python -W ignore search/layout/openfoam_eval.py case $D/${{ matrix.case.spec }} $O $GITHUB_WORKSPACE/adjoint ${{ matrix.case.k }} ${{ matrix.case.id }} | tail -1
+          mkdir -p out/${{ matrix.case.id }}_k${{ matrix.case.k }}
+          cp $O/result.json out/${{ matrix.case.id }}_k${{ matrix.case.k }}/
+          cp $O/prodcheck.log $O/car/run_car.log out/${{ matrix.case.id }}_k${{ matrix.case.k }}/ 2>/dev/null || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: "case-${{ matrix.case.id }}-${{ matrix.case.k }}", path: out/, retention-days: 30 }
+
+  collect:
+    needs: [init, case]
+    if: always() && needs.init.result == 'success'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "${{ github.ref_name }}", fetch-depth: 0 }
+      - uses: actions/download-artifact@v4
+        with: { pattern: "case-*", merge-multiple: true, path: /tmp/r }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: ingest, tell CMA, ask the next step, commit, go on
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          D=${{ needs.init.outputs.dir }}
+          R=$D/results/gen_${{ needs.init.outputs.gen }}
+          mkdir -p $R && cp -r /tmp/r/. $R/ 2>/dev/null || true
+          find $R -name "*.log" -size +1M -exec sh -c 'tail -c 1000000 "$1" > "$1.t" && mv "$1.t" "$1"' _ {} \;
+          (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q >/dev/null && break; sleep 20; done) || true
+          for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 >/dev/null && break; sleep 60; done
+          pip install -q -r requirements.txt
+          python -W ignore search/shape/actions_shape.py ingest $D $R | tail -2
+          python -W ignore search/shape/actions_shape.py next $D | tail -2
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add $D
+          git commit -m "shape_openfoam $D: generation ${{ needs.init.outputs.gen }} results (run ${{ github.run_id }}) [skip ci]" || exit 0
+          for i in 1 2 3 4 5; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((i*10)); done
+          if [ "${{ needs.init.outputs.auto }}" = "true" ] && [ ! -f $D/STOP ]; then
+            if [ -f $D/adjoint_request.json ]; then
+              gh workflow run adjoint_aws.yml -R ${{ github.repository }} --ref ${{ github.ref_name }} -f dir=$D -f auto=true
+            else
+              gh workflow run shape_openfoam.yml -R ${{ github.repository }} --ref ${{ github.ref_name }} -f dir=$D -f auto=true
+            fi
+          fi
