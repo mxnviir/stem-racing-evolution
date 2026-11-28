@@ -1,0 +1,29 @@
+{
+ "steady": true,
+ "span_mark_mN": 0.02,
+ "scheme": "linearUpwind",
+ "state": "/scratch/job/run/steady/steady_linearUpwind",
+ "D_half_mN": 228.9258544418934,
+ "rungs": [
+  {
+   "scheme": "linearUpwind",
+   "from_time": 1000,
+   "iterations": 2000,
+   "span_mN": 0.0005272285284547706,
+   "block_means_mN": [
+    228.926,
+    228.926,
+    228.926,
+    228.926,
+    228.926,
+    228.926,
+    228.926,
+    228.926,
+    228.926,
+    228.926
+   ],
+   "D_half_mN_last1000": 228.9258544418934,
+   "state": "/scratch/job/run/steady/steady_linearUpwind"
+  }
+ ]
+}

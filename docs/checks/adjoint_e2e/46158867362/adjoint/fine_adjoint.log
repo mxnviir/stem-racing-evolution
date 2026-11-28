@@ -1,0 +1,38 @@
+[fine_adjoint 15:33:25] 1 car
+[fine_adjoint 15:39:13] 2 production
+[fine_adjoint 15:43:30] 3 steady
+{"scheme": "linearUpwind", "from_time": 1000, "iterations": 2000, "span_mN": 0.0005272285284547706, "block_means_mN": [228.926, 228.926, 228.926, 228.926, 228.926, 228.926, 228.926, 228.926, 228.926, 228.926], "D_half_mN_last1000": 228.9258544418934, "state": "/scratch/job/run/steady/steady_linearUpwind"}
+STEADY_PASS linearUpwind 0.0005
+[fine_adjoint 15:50:26] 4 DAFoam
+case /scratch/job/run/dafoam_case from /scratch/job/run/steady/steady_linearUpwind/2000; schemes kept:
+ddtSchemes      { default steadyState; }
+// Limited: one bad cell at a wing-to-nose junction blew the unlimited solve up to
+gradSchemes     { default Gauss linear; grad(U) cellLimited Gauss linear 1; }
+    default         none;
+    div(pc)         bounded Gauss upwind;
+    div(phi,U)      bounded Gauss linearUpwind grad(U);
+    div(phi,k)      bounded Gauss upwind;
+    div(phi,omega)  bounded Gauss upwind;
+    div(phi,ReThetat) bounded Gauss upwind;
+    div(phi,gammaInt) bounded Gauss upwind;
+    div((nuEff*dev2(T(grad(U))))) Gauss linear;
+laplacianSchemes { default Gauss linear limited corrected 0.5; }
+interpolationSchemes { default linear; }
+snGradSchemes   { default limited corrected 0.5; }
+D1_functions_D_and_L: applied
+D1b_function_list: applied
+D2_gmres_record: applied
+D3_totals_per_function: applied
+D4_mesh_check_env: applied
+R1_ranks_shm_env: applied
+R1b_shm_funcs: applied
+Traceback (most recent call last):
+  File "/scratch/job/in/evolution/search/adjoint/fine_adjoint.py", line 263, in <module>
+    main()
+  File "/scratch/job/in/evolution/search/adjoint/fine_adjoint.py", line 242, in main
+    log("4 DAFoam"); daf = step_dafoam(job, st, work, adj, a.np)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/job/in/evolution/search/adjoint/fine_adjoint.py", line 140, in step_dafoam
+    env = dict(os.environ, **DAFOAM_DEFAULT_ENV, **(CORE_ENV if core else {}),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: dict() got multiple values for keyword argument 'DAF_GMRES_ITERS'

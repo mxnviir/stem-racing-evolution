@@ -1,0 +1,14 @@
+{
+ "cfd_s": 257,
+ "D20_N": 0.4578499174879918,
+ "L20_N": 0.15007362923949172,
+ "D_half_mN": 228.92495874399592,
+ "D_half_se_mN": 0.0008620769139416306,
+ "L_half_mN": 75.03681461974585,
+ "L_half_se_mN": 0.00120951725285726,
+ "iterations": 1000,
+ "cells": 93925,
+ "y_plus_max": 224.26756005292935,
+ "converged": true,
+ "state": "/scratch/job/run/production/state_prod"
+}
