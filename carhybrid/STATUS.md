@@ -1,0 +1,104 @@
+# Status of the work on branch claude/wizardly-brahmagupta-1edalc (2026-11-28)
+
+One page per piece is linked; this page says what exists, what it showed, and what is still open.
+Repositories:
+- `mxnviir/stem-racing-evolution`, this branch: everything below.
+- `mxnviir/stem-racing-adjoint`: the CFD and DAFoam code, pinned at `9ab9092`, patched at run time; nothing is
+  committed there.
+
+The builder is the evolution repo's branch `claude/loving-keller-q72mvv` at `e9c896b`. It is read only and patched at
+run time by `evo_patches/`.
+
+## 1. Audits and methods (paper material)
+
+- `docs/METHODS_TRIED.md`: every method tried across both repositories, with evidence, verdicts and links.
+- `audit/`: drag audits b1–b3. The original sidepod hybrid keeps −3.05 ± 0.80 mN half car against a team pod
+  legalised the same way (`RESULTS_b3.md`; b2's first reading was corrected).
+- **CFD spent on the sidepod before this work:**
+  - SimScale CMA-ES: 133 runs (about 2,560 core-hours), no gain (best car 2.6 ms slower than the team car).
+  - The adjoint hybrid: about 100 solves for the −3 mN above.
+
+## 2. The builder: legal cars by construction (`evo_patches/`)
+
+| Patch | What it does | Note |
+|---|---|---|
+| P1–P3 | mass bookkeeping | `evo_patches/README.md` |
+| soft_cap v2.1 | 27.175 mm cap without flat decks; fades before the halo's rear face | `evo_patches/soft_cap.py` |
+| nose_material | foam or printed nose decided per car; block front fitted to the referee | `evo_patches/NOSE.md` |
+| legality_fixes L1 | rear wing and supports end before the body's back (T5.6) | `evo_patches/legality_fixes.py` docstring |
+| L2 | foam body clamped to the official block as the referee places it (slot slivers, block front, bore drawn small) | same |
+| L3 (+v2) | wheel supports re-tried from design variants when their own gates fail | same |
+| L4 | front-wing tip moved out when a strut's flare leaves a segment under 25 mm (T8.6.1) | same |
+| L5 | rear wing built further forward when no support can land ahead of the body's back | same |
+| L6 | nose-joint check fails a sliver face instead of crashing the build | same |
+
+Legality of the 32 test layouts:
+
+| Sweep | Legal of 32 | Note |
+|---|---|---|
+| sweep2 | 17 | |
+| sweep3 | 11 | regression, traced (`results/sweep3/RESULTS.md`) |
+| sweep4 | 16 | |
+| sweep5 | 28 | |
+| sweep5 + sweep5r | **30** | |
+
+The two left:
+- **L21:** foam over the rear support's slot, 0.24 mm short.
+- **S02:** halo face joined, a failure already present before any patch.
+
+Galleries: `results/sweep3/GALLERY.png`, `results/sweep5/GALLERY.png`.
+
+## 3. Whole-car hybrid (`carhybrid/`; design `DESIGN.md`)
+
+| Piece | State | Doc |
+|---|---|---|
+| Car build + OpenFOAM adapter (`make_car.py`, `adapt.py`), shape audit (`shape_audit.py`) | working | `README.md`, `DESIGN.md` |
+| P0: team car, coarse DAFoam gradient | done | `P0.md` |
+| P1: does the gradient predict on the production mesh? | **both marks met**: race-time step −11.3 ms; drag step beats its opposite by 29.6 ± 2.8 mN whole car and both random steps; non-linear (slope 1.4) | `P1.md` |
+| Fine-mesh adjoint (DAFoam on the 2.1 M scoring mesh; lift; gates F0–F3) | built; plumbing-tested on GitHub at 129 k cells; **not yet run at 2.1 M** | `FINE_ADJOINT.md` |
+| AWS deployment (AWS CLI, spot, resume, results via S3) | built and tested locally (dry run, fake aws); **not yet launched**: needs your AWS setup | `aws/README.md` (instance choice and prices, section 5) |
+| Gradient map (`grad.py`: drag, lift, mass → race time; 45 or 720 numbers; frame averaging) | working; agrees with the other agent's map (cosine 1.0000). **Known defect, not yet fixed:** counts mask-held surface as moving (their exact test: top numbers 1.30–1.46×) | `grad.py` docstring |
+| Trust-region loop (`loop.py`, P2F) | built and tested (19 unit tests); not run | `FINE_ADJOINT.md` (loop, decisions) |
+| P3: Bayesian layout search on OpenFOAM (`bo.py`) | **running**: batch bo_1 (16 Sobol cars) on GitHub; the collect step proposes and dispatches each next batch automatically | `BO.md` |
+| Rules as constraints on the numbers (`constraints.py`) | **in progress** (see section 5) | `CONSTRAINTS.md` |
+
+Decision recorded, not built: **guided CMA** (the other agent's bench) is to replace the trust-region loop as the
+main stage-2 method. The reasons:
+- CMA's selection over about 20 measured cars averages out the noise;
+- with 720 numbers, a random sample is almost orthogonal to downhill, so the gradient is worth more;
+- it needs fewer AWS adjoints.
+
+It waits on the constraints (section 5), the `grad.py` fix, and DAFoam converging at non-team shapes on AWS.
+
+## 4. Seeded sidepod campaign (`seedhybrid/`)
+
+- Protocol, marks and change log: `seedhybrid/PROTOCOL.md`.
+- The setup's DAFoam gradients failed at the 2,000-iteration GMRES limit. With 6,000 iterations all three converge:
+  window 1,290, d7 1,615, team 1,963.
+- **Generation 1** is dispatched (run 46156806568) and queued behind the layout search for GitHub's 20 slots:
+  - all three seeds adjoint-guided;
+  - no-adjoint arms team and d7 (window's skipped by the pre-registered rule).
+
+## 5. In progress
+
+- **Rules as constraints** (`CONSTRAINTS.md`):
+  - The seed body itself breaks the rules: the masks fix 263 cells of clipping air filled and 5,919 cells of
+    required solid left empty. That is the origin of the flats.
+  - No set of numbers meets every rule: the smallest worst violation is 12.8 mm on 45 numbers and 11.3 mm on 720.
+    Some rule features are sharper than the height-map surfaces can draw.
+  - Being run now: the split into reachable rules (hard constraints, the search never enters them) and sharp
+    features (the mask stays, the gradient holds the surface), with the builder check of projected numbers.
+- **Wing supports as a CFD-designed field** (`evo_patches/wing_field/WING_FIELD.md`):
+  - Done: the support field, evolution's growth move, ball-millable pockets, 3.175 mm rolling-ball fillets, exact
+    foam/plastic complements, the 3 mm chamber keep, the strength limit.
+  - Prototype on L01's rear: legs grown onto the foam above the chamber wall and onto the body's side, 0.6–4.2 MPa,
+    no plastic in the chamber keep.
+  - Open: 2–12 mm³ of concave corner still under the ball at the 0.5 mm grid (to trace); wiring into the builder,
+    `grad.py` and the loop; the front zone.
+
+## 6. Waiting on you
+
+- **AWS:** run `carhybrid/aws/aws_setup.sh`, check the spot quota (128+ vCPU for m7a.32xlarge in us-east-2), then
+  `launch.sh aws_smoke`. Recommended instance: m7a.32xlarge spot in Ohio; about $85–180 for the whole programme on
+  spot (estimate).
+- **Go-ahead** to: fix `grad.py` (held surface); build guided CMA; wire the support field into the builder.

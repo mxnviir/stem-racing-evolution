@@ -1,5 +1,7 @@
 # Whole-car hybrid (carhybrid)
 
+**Current status of everything on this branch: [STATUS.md](STATUS.md).**
+
 The adjoint-led hybrid loop on whole cars built the stem-racing-evolution way, scored by race time.
 **Design, decisions and the checks each phase must pass: [DESIGN.md](DESIGN.md).** What was tried before and why it
 was dropped: [../docs/METHODS_TRIED.md](../docs/METHODS_TRIED.md).
