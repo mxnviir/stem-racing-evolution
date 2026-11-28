@@ -320,6 +320,9 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
     X, Y, Z = np.meshgrid(xs, ys, zs, indexing="ij")
     x_ref_a = base.landmarks["ref_plane_A_m"] * 1e3
     x_rear_mm = base.landmarks["rear_face_m"] * 1e3
+    x_front_cut = x_ref_a                         # where the milled body starts: Ref A, or a foam nose's front limit
+    if freeform is not None and getattr(freeform, "nose_foam", False):
+        x_front_cut = x_ref_a - FOAM_NOSE_OVERHANG_MM
     if field_mm is not None:
         if np.shape(field_mm) != X.shape:
             raise ValueError(f"field_mm has shape {np.shape(field_mm)}, this car's grid is {X.shape}")
@@ -330,7 +333,6 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
         import freeform as fr
         phi0 = fr.field(freeform, X, Y, Z, freeform.x_tip_mm, freeform.x_rear_mm,
                         axles=(x_front_mm, x_front_mm + W_mm, None))
-        x_front_cut = (x_ref_a - FOAM_NOSE_OVERHANG_MM if getattr(freeform, "nose_foam", False) else x_ref_a)
         phi0 = np.maximum(phi0, np.maximum(x_front_cut - X, X - x_rear_mm))   # the milled body: Ref A (or, with a
         #   foam nose, T8.2's 40 mm ahead of it) .. rear face; T8.5.1's cap ahead of Ref A is forced in apply_build_rules
     else:
@@ -428,7 +430,7 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
         # Cut before, the front face moved forward with the skin, 4 mm into the printed nose at
         # a 4 mm skin, and at exactly 4.00 a whole slab ahead of Ref A turned solid at once
         # (Part 2: +0.17 g, halo drag -35 %, between skins 3.99 and 4.00, 2026-11-09).
-        field = np.maximum(field, np.maximum(x_ref_a - X, X - x_rear_mm))
+        field = np.maximum(field, np.maximum(x_front_cut - X, X - x_rear_mm))      # (a foam nose: from T8.2's limit)
         if bar_to is not None:
             g.phi.hard_mask_solid |= stub & (X >= x_ref_a) & (X <= bar_to)
         if bridges is not None:
