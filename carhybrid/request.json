@@ -871,6 +871,43 @@
     "k": 0,
     "u": "[-0.072841, -0.115137, -0.029926, 0.022838, 0.03743, -0.080965, 0.01793, -0.009556, 0.102782, -0.070916, 0.000281, -0.237034, 0.030038, 0.122723, -0.033546, 0.084288, 0.018188, -0.007788, -0.008282, 0.066998, 0.109009, 0.19807, -0.087784, -0.094385, 0.015557, 0.013763, -0.011926, -0.08844, 0.053085, 0.041327, 0.107619, -0.064384, -0.024596, 0.066848, 0.02724, 0.072135, 0.044839, -0.046629, -0.018099, -0.049374, 0.001793, -0.054173, 0.023963, 0.029533, -0.044715]"
    }
+  ],
+  "f0_hosted": [
+   {
+    "name": "f0h_team_bg4_k0",
+    "type": "fine_adjoint",
+    "layout": "team",
+    "u": "zero",
+    "k": 0,
+    "bg_div": 4.0,
+    "runner": "hosted"
+   }
+  ],
+  "f0": [
+   {
+    "name": "f0_team_bg8.12_k0",
+    "type": "fine_adjoint",
+    "layout": "team",
+    "u": "zero",
+    "k": 0,
+    "bg_div": 8.12
+   },
+   {
+    "name": "f0_team_bg10.23_k0",
+    "type": "fine_adjoint",
+    "layout": "team",
+    "u": "zero",
+    "k": 0,
+    "bg_div": 10.23
+   },
+   {
+    "name": "f0_team_bg12.889_k0",
+    "type": "fine_adjoint",
+    "layout": "team",
+    "u": "zero",
+    "k": 0,
+    "bg_div": 12.889
+   }
   ]
  },
  "_sweep1_note": "readiness sweep, build only (no CFD): 24 scrambled-Sobol layouts over the 12 stage-1 genes (seed 20261128) and 8 stage-2 perturbations of the team layout (45 free-form numbers ~ N(0, 0.5), clipped +-2, as CMA's sigma 0.5)",
@@ -878,5 +915,7 @@
  "_sweep2_note": "the same 32 cars as sweep1/sweep1r, on the builder with evo_patches (mass: P1-P3; soft_cap: no flat deck, no sharp shelf, no step at the axles)",
  "_p1_note": "P1 gradient check, pre-registered in carhybrid/P1.md before any result: team layout, directions from the P0 gradient (carhybrid/results/p0/p0_team_dafoam/grad.json) by carhybrid/p1_cases.py, on the builder with every evo_patches fix (mass bookkeeping, soft cap v2, nose material); plus a DAFoam gradient on that base car.",
  "_sweep3_note": "sweep2's 32 cars rebuilt with soft cap v2 (the halo's visibility region compressed, not truncated) and the multi-material nose (evo_patches/nose_material.py); renders and shape audits.",
- "_p1r_note": "P1's three cases whose legal cars were lost to the adapter (half car not watertight after trimesh's vertex merge; carhybrid/adapt.py now keeps manifold's topology); same u, frames and names, results in results/p1r."
+ "_p1r_note": "P1's three cases whose legal cars were lost to the adapter (half car not watertight after trimesh's vertex merge; carhybrid/adapt.py now keeps manifold's topology); same u, frames and names, results in results/p1r.",
+ "_f0_hosted_note": "carhybrid/FINE_ADJOINT.md plumbing test on a hosted runner (4 cores, 16 GB + 10 GB swap): the team car, frame 0, bg_div 4.0 = ~96 k cells (measured locally: cells ~ bg_div^2.4 from 2.12 M at 12.889; the wall-resolved layer stack forms only partly on 2 mm walls, mean 1.5 of 15 layers on the body), small enough for DAFoam's Krylov adjoint at ~150 kB/cell. A plumbing test only: not the production mesh, gates F1-F3 are read but not judged on it.",
+ "_f0_note": "Gate F0, the adjoint memory law, on the bigmem runner: the team car, frame 0, bg_div 8.12 / 10.23 / 12.889 (~0.74 / 1.24 / 2.12 M cells, cells ~ bg_div^2.4); peak whole-machine memory per job in resources.json; passes if the three fit a line in cells and the line gives < 450 GB at 2.1 M."
 }

@@ -36,23 +36,35 @@ jobs:
       batch: ${{ steps.r.outputs.batch }}
       domain: ${{ steps.r.outputs.domain }}
       bgdiv: ${{ steps.r.outputs.bgdiv }}
+      skip: ${{ steps.r.outputs.skip }}
     steps:
       - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
       - id: r
-        env: { I_BATCH: "${{ github.event.inputs.batch }}" }
+        env: { I_BATCH: "${{ github.event.inputs.batch }}", EVENT: "${{ github.event_name }}" }
         run: |
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
-          import json, os
+          import json, os, subprocess
           r = json.load(open("carhybrid/request.json"))
           b = os.environ.get("I_BATCH") or r["launch"]
-          print("cases=" + json.dumps(r["batches"][b])); print("batch=" + b)
+          # a push launches only when it changed "launch": any other edit of request.json (adding a batch) must not
+          # re-run the current launch batch (commit 9b41a11 re-launched all of P1 that way)
+          skip = False
+          if os.environ.get("EVENT") == "push":
+              prev = subprocess.run(["git", "show", "HEAD~1:carhybrid/request.json"], capture_output=True, text=True)
+              try:
+                  skip = prev.returncode == 0 and json.loads(prev.stdout).get("launch") == r["launch"]
+              except ValueError:
+                  skip = False
+          print("skip=" + ("true" if skip else "false"))
+          print("cases=" + json.dumps(r["batches"][b] if not skip else [{"name": "none", "type": "none"}])); print("batch=" + b)
           print("domain=" + json.dumps(r["domain_m"])); print("bgdiv=" + str(r["bg_div"]))
           PY
 
   case:
     name: "${{ matrix.case.name }}"
     needs: init
-    if: ${{ !cancelled() && needs.init.result == 'success' }}
+    if: ${{ !cancelled() && needs.init.result == 'success' && needs.init.outputs.skip != 'true' }}
     # fine_adjoint -> the self-hosted big-memory machine unless the case asks for a hosted runner (plumbing tests)
     runs-on: ${{ (matrix.case.type == 'fine_adjoint' && matrix.case.runner != 'hosted') && fromJSON('["self-hosted", "bigmem"]') || 'ubuntu-24.04' }}
     # hosted jobs stop at 6 h; self-hosted ones may run long (kept under the job token's 24 h)
@@ -98,7 +110,7 @@ jobs:
           mkdir -p out/${{ matrix.case.name }}
           rm -rf /tmp/car                                     # a self-hosted machine keeps /tmp between jobs
           set +e
-          python -W ignore carhybrid/make_car.py evo "$LAYOUT" "$U" /tmp/car > out/${{ matrix.case.name }}/make_car.log 2>&1
+          python -W ignore carhybrid/make_car.py evo "$LAYOUT" "$U" /tmp/car ${{ matrix.case.grid && format('--grid {0}', matrix.case.grid) || '' }} > out/${{ matrix.case.name }}/make_car.log 2>&1
           RC=$?
           set -e
           tail -c 2500 out/${{ matrix.case.name }}/make_car.log
@@ -173,7 +185,7 @@ jobs:
 
   collect:
     needs: [init, case]
-    if: ${{ !cancelled() && needs.init.result == 'success' }}       # a cancelled run commits and dispatches nothing
+    if: ${{ !cancelled() && needs.init.result == 'success' && needs.init.outputs.skip != 'true' }}       # a cancelled run commits and dispatches nothing
     runs-on: ubuntu-24.04
     permissions: { contents: write, actions: write }        # actions: the loop hook dispatches the next batch
     steps:
@@ -193,20 +205,37 @@ jobs:
           git add carhybrid/results
           git commit -m "carhybrid ${{ needs.init.outputs.batch }}: results (run ${{ github.run_id }})" || true
           for i in 1 2 3 4 5; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((i*10)); done
+      # the loop hook (batches named loop*): loop.py advance judges the stage from the committed results (it needs the
+      # evolution race model: the builder checkout at EVO_SHA with this branch's patches) and writes the next stage
+      - uses: actions/checkout@v4
+        if: startsWith(needs.init.outputs.batch, 'loop')
+        with: { repository: mxnviir/stem-racing-evolution, ref: "${{ env.EVO_SHA }}", path: evo }
       - uses: actions/setup-python@v5
         if: startsWith(needs.init.outputs.batch, 'loop')
         with: { python-version: "3.11" }
       - name: loop hook (carhybrid/loop.py advance; dispatch the batch it writes)
         if: startsWith(needs.init.outputs.batch, 'loop')
-        env: { GH_TOKEN: "${{ github.token }}" }
+        timeout-minutes: 40
+        env: { GH_TOKEN: "${{ github.token }}", CARHYBRID_EVO: evo }
         run: |
-          pip install -q numpy scipy
+          (for i in 1 2 3; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
+          for i in 1 2 3; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 30; done
+          pip install -q $PY_DEPS
+          python evo_patches/apply.py evo
+          echo "evo/" >> .git/info/exclude                     # never committed
           R=carhybrid/results/${{ needs.init.outputs.batch }}
           set +e
-          python carhybrid/loop.py advance $R ${{ github.run_id }}
+          python carhybrid/loop.py advance $R ${{ github.run_id }} --evo evo
           RC=$?
           set -e
-          if [ $RC -ne 0 ]; then echo "loop.py advance exit $RC: no further batch"; exit 0; fi
+          # 0 = next stage written (dispatch request.json's launch); 3 = the loop stopped (nothing to dispatch);
+          # anything else (2 = refused / error) fails this job
+          if [ $RC -eq 3 ]; then echo "loop.py: stopped, no further batch"; STOPPED=1; elif [ $RC -ne 0 ]; then echo "loop.py advance FAILED (exit $RC)"; exit 1; fi
+          if [ -n "${STOPPED:-}" ]; then
+            git add carhybrid; git commit -m "carhybrid loop: stopped after ${{ needs.init.outputs.batch }} (run ${{ github.run_id }})" || true
+            for i in 1 2 3 4 5; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((i*10)); done
+            exit 0
+          fi
           NEXT=$(python3 -c "import json; print(json.load(open('carhybrid/request.json'))['launch'])")
           python3 -c "import json, sys; r = json.load(open('carhybrid/request.json')); sys.exit(0 if sys.argv[1] in r['batches'] else 1)" "$NEXT" \
             || { echo "loop.py wrote launch=$NEXT but no such batch"; exit 1; }
