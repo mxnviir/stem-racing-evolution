@@ -91,6 +91,13 @@ jobs:
           cp /tmp/car/rec.json /tmp/car/cfd/adapt.json out/${{ matrix.case.name }}/ 2>/dev/null || true
           cp /tmp/car/evo/summary.json /tmp/car/evo/run_car.log /tmp/car/evo/report.md out/${{ matrix.case.name }}/ 2>/dev/null || true
           echo "=== verdict"; python3 -c "import json; r=json.load(open('/tmp/car/rec.json')); print(json.dumps({k: r.get(k) for k in ('legal','failed','why','mass','build_s')}, default=float)[:1500])" || true
+          # renders and the shape audit of every car built (owner 2026-11-28: renders of all; no extreme squareness or
+          # hard-coded shapes)
+          if [ -f /tmp/car/evo/body_half.stl ] && [ -f /tmp/car/evo/parts/assembly.json ]; then
+            (cd evo && python -W ignore search/layout/layout_render.py /tmp/car/evo /tmp/render_full.png > /dev/null 2>&1) || echo "render failed"
+            python3 -c "from PIL import Image; im = Image.open('/tmp/render_full.png'); im.thumbnail((1400, 1600)); im.save('out/${{ matrix.case.name }}/render.png', optimize=True)" 2>/dev/null || true
+            python -W ignore carhybrid/shape_audit.py /tmp/car/evo out/${{ matrix.case.name }}/shape.json || echo "shape audit failed"
+          fi
           if [ "${{ matrix.case.type }}" = "build" ]; then exit 0; fi       # build-only cases: the verdict is the result
           exit $RC
       - name: score (audit protocol; fresh wall-resolved mesh, production scheme, 1000 its)
@@ -140,7 +147,7 @@ jobs:
           R=carhybrid/results/${{ needs.init.outputs.batch }}
           mkdir -p $R
           for d in /tmp/res/*/; do n=$(basename $d); mkdir -p $R/$n
-            find $d -maxdepth 1 \( -name "*.json" -o -name "*.log" -o -name "*.out" -o -name "*.npz" -o -name "*.md" \) -size -5M -exec cp {} $R/$n/ \;
+            find $d -maxdepth 1 \( -name "*.json" -o -name "*.log" -o -name "*.out" -o -name "*.npz" -o -name "*.md" -o -name "*.png" \) -size -5M -exec cp {} $R/$n/ \;
           done
           git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add carhybrid/results
