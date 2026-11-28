@@ -1,0 +1,49 @@
+{
+ "dir": "car/parts/tests",
+ "shard": 6,
+ "tests": [
+  {
+   "id": "car.parts.tests.test_mass_report::test_masses_and_centre_add_up",
+   "status": "passed",
+   "s": 0.077
+  },
+  {
+   "id": "car.parts.tests.test_support_engine::test_one_closed_piece_per_axle_and_every_gate_passes",
+   "status": "passed",
+   "s": 5.436
+  },
+  {
+   "id": "car.parts.tests.test_support_engine::test_saddle_is_flush_and_spans_the_channel",
+   "status": "passed",
+   "s": 0.011
+  },
+  {
+   "id": "car.parts.tests.test_support_engine::test_rules_measured_not_assumed",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.parts.tests.test_support_engine::test_loads_size_a_thin_arm_up",
+   "status": "passed",
+   "s": 3.323
+  },
+  {
+   "id": "car.parts.tests.test_support_engine::test_a_disc_too_big_for_the_rim_is_refused",
+   "status": "passed",
+   "s": 3.075
+  },
+  {
+   "id": "car.parts.tests.test_support_engine::test_ceiling_is_what_the_ball_can_mill",
+   "status": "passed",
+   "s": 0.059
+  },
+  {
+   "id": "car.parts.tests.test_support_engine::test_the_plate_is_flush_with_the_underside",
+   "status": "passed",
+   "s": 0.006
+  }
+ ],
+ "counts": {
+  "passed": 8
+ }
+}

@@ -1,0 +1,311 @@
+{
+ "stations": 38,
+ "rectangularity_median": 0.7572309394781558,
+ "rectangularity_max": 0.8724702295105924,
+ "rectangularity_by_x": [
+  [
+   44.4,
+   0.65
+  ],
+  [
+   49.4,
+   0.763
+  ],
+  [
+   54.4,
+   0.765
+  ],
+  [
+   59.4,
+   0.76
+  ],
+  [
+   64.4,
+   0.788
+  ],
+  [
+   69.4,
+   0.824
+  ],
+  [
+   74.4,
+   0.851
+  ],
+  [
+   79.4,
+   0.856
+  ],
+  [
+   84.4,
+   0.857
+  ],
+  [
+   89.4,
+   0.728
+  ],
+  [
+   94.4,
+   0.667
+  ],
+  [
+   99.4,
+   0.71
+  ],
+  [
+   104.4,
+   0.739
+  ],
+  [
+   109.4,
+   0.806
+  ],
+  [
+   114.4,
+   0.77
+  ],
+  [
+   119.4,
+   0.768
+  ],
+  [
+   124.4,
+   0.761
+  ],
+  [
+   129.4,
+   0.755
+  ],
+  [
+   134.4,
+   0.726
+  ],
+  [
+   139.4,
+   0.669
+  ],
+  [
+   144.4,
+   0.653
+  ],
+  [
+   149.4,
+   0.638
+  ],
+  [
+   154.4,
+   0.633
+  ],
+  [
+   159.4,
+   0.644
+  ],
+  [
+   164.4,
+   0.674
+  ],
+  [
+   169.4,
+   0.717
+  ],
+  [
+   174.4,
+   0.841
+  ],
+  [
+   179.4,
+   0.869
+  ],
+  [
+   184.4,
+   0.872
+  ],
+  [
+   189.4,
+   0.822
+  ],
+  [
+   194.4,
+   0.814
+  ],
+  [
+   199.4,
+   0.841
+  ],
+  [
+   204.4,
+   0.867
+  ],
+  [
+   209.4,
+   0.544
+  ],
+  [
+   214.4,
+   0.544
+  ],
+  [
+   219.4,
+   0.529
+  ],
+  [
+   224.4,
+   0.522
+  ],
+  [
+   229.4,
+   0.521
+  ]
+ ],
+ "box_sections": [],
+ "flat_patches": [
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 0.0,
+   "area_mm2": 4419.1,
+   "label": "centre plane (closing face)"
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 37.0,
+   "area_mm2": 125.4,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 17.65,
+   "area_mm2": 109.6,
+   "label": "ballast container floor (App. ix, internal)"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 24.0,
+   "area_mm2": 103.2,
+   "label": "halo pocket floor"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.1,
+   "area_mm2": 102.2,
+   "label": "halo rim, body flush with the seat (T4.4.2, owner 2026-11-23)"
+  },
+  {
+   "axis": "x",
+   "normal_sign": 1,
+   "at_mm": 207.05,
+   "area_mm2": 101.4,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 4.0,
+   "area_mm2": 72.4,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 8.0,
+   "area_mm2": 62.6,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 112.8,
+   "area_mm2": 59.1,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 23.75,
+   "area_mm2": 51.2,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 3.0,
+   "area_mm2": 50.9,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 34.35,
+   "area_mm2": 50.4,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 6.35,
+   "area_mm2": 50.3,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.2,
+   "area_mm2": 35.0,
+   "label": "sidepod-top cap 27.175 mm (hard-coded in freeform.field)"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 13.75,
+   "area_mm2": 32.0,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 9.8,
+   "area_mm2": 27.5,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 45.0,
+   "area_mm2": 25.6,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 23.8,
+   "area_mm2": 25.3,
+   "label": "halo pocket floor"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.25,
+   "area_mm2": 25.0,
+   "label": "sidepod-top cap 27.175 mm (hard-coded in freeform.field)"
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 112.75,
+   "area_mm2": 23.7,
+   "label": "UNEXPLAINED"
+  }
+ ],
+ "unexplained_flat_mm2": 732.5,
+ "cap_area_mm2": 60.0,
+ "halo_rim_area_mm2": 102.2,
+ "crease_length_mm": 384.6,
+ "body_area_mm2": 18779.4,
+ "flags": [
+  "unexplained flat patches 732.5 mm2",
+  "hard-coded sidepod-top cap 60.0 mm2"
+ ]
+}

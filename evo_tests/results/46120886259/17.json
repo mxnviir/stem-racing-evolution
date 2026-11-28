@@ -1,0 +1,14 @@
+{
+ "dir": "search/shape",
+ "shard": 0,
+ "tests": [
+  {
+   "id": "search.shape.test_shape::test_shape_loop",
+   "status": "passed",
+   "s": 40.156
+  }
+ ],
+ "counts": {
+  "passed": 1
+ }
+}

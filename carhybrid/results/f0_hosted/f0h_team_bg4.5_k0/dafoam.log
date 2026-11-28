@@ -1,0 +1,5 @@
+=== head
+bash: line 10:   243 Floating point exception(core dumped) renumberMesh -overwrite > log.renumberMesh 2>&1
+=== key lines
+=== tail
+bash: line 10:   243 Floating point exception(core dumped) renumberMesh -overwrite > log.renumberMesh 2>&1

@@ -1,0 +1,259 @@
+{
+ "dir": "car/race/tests",
+ "shard": 0,
+ "tests": [
+  {
+   "id": "car.race.tests.test_mass_com_ingest::test_mass_weighted_com_matches_hand_calculation",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_mass_com_ingest::test_empty_machined_components_raises",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_mass_com_ingest::test_negative_mass_component_raises",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_mass_com_ingest::test_zero_mass_component_is_excluded_and_warned_not_fatal",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_mass_com_ingest::test_negative_mass_component_still_raises",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_mass_com_ingest::test_every_machined_component_gone_still_describes_the_hardware",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_mass_com_ingest::test_cartridge_mass_must_equal_23g",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_mass_com_ingest::test_h_com_and_x_com_extraction",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_mass_com_ingest::test_absurd_com_position_rejected",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_mass_com_ingest::test_com_sanity_bounds_exactly_at_limit_accepted",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_physics_contract::test_mm_m_round_trip",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_physics_contract::test_cartridge_mass_conversion_exact",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_physics_contract::test_density_conversion",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_physics_contract::test_forces_and_area_double",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_physics_contract::test_half_to_full_cm_not_simply_doubled",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_physics_contract::test_symmetric_shape_zero_moment_gives_zero_cm",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_physics_contract::test_zero_area_does_not_divide_by_zero",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_physics_contract::test_full_car_quantities_is_distinct_type_from_half",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_physics_contract::test_time_coefficient_is_the_approved_calibration",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_physics_contract::test_reference_condition_constants",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_physics_contract::test_negative_D20_raises",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_physics_contract::test_negative_area_raises",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_physics_contract::test_tiny_area_cm_is_zero_not_huge",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_physics_contract::test_custom_q_ref_is_used_in_to_full_car",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_physics_contract::test_constants_defined_twice_still_agree",
+   "status": "passed",
+   "s": 0.002
+  },
+  {
+   "id": "car.race.tests.test_pitch_balance::test_static_split_matches_lever_rule",
+   "status": "passed",
+   "s": 0.187
+  },
+  {
+   "id": "car.race.tests.test_pitch_balance::test_thrust_through_com_moves_no_load",
+   "status": "passed",
+   "s": 0.002
+  },
+  {
+   "id": "car.race.tests.test_pitch_balance::test_thrust_above_com_unloads_then_lifts_the_rear",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.race.tests.test_pitch_balance::test_thrust_below_com_lifts_the_front",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_pitch_balance::test_forces_and_moments_balance_in_every_regime",
+   "status": "passed",
+   "s": 0.007
+  },
+  {
+   "id": "car.race.tests.test_pitch_balance::test_equal_mu_and_wheels_down_means_com_height_does_not_change_resistance",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.race.tests.test_pitch_balance::test_resistance_grows_with_misalignment_once_a_wheel_lifts",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.race.tests.test_pitch_balance::test_lift_threshold_matches_the_solver",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.race.tests.test_pitch_balance::test_differentiable_in_com_height_and_x",
+   "status": "passed",
+   "s": 0.457
+  },
+  {
+   "id": "car.race.tests.test_pitch_balance::test_com_with_gas_moves_toward_the_cartridge",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_race_com::test_com_well_above_the_thrust_line_lifts_the_front_and_costs_time",
+   "status": "passed",
+   "s": 6.353
+  },
+  {
+   "id": "car.race.tests.test_race_com::test_plain_rolling_resistance_ignores_small_offsets",
+   "status": "passed",
+   "s": 4.976
+  },
+  {
+   "id": "car.race.tests.test_race_com::test_a_load_sensitive_bearing_makes_small_offsets_cost_time",
+   "status": "passed",
+   "s": 8.455
+  },
+  {
+   "id": "car.race.tests.test_race_com::test_gradients_match_finite_differences_with_the_pitch_physics",
+   "status": "passed",
+   "s": 25.309
+  },
+  {
+   "id": "car.race.tests.test_race_com::test_geometry_from_assembly",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_race_com::test_param_names_are_unchanged",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_race_com::test_drag_bias_divides_the_cfd_drag",
+   "status": "passed",
+   "s": 4.981
+  },
+  {
+   "id": "car.race.tests.test_race_com::test_wheel_resistance_finite_with_com_over_or_outside_an_axle[front_axle-1.0]",
+   "status": "passed",
+   "s": 0.027
+  },
+  {
+   "id": "car.race.tests.test_race_com::test_wheel_resistance_finite_with_com_over_or_outside_an_axle[front_axle-1.5]",
+   "status": "passed",
+   "s": 0.047
+  },
+  {
+   "id": "car.race.tests.test_race_com::test_wheel_resistance_finite_with_com_over_or_outside_an_axle[rear_axle-1.0]",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.race.tests.test_race_com::test_wheel_resistance_finite_with_com_over_or_outside_an_axle[rear_axle-1.5]",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.race.tests.test_race_com::test_wheel_resistance_finite_with_com_over_or_outside_an_axle[outside-1.0]",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_race_com::test_wheel_resistance_finite_with_com_over_or_outside_an_axle[outside-1.5]",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_race_com::test_wheel_radius_matches_the_geometry_contract",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.race.tests.test_race_com::test_main_calls_only_defined_names",
+   "status": "passed",
+   "s": 0.0
+  }
+ ],
+ "counts": {
+  "passed": 50
+ }
+}

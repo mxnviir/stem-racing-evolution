@@ -1,0 +1,169 @@
+{
+ "dir": "car/body/tests",
+ "shard": 4,
+ "tests": [
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_front_cylinder_x_center_at_x_front",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_rear_cylinder_x_center_equals_x_front_plus_W",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_cylinder_contains_point_inside",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_cylinder_contains_point_outside",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_cylinder_void_mask_shape",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_cylinder_void_mask_centre_is_true",
+   "status": "passed",
+   "s": 0.002
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_wheel_disc_zone_contains_point_at_real_wheel_position",
+   "status": "passed",
+   "s": 0.002
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_wheel_disc_zone_excludes_centreline",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_wheel_disc_zone_excludes_outside_x_z_circle",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_wheel_disc_void_mask_shape",
+   "status": "passed",
+   "s": 0.007
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_four_wheel_zones_left_right_symmetric",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_box_void_mask_shape",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_halo_validation_behind_front_axle",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_halo_validation_allows_at_or_before_front_axle",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_halo_validation_allows_before_canister",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_halo_validation_fails_if_past_rear_axle",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_com_sanity_gate_catches_mm_as_m",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_com_sanity_gate_valid",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_com_sanity_gate_outside_car_length",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_the_canister_void_is_the_bore_and_stays_legal",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_fixed_hardware::test_the_loft_leaves_the_t5_5_wall_above_the_bore",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_mass_com_calculator::test_compute_component_mass_positive",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_mass_com_calculator::test_compute_component_mass_com_in_bounds",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_mass_com_calculator::test_zero_solid_cells_returns_zero_mass",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_mass_com_calculator::test_sidepod_pair_mass_is_double",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_mass_com_calculator::test_sidepod_pair_com_x_matches_right",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_mass_com_calculator::test_compute_all_returns_four_components",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_mass_com_calculator::test_nose_density_higher_than_body",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_remap_geometry::test_remap_preserves_the_shape_across_a_grid_change",
+   "status": "passed",
+   "s": 15.974
+  },
+  {
+   "id": "car.body.tests.test_remap_geometry::test_remap_is_not_the_same_as_rebuilding",
+   "status": "passed",
+   "s": 10.684
+  },
+  {
+   "id": "car.body.tests.test_remap_geometry::test_remapped_field_is_a_usable_signed_distance_field",
+   "status": "passed",
+   "s": 1.442
+  },
+  {
+   "id": "car.body.tests.test_remap_geometry::test_warm_start_carries_a_CARVED_field_to_the_next_d_halo",
+   "status": "passed",
+   "s": 18.428
+  }
+ ],
+ "counts": {
+  "passed": 32
+ }
+}

@@ -1,0 +1,154 @@
+{
+ "dir": "car/body/tests",
+ "shard": 5,
+ "tests": [
+  {
+   "id": "car.body.tests.test_freeform::test_a_known_solid_comes_back",
+   "status": "passed",
+   "s": 0.407
+  },
+  {
+   "id": "car.body.tests.test_freeform::test_the_nose_is_legal_and_one_solid",
+   "status": "passed",
+   "s": 0.817
+  },
+  {
+   "id": "car.body.tests.test_freeform::test_cma_numbers_move_the_surfaces",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_freeform::test_the_sidepod_top_holds_between_the_wheels",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_freeform::test_the_seed_nose_is_the_body_rounded_off_not_a_cone",
+   "status": "passed",
+   "s": 0.942
+  },
+  {
+   "id": "car.body.tests.test_freeform::test_the_floor_can_form_a_tunnel",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_min_wall::test_wall_29_fails_30_passes[5.0]",
+   "status": "passed",
+   "s": 0.006
+  },
+  {
+   "id": "car.body.tests.test_min_wall::test_wall_29_fails_30_passes[5.25]",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_min_wall::test_wall_29_fails_30_passes[5.5]",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_min_wall::test_wall_29_fails_30_passes[5.75]",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_min_wall::test_oblique_wall",
+   "status": "passed",
+   "s": 0.003
+  },
+  {
+   "id": "car.body.tests.test_min_wall::test_convex_edge_is_not_a_wall",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_min_wall::test_guard_a_ridge_that_moved_is_not_a_new_wall[compare]",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_min_wall::test_guard_a_ridge_that_moved_is_not_a_new_wall[freeze]",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_min_wall::test_guard_stops_a_wall_going_under_3[compare]",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_min_wall::test_guard_stops_a_wall_going_under_3[freeze]",
+   "status": "passed",
+   "s": 0.002
+  },
+  {
+   "id": "car.body.tests.test_min_wall::test_freeze_keeps_the_move_away_from_the_wall",
+   "status": "passed",
+   "s": 0.002
+  },
+  {
+   "id": "car.body.tests.test_min_wall::test_freeze_beside_a_thin_bridge_leaves_one_piece_and_a_distance_field",
+   "status": "passed",
+   "s": 0.062
+  },
+  {
+   "id": "car.body.tests.test_min_wall::test_wall_floor_beyond_a_designed_thin_wall",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_surface_extraction::test_extract_surface_returns_mesh",
+   "status": "passed",
+   "s": 5.253
+  },
+  {
+   "id": "car.body.tests.test_surface_extraction::test_extract_surface_vertices_in_world_coords",
+   "status": "passed",
+   "s": 5.189
+  },
+  {
+   "id": "car.body.tests.test_surface_extraction::test_empty_mesh_raises",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_surface_extraction::test_exception_hierarchy",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_surface_extraction::test_accessibility_failure_has_is_large",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_surface_extraction::test_rule_violation_has_is_major",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_surface_extraction::test_aspect_ratio_equilateral_triangle_is_one",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_surface_extraction::test_aspect_ratio_sliver_triangle_is_large",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_surface_extraction::test_a_few_slivers_warn_but_a_bad_mesh_still_raises",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_surface_extraction::test_accessibility_gate_answers_known_shapes_correctly",
+   "status": "passed",
+   "s": 0.004
+  }
+ ],
+ "counts": {
+  "passed": 29
+ }
+}

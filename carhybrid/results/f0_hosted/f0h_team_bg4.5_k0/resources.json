@@ -1,0 +1,32 @@
+{
+ "cells": 129036,
+ "ranks": 4,
+ "score_ranks": 4,
+ "adjoint_states": null,
+ "peak_GB_whole_machine": 1.56,
+ "peak_GB_score": 1.56,
+ "peak_GB_dafoam": null,
+ "baseline_GB": 1.22,
+ "kB_per_cell_dafoam_peak": null,
+ "estimate_GB_at_150kB_per_cell": 19.4,
+ "wall_s": {
+  "build": 0,
+  "score": 314,
+  "steady": 0,
+  "make_case": 0,
+  "dafoam": 2,
+  "grad": 0
+ },
+ "score_wall_s": 314.1,
+ "dafoam_primal_s": null,
+ "dafoam_adjoint_s": null,
+ "dafoam_adjoint_s_per_function": null,
+ "job_wall_s": 316,
+ "host_cores": 4,
+ "host_mem_GB": 15.3,
+ "host_swap_GB": 13.0,
+ "runner": "GitHub Actions 1000008028",
+ "runner_environment": "github-hosted",
+ "memory_samples": 32,
+ "sample_interval_s": 10
+}

@@ -1,0 +1,19 @@
+{
+ "dir": "car/parts/tests",
+ "shard": 1,
+ "tests": [
+  {
+   "id": "car.parts.tests.test_ballast_com::test_ballast_sits_low_in_its_container",
+   "status": "passed",
+   "s": 0.14
+  },
+  {
+   "id": "car.parts.tests.test_parts_list::test_one_row_per_file_with_process_and_material",
+   "status": "passed",
+   "s": 0.027
+  }
+ ],
+ "counts": {
+  "passed": 2
+ }
+}

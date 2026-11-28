@@ -1,0 +1,259 @@
+{
+ "dir": "car/body/tests",
+ "shard": 3,
+ "tests": [
+  {
+   "id": "car.body.tests.test_exact_zones::test_each_zone_field_matches_its_mask[1.0]",
+   "status": "passed",
+   "s": 9.861
+  },
+  {
+   "id": "car.body.tests.test_exact_zones::test_each_zone_field_matches_its_mask[0.75]",
+   "status": "passed",
+   "s": 1.223
+  },
+  {
+   "id": "car.body.tests.test_exact_zones::test_box_distance_is_exact",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_exact_zones::test_stamp_puts_a_flat_face_on_the_zone_at_any_grid",
+   "status": "passed",
+   "s": 2.614
+  },
+  {
+   "id": "car.body.tests.test_exact_zones::test_half_body_mesh_stays_out_of_every_zone[1.0]",
+   "status": "passed",
+   "s": 16.183
+  },
+  {
+   "id": "car.body.tests.test_exact_zones::test_half_body_mesh_stays_out_of_every_zone[0.5]",
+   "status": "passed",
+   "s": 27.62
+  },
+  {
+   "id": "car.body.tests.test_exact_zones::test_halo_zone_fields_match_their_masks[1.0]",
+   "status": "passed",
+   "s": 0.201
+  },
+  {
+   "id": "car.body.tests.test_exact_zones::test_halo_zone_fields_match_their_masks[0.75]",
+   "status": "passed",
+   "s": 0.496
+  },
+  {
+   "id": "car.body.tests.test_exact_zones::test_slot_corners_are_sharp_in_the_half_body",
+   "status": "passed",
+   "s": 1.666
+  },
+  {
+   "id": "car.body.tests.test_exact_zones::test_pocket_floor_stays_full_height_up_to_the_ballast_slot[1.0]",
+   "status": "passed",
+   "s": 1.732
+  },
+  {
+   "id": "car.body.tests.test_exact_zones::test_pocket_floor_stays_full_height_up_to_the_ballast_slot[0.5]",
+   "status": "passed",
+   "s": 6.664
+  },
+  {
+   "id": "car.body.tests.test_exact_zones::test_half_body_keeps_the_cargo_inside_it[1.0]",
+   "status": "passed",
+   "s": 1.642
+  },
+  {
+   "id": "car.body.tests.test_exact_zones::test_half_body_keeps_the_cargo_inside_it[0.5]",
+   "status": "passed",
+   "s": 6.493
+  },
+  {
+   "id": "car.body.tests.test_machining_known_shapes::test_a_4mm_slot_is_filled_unless_required_then_widened_past_the_ball",
+   "status": "passed",
+   "s": 2.225
+  },
+  {
+   "id": "car.body.tests.test_machining_known_shapes::test_an_inside_corner_gets_the_ball_radius",
+   "status": "passed",
+   "s": 1.11
+  },
+  {
+   "id": "car.body.tests.test_machining_known_shapes::test_an_undercut_no_side_reaches_is_filled",
+   "status": "passed",
+   "s": 1.141
+  },
+  {
+   "id": "car.body.tests.test_machining_known_shapes::test_a_pocket_open_to_the_top_stays_open",
+   "status": "passed",
+   "s": 1.122
+  },
+  {
+   "id": "car.body.tests.test_machining_known_shapes::test_required_air_with_square_corners_grows_until_the_ball_reaches",
+   "status": "passed",
+   "s": 1.138
+  },
+  {
+   "id": "car.body.tests.test_machining_known_shapes::test_a_zone_corner_is_relieved_the_same_for_a_body_flush_with_it_or_just_back_from_it",
+   "status": "passed",
+   "s": 2.203
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_godunov_gradient_returns_array",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_grad_magnitude_positive",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_hj_update_changes_grid",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_hj_update_preserves_hard_constraints",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_reinitialise_sdf_runs",
+   "status": "passed",
+   "s": 0.004
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_extend_velocity_returns_same_shape",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_combine_gradients_normalizes",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_combine_gradients_zero_safe",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_splat_vertex_sensitivity_places_value_in_correct_cell",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_splat_vertex_sensitivity_averages_multiple_hits",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_apply_adjoint_sensitivity_mismatched_lengths_raises",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_apply_adjoint_sensitivity_raises_on_none",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_apply_adjoint_sensitivity_updates_symmetric_component",
+   "status": "passed",
+   "s": 0.006
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_aero_gradient_actually_steers_the_shape",
+   "status": "passed",
+   "s": 9.427
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_gradient_balance_is_physical_not_normalised",
+   "status": "passed",
+   "s": 1.304
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_weights_are_ablation_switches_not_magnitude_setters",
+   "status": "passed",
+   "s": 0.144
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_spiky_sensitivity_warns_and_still_steers",
+   "status": "passed",
+   "s": 0.586
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_non_finite_sensitivity_raises",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_the_update_actually_moves_the_surface",
+   "status": "passed",
+   "s": 0.595
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_stage2_update_leaves_no_void_the_cutter_cannot_reach",
+   "status": "passed",
+   "s": 15.252
+  },
+  {
+   "id": "car.body.tests.test_phi_updater::test_redistancing_does_not_move_the_surface",
+   "status": "passed",
+   "s": 0.25
+  },
+  {
+   "id": "car.body.tests.test_wheel_visibility_zones::test_rect_mask_marks_correct_x_band",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_wheel_visibility_zones::test_rect_mask_respects_y_min",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_wheel_visibility_zones::test_t792_is_the_drawn_trapezoid",
+   "status": "passed",
+   "s": 0.002
+  },
+  {
+   "id": "car.body.tests.test_wheel_visibility_zones::test_t793_is_the_drawn_trapezoid",
+   "status": "passed",
+   "s": 0.002
+  },
+  {
+   "id": "car.body.tests.test_wheel_visibility_zones::test_outlines_match_the_drawing",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_wheel_visibility_zones::test_build_t79_sidepod_combines_both_wedges",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_wheel_visibility_zones::test_build_t79_nose_returns_none",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_wheel_visibility_zones::test_build_t79_main_body_forbidden_near_front_wheel",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_wheel_visibility_zones::test_build_t79_rearpod_forbidden_near_rear_wheel",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_wheel_visibility_zones::test_default_gap_constants_match_regs",
+   "status": "passed",
+   "s": 0.0
+  }
+ ],
+ "counts": {
+  "passed": 50
+ }
+}

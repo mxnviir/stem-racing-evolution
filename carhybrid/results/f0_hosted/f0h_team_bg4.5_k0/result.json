@@ -1,0 +1,88 @@
+{
+ "case": {
+  "name": "f0h_team_bg4.5_k0",
+  "design": "folder:/tmp/car/cfd",
+  "k": 0,
+  "bg_div": 4.5,
+  "np": 4,
+  "keep_state": "/home/runner/work/_temp/fine_adjoint/state",
+  "timeout_s": 60000
+ },
+ "converged": true,
+ "adjoint_repo_sha": "9ab9092debd0e0297b290d886bf45a765045448c",
+ "protocol": "fresh wall-resolved mesh, production linearUpwind, cold, 1000 its, score its 200-1000",
+ "wall_s": 314.1,
+ "prodcheck": {
+  "D20_half_N": 0.23234017122385578,
+  "wall_s": 312.4,
+  "converged": true,
+  "residual_p": 8.28888836868516e-05,
+  "force_osc": 0.00035352045928835763,
+  "force_drift": 4.667114036636561e-05,
+  "run_dir": "",
+  "force_mean_stderr": 2.4588664727385392e-05,
+  "morph_fallback": false,
+  "folder": "/tmp/car/cfd",
+  "scheme": "production linearUpwind",
+  "mesh": "fresh",
+  "resolution": "resolved",
+  "iterations": 1000,
+  "n_proc": 4,
+  "y_plus_min": 0.23837340225405207,
+  "y_plus_max": 155.68666239247688,
+  "n_cells": 129036,
+  "run_dir_kept": "/home/runner/work/stem-racing-evolution/stem-racing-evolution/out/f0h_team_bg4.5_k0/state"
+ },
+ "cells": 129036,
+ "y_plus_min": 0.23837340225405207,
+ "y_plus_max": 155.68666239247688,
+ "solver_converged": true,
+ "iterations_run": 1000,
+ "drag_mN": 232.3371863241294,
+ "drag_block_se_mN": 0.003251764629400426,
+ "drag_blocks_mN": [
+  232.33868859656593,
+  232.32767452394125,
+  232.34221095215452,
+  232.3401712238558
+ ],
+ "lift_mN": 103.9301795395491,
+ "steady_drag": {
+  "iterations": 500,
+  "block": 100,
+  "block_means_mN": [
+   232.34047820576015,
+   232.33719495987017,
+   232.3472269444389,
+   232.3428715618655,
+   232.33747088584605
+  ],
+  "span_mN": 0.01003198456871246
+ },
+ "steady_lift": {
+  "iterations": 500,
+  "block": 100,
+  "block_means_mN": [
+   103.95646389889909,
+   103.94009012027877,
+   103.9400476565409,
+   103.91399883683216,
+   103.92051565415184
+  ],
+  "span_mN": 0.04246506206692402
+ },
+ "body_drag_mN": 87.33081844889173,
+ "wheels_drag_mN": 145.00636787523766,
+ "kept_state": {
+  "path": "/home/runner/work/_temp/fine_adjoint/state",
+  "time": "1000",
+  "fields": [
+   "U",
+   "k",
+   "nut",
+   "omega",
+   "p",
+   "phi"
+  ]
+ }
+}
