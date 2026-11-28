@@ -128,7 +128,7 @@ jobs:
           grep -E "DAFOAM|Killed|Maximum resident" $O/dafoam.out || tail -30 $O/dafoam.out
           cp gate/dafoam_case/dafoam_sens.npz gate/dafoam_case/dafoam_sens.json $O/ 2>/dev/null || { echo "no gradient"; exit 0; }
           cd $GITHUB_WORKSPACE
-          python -W ignore carhybrid/grad.py evo /tmp/car/rec.json $O/dafoam_sens.npz "$U" $O/grad.json --body /tmp/car/evo || echo "grad mapping failed"
+          python -W ignore carhybrid/grad.py evo /tmp/car/rec.json $O/dafoam_sens.npz "$U" $O/grad.json --body /tmp/car/evo ${{ matrix.case.d20 && format('--d20 {0}', matrix.case.d20) || '' }} || echo "grad mapping failed"
           cat $O/grad.json | head -c 1500 || true
       - uses: actions/upload-artifact@v4
         if: always()

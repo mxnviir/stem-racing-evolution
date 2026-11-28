@@ -95,20 +95,22 @@ before), at the printed density, in `fixed_hardware_kwargs` and so in the race m
 | x_cut (decided by) | Ref A | 37.00 (attachment: struts to 35.68) | Ref A | 23.75 (attachment: struts to 22.54) |
 | foam nose | 0 | 2.4 mm, 0.107 g | 0 | 15.65 mm, 0.629 g |
 | printed nose (+ pylons, tenon) | 6.69 g | 5.75 g | 9.98 g | 4.58 g |
-| car without cartridge (race model) | 53.79 g* | 52.85 g | 50.65 g | 45.91 g + 2.29 g lead to 48.2 |
-| race mass | 74.94 g* | 74.00 g | 71.80 g | 69.35 g (-2.45 g, ~-18 ms) |
+| car without cartridge (race model) | 53.76 g | 52.85 g | 50.65 g | 45.91 g + 2.29 g lead to 48.2 |
+| race mass | 74.91 g | 74.00 g | 71.80 g | 69.35 g (-2.45 g, ~-18 ms) |
 | junction step, top / side / bottom | 2.04 / 0.25 / 0.03 mm | 0.03 / 0.12 / 0.02 mm | 0.52 / 0.27 / 0.10 mm | 0.003 / 0.18 / 0.50 mm |
 | glued face, stress / 0.5 MPa | - | 259 mm2, 0.17 MPa | - | 191 mm2, 0.29 MPa |
 | legal (waived: T3.6, T5.1, grid bore) | yes | yes | yes | yes |
 | CFD one closed solid | yes | yes | yes | yes |
 
-\* team "before": `$S/car_team` (pinned builder without soft_cap; its soft_cap rebuild is in TEAM_BEFORE below).
 In ABS (apply.py P3) every printed figure is x 0.839: team print 5.61 -> 4.82 g, short 8.37 -> 3.84 g.
 Steps: the largest jump of the union's outer surface across the seam, sampled every 0.05 mm (centre plane top and
 bottom, side at the nose's widest height). The short car's 0.5 mm bottom step is the block's 6 x 6 mm slot: its nose
 dips 0.5 mm into the slot's band, the foam cannot (the body behind Ref A has the same groove).
-Shape audit (`carhybrid/shape_audit.py`): rectangularity unchanged (short 0.756 / 0.873 both); new flat patches are
-the glued face at `x_cut` (96-130 mm2 a half, covered by the print) and the tenon pocket's walls (internal).
+Shape audit (`carhybrid/shape_audit.py`): rectangularity unchanged (team median/max 0.750/0.878 -> 0.747/0.877,
+short 0.756/0.873 both); unexplained flat area team 571 -> 802 mm2, short 521 -> 730 mm2: the new flats are the glued
+face at `x_cut` (130 / 96 mm2 a half, covered by the print) and the tenon pocket's walls (internal); sidepod cap
+unchanged. Crease length fell (team 7215 -> 430 mm, short 3463 -> 288 mm): the cut body is re-meshed through manifold
+(`nose_split._closed`, edges under 0.01 mm merged), which also removes sliver creases elsewhere on the body.
 Renders: `evo_patches/renders/{team,short}_{before,after}.png` (purple: print; grey: foam).
 
 ## Limits
@@ -120,7 +122,8 @@ Renders: `evo_patches/renders/{team,short}_{before,after}.png` (purple: print; g
   (its skin moves the foam; the print follows the plan's skin).
 - 0.5 MPa on the foam side of a glued face is the repo's assumption (`FOAM_BEARING_MPA`), not a test.
 - The finalists' joints path (`joints.make_all`): the split nose is kept as printed with its tenon (no second pocket),
-  the body milled from `x_cut`, `nose_has_tenon` reported; see the test result in the report (JOINTS below).
+  the body milled from `x_cut`, `nose_has_tenon` reported. NOT VERIFIED: `joints.make_all` on the team car did not
+  finish in 50 min on this 4-core machine (its sliver pass), so the manufacturing-file path is untested.
 - The thin test is an opening by a 1.5 mm ball with a 1 mm2 per-section tolerance (the blended edges read 0.1-0.8 mm2).
 - T8.7 in the referee now exempts wing points within 5 mm sideways of the foam nose too (the whole nose), as it did
   for the printed nose.

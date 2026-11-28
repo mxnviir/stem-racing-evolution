@@ -1,7 +1,7 @@
 """The DAFoam drag gradient -> the race-time gradient in stage 2's free-form numbers (carhybrid/DESIGN.md, decision 4).
 
     python carhybrid/grad.py <evolution checkout> <car record json> <dafoam_sens.npz> <u json or "zero"> <out json>
-         [--body <car folder with body_half.stl>]
+         [--body <car folder with body_half.stl>] [--d20 <whole-car drag at 20 m/s, N>]
 
 car record: layout_car.build's record (genes, decoded layout incl. "freeform" = the stage-2 seed, mass).
 u: stage 2's coarse displacement numbers (45 = top 5x2 + bottom 5x4 + side 5x3, simscale_shape.COARSE / AMP_MM);
@@ -28,7 +28,7 @@ RHO_FOAM_G_MM3 = 0.163e-3
 RHO_NOSE_G_MM3 = 1.04e-3           # printed ABS nose
 
 
-def main(evo, rec_p, sens_p, u_s, out_p, body_dir=None):
+def main(evo, rec_p, sens_p, u_s, out_p, body_dir=None, d20=None):
     evo = Path(evo).resolve()
     sys.path.insert(0, str(evo)); import repo_paths; repo_paths.add()
     import freeform as fr
@@ -43,9 +43,12 @@ def main(evo, rec_p, sens_p, u_s, out_p, body_dir=None):
     ref_a = d["x_front"] - 16.0
     axles = (d["x_front"], d["x_front"] + d["W"], 14.12)
 
+    # the halo's visibility region (evo_patches/soft_cap.py v2): the builder's field compresses the top there too
+    hk = {"halo": fr.halo_span(ref_a, d["d_halo"])} if hasattr(fr, "halo_span") else {}
+
     def phi(uu, P):
         ff = fr.from_unit(seed, uu, amp, *coarse)
-        return fr.field(ff, P[:, 0], P[:, 1], P[:, 2], ff.x_tip_mm, ff.x_rear_mm, axles=axles)
+        return fr.field(ff, P[:, 0], P[:, 1], P[:, 2], ff.x_tip_mm, ff.x_rear_mm, axles=axles, **hk)
 
     S = np.load(sens_p)
     X, G = S["Xs"] * 1e3, S["dD_dXs"]                       # mm; N/m per point (dD = sum G . dX, dX in m)
@@ -91,7 +94,10 @@ def main(evo, rec_p, sens_p, u_s, out_p, body_dir=None):
             dm[j] = 2.0 * (Vc * A * rho).sum()
     m = rec["mass"]
     lead = float(m.get("lead_g", 0.0) or 0.0)
-    D20, L20 = float(rec.get("D20_N", 0.36)), float(rec.get("L20_N", 0.0))
+    # the race model's partials at this car's own drag: --d20 (2 x the audit protocol's half-car drag), else the
+    # record's, else 0.36 N (P0 used 0.36 for a car measured at 0.467 N: dT/dD 0.178 vs 0.186 ms/mN, 4 % low)
+    D20 = float(d20) if d20 is not None else float(rec.get("D20_N", 0.36))
+    L20 = float(rec.get("L20_N", 0.0))
     T0 = SL.race_time(rec, D20, L20)
     dT_dD = (SL.race_time(rec, D20 + 1e-3, L20) - SL.race_time(rec, D20 - 1e-3, L20)) / 2e-3      # s per N
     r2 = json.loads(json.dumps(rec)); r2["mass"]["race_mass_g"] = m["race_mass_g"] + 0.1
@@ -112,4 +118,4 @@ def main(evo, rec_p, sens_p, u_s, out_p, body_dir=None):
 if __name__ == "__main__":
     a = sys.argv[1:]
     body = a[a.index("--body") + 1] if "--body" in a else None
-    main(*a[:5], body_dir=body)
+    main(*a[:5], body_dir=body, d20=a[a.index("--d20") + 1] if "--d20" in a else None)

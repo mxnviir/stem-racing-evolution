@@ -22,6 +22,12 @@ CAP_Z_MM = 27.175
 POCKET_FLOOR_Z_MM = 24.0
 
 
+def _near_halo(pts, halo, reach_mm=15.0):
+    """Most of a flat patch's area within reach_mm of the halo seat in x (the ring the seat's rim makes)."""
+    x = pts[:, 0]
+    return np.mean((x > halo[0] - reach_mm) & (x < halo[1] + 2.0)) > 0.5
+
+
 def main(folder, out_json):
     import trimesh
     folder = Path(folder)
@@ -32,6 +38,9 @@ def main(folder, out_json):
         m.apply_scale(1e3)
     ref_a = d.get("x_front", m.bounds[0][0] + 20.0) - 16.0
     rear = d.get("x_front", 0) + d.get("W", 0) + d.get("rear", 0) if d else m.bounds[1][0]
+    # the halo's seat (halo_seat.py): the body meets the pocket's rim (24 + 3.175 = 27.175 mm) flush, by the owner's
+    # 2026-11-23 rule (no trench), and T4.4.2 keeps it at or under the rim ahead of / beside the halo: a flat ring there
+    halo = (ref_a + d["d_halo"], ref_a + d["d_halo"] + 50.0) if "d_halo" in d else None
     # sections
     rect, stations = [], np.arange(ref_a + 5.0, rear - 25.0, 5.0)
     for x in stations:
@@ -70,6 +79,8 @@ def main(folder, out_json):
                 label = "block rear face"
             elif name == "z" and abs(pos - POCKET_FLOOR_Z_MM) < 0.2:
                 label = "halo pocket floor"
+            elif name == "z" and abs(pos - CAP_Z_MM) < 0.2 and halo is not None and _near_halo(c[al][sel], halo):
+                label = "halo rim, body flush with the seat (T4.4.2, owner 2026-11-23)"
             elif name == "z" and abs(pos - CAP_Z_MM) < 0.2:
                 label = "sidepod-top cap 27.175 mm (hard-coded in freeform.field)"
             elif name == "z" and abs(pos - (POCKET_FLOOR_Z_MM - 6.35)) < 0.2:
@@ -93,6 +104,7 @@ def main(folder, out_json):
            "flat_patches": patches[:20],
            "unexplained_flat_mm2": round(sum(p["area_mm2"] for p in patches if p["label"] == "UNEXPLAINED"), 1),
            "cap_area_mm2": round(sum(p["area_mm2"] for p in patches if p["label"] and p["label"].startswith("sidepod-top cap")), 1),
+           "halo_rim_area_mm2": round(sum(p["area_mm2"] for p in patches if p["label"] and p["label"].startswith("halo rim")), 1),
            "crease_length_mm": round(float(L[sharp].sum()), 1),
            "body_area_mm2": round(float(m.area), 1)}
     out["flags"] = ([f"box section at x {x} (rectangularity {v})" for x, v in out["box_sections"]] +
