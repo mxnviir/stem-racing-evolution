@@ -114,7 +114,7 @@ def main(argv):
         print(f"{TAG}: {pid}: {st}")
     if not check:                       # the separate patch modules (each idempotent, each with its own anchors)
         sys.path.insert(0, str(Path(__file__).resolve().parent))
-        for mod in ("soft_cap", "nose_material", "legality_fixes", "rear_wing_shape"):
+        for mod in ("soft_cap", "nose_material", "legality_fixes", "rear_wing_shape", "sidepod_rules"):
             print(f"{TAG}: {__import__(mod).apply(root)}")
     return 1 if any(st.startswith("NOT") for _p, st in res) else 0
 

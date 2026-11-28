@@ -15,12 +15,12 @@ The body is the solid between a top and a bottom surface, inside a side outline,
   body too.
 
 `build()` takes the builder's own masks, built as `param_body.build` builds them (`build_unified_geometry`, plus
-`build_rule_masks`, plus the team's sidepod and halo 27.175 mm cap from `freeform.field`), and classifies them.
+`build_rule_masks`, plus the halo's 27.175 mm limit from `freeform.field`; the team's sidepod cap was dropped on 2026-11-28, `evo_patches/sidepod_rules.py`), and classifies them.
 
 | Class | What it covers | Becomes |
 |---|---|---|
 | Required solid | T4.2 cargo, marking room, axle supports, the T5.5 3 mm zone round the chamber, the halo–canister loft, nose stub, pocket bridge | top ≥, bottom ≤ in each column; side ≥ in each row |
-| Clipping air | Rule envelope / block, T7.9 zones, T7.2 wheel keep-clear, T4.4.2 view air, T8.5.1 nose box, 27.175 mm caps | the body keeps to the column's allowed interval, or the column is empty (top < bottom) |
+| Clipping air | Rule envelope / block, T7.9 zones, T7.2 wheel keep-clear, T4.4.2 view air, T8.5.1 nose box, the halo's 27.175 mm (T4.4.2-3) | the body keeps to the column's allowed interval, or the column is empty (top < bottom) |
 | Fixed cuts | Halo pocket and seat, bore, axle holes, wheel discs, the block's underside slot | not constraints: always cut; the gradient must hold that surface |
 
 Margins: half a build cell + 0.05 mm for air; + 0.8 mm for solid (the blend). Where solid and air meet in a column,
@@ -67,7 +67,8 @@ Functions:
    - project the seed;
    - confirm with `check()` that projected numbers leave the masks nothing to do outside the sharp features;
    - build real cars from projected numbers.
-2. In the builder, with projected numbers: switch off the 27.175 mm soft compression. The constraint keeps the top
-   below the cap, so the compression would only distort it.
-3. Wire `project()` into the adjoint step (projected gradient) and the samples of any CMA, and the held-surface masks
+2. In the builder, with projected numbers: switch off the halo region's soft compression (the sidepod part is already
+   gone, `sidepod_rules.py` S1). The constraint keeps the top below the halo's rim, so the compression would only
+   distort it.
+3. Wire `project()` into the adjoint step (projected gradient) and the Bayesian search's proposals, and the held-surface masks
    into `grad.py`.

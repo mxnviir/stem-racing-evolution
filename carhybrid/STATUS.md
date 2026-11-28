@@ -24,6 +24,7 @@ run time by `evo_patches/`.
 |---|---|---|
 | P1–P3 | mass bookkeeping | `evo_patches/README.md` |
 | soft_cap v2.1 | 27.175 mm cap without flat decks; fades before the halo's rear face | `evo_patches/soft_cap.py` |
+| sidepod_rules S1 | the team's 27.175 mm sidepod cap **dropped** (owner, 2026-11-28); only the halo's T4.4.2–3 limit stays; sidepod width = the block's 32.5 mm | `evo_patches/sidepod_rules.py` |
 | nose_material | foam or printed nose decided per car; block front fitted to the referee | `evo_patches/NOSE.md` |
 | legality_fixes L1 | rear wing and supports end before the body's back (T5.6) | `evo_patches/legality_fixes.py` docstring |
 | L2 | foam body clamped to the official block as the referee places it (slot slivers, block front, bore drawn small) | same |
@@ -63,7 +64,7 @@ Galleries: `results/sweep3/GALLERY.png`, `results/sweep5/GALLERY.png`.
 | P3: Bayesian layout search on OpenFOAM (`bo.py`) | **running**: batch bo_1 (16 Sobol cars) on GitHub; the collect step proposes and dispatches each next batch automatically | `BO.md` |
 | Rules as constraints on the numbers (`constraints.py`) | **in progress** (see section 5) | `CONSTRAINTS.md` |
 
-**Decision (owner, 2026-11-28 evening): no CMA in this repository.** Guided CMA is the other repository's method; ours is the hybrid trust model (adjoint steps judged by measured CFD, evolution where the adjoint cannot reach, the Bayesian layout search), and the goal is to beat their CMA. The earlier guided-CMA recommendation is withdrawn. Plans for wings, supports, flatness, the chamber wall and hubcaps: [PLAN_WINGS_FLATNESS.md](PLAN_WINGS_FLATNESS.md).
+**Decision (owner, 2026-11-28 evening): no CMA in this repository.** Guided CMA is the other repository's method; ours is the hybrid trust model (adjoint steps judged by measured CFD, evolution where the adjoint cannot reach, the Bayesian layout search). **The goal is the best car** (race time on the audit protocol), not beating CMA. The earlier guided-CMA recommendation is withdrawn. Plans for wings, supports, flatness, the chamber wall and hubcaps: [PLAN_WINGS_FLATNESS.md](PLAN_WINGS_FLATNESS.md).
 
 It waits on the constraints (section 5), the `grad.py` fix, and DAFoam converging at non-team shapes on AWS.
 

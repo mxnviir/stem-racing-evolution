@@ -143,6 +143,9 @@ axle span (fully on between the axles). (2) and (3) only remove material; the li
 The height limit itself (nothing outboard of the spine above 27.175 mm between the axles) is the existing design rule
 (the team's sidepod top), not a regulation found in `rules_constants.py`; making it a searched number is the owner's call.
 
+**Dropped 2026-11-28 (owner): `sidepod_rules.py` S1.** The team's sidepod cap no longer applies. Of soft_cap only the
+halo part stays (T4.4.2-3: the body below the halo's rim ahead of, beside and over it), which is a rule.
+
 ## Modules applied after the PATCHES list (in this order, each idempotent)
 
 | module | what | doc |
@@ -150,6 +153,7 @@ The height limit itself (nothing outboard of the spine above 27.175 mm between t
 | `soft_cap.py` | the 27.175 mm cap without flat decks; fades before the halo's rear face | its docstring |
 | `nose_material.py` | foam or printed nose, decided per car; the block front fitted to the referee | `NOSE.md` |
 | `legality_fixes.py` | L1-L6: rear wing ahead of the body's back, body clamped to the official block, wheel-support variants, front-wing segment, rear wing forward when unsupported, nose-joint sliver | its docstring |
+| `sidepod_rules.py` | S1: the team's 27.175 mm sidepod cap dropped (only the halo's T4.4.2-3 limit stays); the sidepods are bounded by rules only (width: the official block, 32.5 mm each side) | its docstring |
 | `rear_wing_shape.py` | W1-W6: the rear wing as the regulations allow, zero AoA (spanwise bend, sweep, taper, thickness, camber of either sign), whole-span placement, struts from the tip section, gates per section; L7: T9.5.1 strict in the referee (own supports break the span) | its docstring; `docs/rules/README.md` |
 
 Idempotency: a module whose text a later module refines (rear_wing_shape rewrites two lines of L1a; L6 edits a

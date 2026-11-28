@@ -238,6 +238,9 @@ def main(evo, rec_p, sens_p, u_s, out_p, body_dir=None, d20=None, l20=None, grid
     u = load_u(u_s, n)
     ref_a = d["x_front"] - 16.0
     axles = (d["x_front"], d["x_front"] + d["W"], 14.12)
+    # the field must be the builder's: with evo_patches/sidepod_rules.py S1 the team's sidepod cap is gone (axles=None)
+    if "sidepod_rules.py S1" in (Path(fr.__file__).parent / "param_body.py").read_text():
+        axles = None
     # the halo's visibility region (evo_patches/soft_cap.py v2): the builder's field compresses the top there too
     hk = {"halo": fr.halo_span(ref_a, d["d_halo"])} if hasattr(fr, "halo_span") else {}
     F = FieldMap(fr, seed, u, amp, grid, axles, hk)

@@ -91,7 +91,9 @@ def apply(evo):
     q = Path(evo) / "car" / "body" / "param_body.py"
     t, u = p.read_text(), q.read_text()
     if "evo_patches/soft_cap.py" in t:
-        assert SIG_NEW in t and CALL_NEW in u, "soft_cap: an older version is applied (start from a clean checkout)"
+        # sidepod_rules.py S1 later swaps the axles line (team cap dropped); either form is this version
+        assert SIG_NEW in t and (CALL_NEW in u or "sidepod_rules.py S1" in u), \
+            "soft_cap: an older version is applied (start from a clean checkout)"
         return "soft_cap: already applied"
     assert (t.count(OLD) == 1 and t.count(CONST_OLD) == 1 and t.count(TOP_OLD) == 1 and t.count(SIG_OLD) == 1
             and u.count(CALL_OLD) == 1), "soft_cap: anchor not found (builder changed?)"

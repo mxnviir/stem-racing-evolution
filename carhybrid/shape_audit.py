@@ -93,7 +93,7 @@ def main(folder, out_json):
             elif name == "z" and abs(pos - CAP_Z_MM) < 0.2 and halo is not None and _near_halo(c[al][sel], halo):
                 label = "halo rim, body flush with the seat (T4.4.2, owner 2026-11-23)"
             elif name == "z" and abs(pos - CAP_Z_MM) < 0.2:
-                label = "sidepod-top cap 27.175 mm (hard-coded in freeform.field)"
+                label = "27.175 mm: the team sidepod cap (dropped 2026-11-28 by sidepod_rules S1; flat here = an older builder)"
             elif name == "z" and abs(pos - (POCKET_FLOOR_Z_MM - 6.35)) < 0.2:
                 label = "ballast container floor (App. ix, internal)"
             elif name == "x" and abs(pos - (rear - 52.0)) < 2.5:

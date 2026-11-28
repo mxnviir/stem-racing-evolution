@@ -18,7 +18,8 @@ Which rules (the builder's own masks, built as param_body.build builds them)
       in every column through them top >= their top and bottom <= their bottom, and in every row side >= their |y|;
     - CLIPPING air (forced air that bounds where a surface may go): outside the rule envelope (the block, T3.4/T3.5,
       the region bounds), T7.9's zones, T7.2's wheel keep-clear, T4.4.2's view air round the halo, T8.5.1's nose box,
-      the team's 27.175 mm sidepod cap (freeform.field): in each column the body stays in its allowed interval
+      the halo region's 27.175 mm (freeform.field; T4.4.2-3). The team's sidepod cap was dropped (owner,
+      2026-11-28; evo_patches/sidepod_rules.py): in each column the body stays in its allowed interval
       (top <= the air above it, bottom >= the air below it), or the column is empty (top < bottom);
     - FIXED CUTS (forced air that is always cut, whatever the numbers): the halo pocket and seat, the chamber bore,
       axle holes and wheel discs (fixed_hardware's voids), the block's underside slot: NOT constraints. They hold
@@ -120,12 +121,11 @@ def masks_of(d, spacing_mm=1.0):
     except Exception:                                    # noqa: BLE001  (older builders: the seat is in the pocket mask)
         pass
     fixed |= up.model_block_slot_mask(r)
-    # the team's sidepod cap and the halo region's 27.175 mm (freeform.field), as clipping air
-    xf, xr = d["x_front"], d["x_front"] + d["W"]
+    # the halo region's 27.175 mm (freeform.field; T4.4.2-3), as clipping air. The team's sidepod cap is dropped
+    # (owner, 2026-11-28; evo_patches/sidepod_rules.py S1): only rules bound the sidepods
     T = fr.CAP_TAPER_MM
-    cap = (X >= xf - T) & (X <= xr + T) & (np.abs(Y) > fr.SPINE_HALF_MM - T) & (Z > fr.SIDEPOD_TOP_MM)
     xa, xh0, xh1, hw = fr.halo_span(g.landmarks["ref_plane_A_m"] * 1e3, d["d_halo"])
-    cap |= (X >= xa - T) & (X <= xh1) & ((np.abs(Y) <= hw + T) | (X >= xh0 - T)) & (Z > fr.SIDEPOD_TOP_MM)
+    cap = (X >= xa - T) & (X <= xh1) & ((np.abs(Y) <= hw + T) | (X >= xh0 - T)) & (Z > fr.SIDEPOD_TOP_MM)
     air |= cap & ~solid
     clip = air & ~fixed
     # border cells: the region's edge (clipping)
@@ -414,7 +414,7 @@ def check(C: Constraints, evo, u, spacing_mm=1.0):
     xs, ys, zs, solid, clip, fixed, geom, h = masks_of(d, spacing_mm)
     X, Y, Z = np.meshgrid(xs, ys, zs, indexing="ij")
     xa = geom.landmarks["ref_plane_A_m"] * 1e3
-    phi = fr.field(ff, X, Y, Z, ff.x_tip_mm, ff.x_rear_mm, axles=(d["x_front"], d["x_front"] + d["W"], None),
+    phi = fr.field(ff, X, Y, Z, ff.x_tip_mm, ff.x_rear_mm, axles=None,     # as param_body (sidepod_rules S1)
                    halo=fr.halo_span(xa, d["d_halo"]))
     body = phi < 0
     return {"clip_air_filled_cells": int((body & clip).sum()), "required_solid_empty_cells": int((~body & solid).sum()),

@@ -4,10 +4,12 @@
 
 The owner, 2026-11-28: CMA (plain or gradient-guided) is the other repository's method. This branch is our own
 hybrid, the trust model: adjoint-driven steps judged by measured CFD, evolution where the adjoint cannot reach, and
-the Bayesian layout search. Our job is to beat their CMA, not to adopt it.
-- The guided-CMA recommendation (STATUS.md, section 3) is withdrawn.
-- The comparison against their method is the paper's claim: the same builder, layouts and budget; the score is
-  race time on the audit protocol.
+the Bayesian layout search. The guided-CMA recommendation (STATUS.md, section 3) is withdrawn.
+
+**Goal restated (owner, later the same evening):** the goal is the best car, not beating CMA. A win over CMA is not
+evidence of a good car if CMA is a weak method. So we work with our own method and judge it by the car: race time on
+the audit protocol, against the team car and the best car found so far. A comparison with the other repository is
+at most a side note.
 
 ## 1. Rear-wing supports: what "searched" means, and taking theirs
 
@@ -101,7 +103,9 @@ That is the flat look. Causes:
    the sidepods.
 
 **Plan:**
-- **(a)** Owner decision: keep or drop the team sidepod cap. If dropped, only T4.4.2–3 limit the body near the halo.
+- **(a)** ~~Owner decision: keep or drop the team sidepod cap.~~ **Dropped (owner, 2026-11-28):**
+  `evo_patches/sidepod_rules.py` S1. Only T4.4.2–3 limit the body near the halo; the sidepods' width limit is the
+  official block's (32.5 mm each side, T1.14/T3.1.2), which the envelope already used.
 - **(b)** Either way, no squashing: the limits become constraints on the numbers (`constraints.py`).
   - For the cap and halo-view limits this is easy: they bound the top surface only, a simple bound the projection
     handles without the full set.
