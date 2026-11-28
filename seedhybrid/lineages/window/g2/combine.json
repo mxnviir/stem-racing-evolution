@@ -1,0 +1,90 @@
+{
+ "es": {
+  "n_dirs": 3,
+  "dirs": [
+   "window_g1_rnd1000",
+   "window_g1_rnd1001",
+   "window_g1_rnd1002"
+  ],
+  "coef": [
+   -693493672.3738953,
+   -945164528.2499659,
+   -633274407.1894841
+  ],
+  "linear_model_mN_at_0p125": -0.284089497611174,
+  "share_in_span": 0.996514932711641,
+  "predicted_mN": {
+   "dafoam_coarse": -0.12488762151325401,
+   "esi_coarse": 0.006853684681231257,
+   "esi_resolved": -0.08446994557985499
+  }
+ },
+ "guided": {
+  "n_dirs": 5,
+  "dirs": [
+   "window_g1_daf",
+   "window_g1_dafh",
+   "window_g1_rnd1000",
+   "window_g1_rnd1001",
+   "window_g1_rnd1002"
+  ],
+  "coef": [
+   -481688623917.6374,
+   966275661053.0116,
+   -710164790.580746,
+   -1009213426.2018831,
+   -684687664.4398203
+  ],
+  "linear_model_mN_at_0p125": -0.3286510050986817,
+  "share_in_span": 0.9936425428512139,
+  "predicted_mN": {
+   "dafoam_coarse": -1.5944683555883539,
+   "esi_coarse": -0.06302757591088659,
+   "esi_resolved": -0.17599020197012819
+  }
+ },
+ "guided_daf": {
+  "n_dirs": 5,
+  "dirs": [
+   "window_g1_daf",
+   "window_g1_dafh",
+   "window_g1_rnd1000",
+   "window_g1_rnd1001",
+   "window_g1_rnd1002"
+  ],
+  "coef": [
+   -481688623917.6374,
+   966275661053.0116,
+   -710164790.580746,
+   -1009213426.2018831,
+   -684687664.4398203
+  ],
+  "linear_model_mN_at_0p125": -0.3286510050986817,
+  "share_in_span": 0.9936425428512139,
+  "predicted_mN": {
+   "dafoam_coarse": -1.5944683555883539,
+   "esi_coarse": -0.06302757591088659,
+   "esi_resolved": -0.17599020197012819
+  }
+ },
+ "guided_esi": {
+  "n_dirs": 3,
+  "dirs": [
+   "window_g1_rnd1000",
+   "window_g1_rnd1001",
+   "window_g1_rnd1002"
+  ],
+  "coef": [
+   -693493672.3738953,
+   -945164528.2499659,
+   -633274407.1894841
+  ],
+  "linear_model_mN_at_0p125": -0.284089497611174,
+  "share_in_span": 0.996514932711641,
+  "predicted_mN": {
+   "dafoam_coarse": -0.12488762151325401,
+   "esi_coarse": 0.006853684681231257,
+   "esi_resolved": -0.08446994557985499
+  }
+ }
+}

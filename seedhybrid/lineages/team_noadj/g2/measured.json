@@ -1,0 +1,27 @@
+{
+ "team_noadj_g1_rnd1000": {
+  "field": "rnd1000",
+  "amp_mm": 1.0,
+  "dF_mN": 1.8057316245329673
+ },
+ "team_noadj_g1_rnd1001": {
+  "field": "rnd1001",
+  "amp_mm": 1.0,
+  "dF_mN": 1.452160827475467
+ },
+ "team_noadj_g1_rnd1002": {
+  "field": "rnd1002",
+  "amp_mm": 1.0,
+  "dF_mN": 1.6530259769320423
+ },
+ "team_noadj_g1_rnd1003": {
+  "field": "rnd1003",
+  "amp_mm": 1.0,
+  "dF_mN": 10.72996350080939
+ },
+ "team_noadj_g1_rnd1004": {
+  "field": "rnd1004",
+  "amp_mm": 1.0,
+  "dF_mN": 1.1642360493509898
+ }
+}

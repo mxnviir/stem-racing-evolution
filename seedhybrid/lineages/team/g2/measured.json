@@ -1,0 +1,22 @@
+{
+ "team_g1_dafh": {
+  "field": "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz",
+  "amp_mm": 0.5,
+  "dF_mN": -2.025138981200911
+ },
+ "team_g1_rnd1000": {
+  "field": "rnd1000",
+  "amp_mm": 1.0,
+  "dF_mN": 1.806558443946443
+ },
+ "team_g1_rnd1001": {
+  "field": "rnd1001",
+  "amp_mm": 1.0,
+  "dF_mN": 1.4522724887657432
+ },
+ "team_g1_rnd1002": {
+  "field": "rnd1002",
+  "amp_mm": 1.0,
+  "dF_mN": 1.6540558832652437
+ }
+}

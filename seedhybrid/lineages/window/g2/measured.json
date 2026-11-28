@@ -1,0 +1,27 @@
+{
+ "window_g1_daf": {
+  "field": "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz",
+  "amp_mm": 1.0,
+  "dF_mN": -0.4474872715714753
+ },
+ "window_g1_dafh": {
+  "field": "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz",
+  "amp_mm": 0.5,
+  "dF_mN": -1.6860816948533284
+ },
+ "window_g1_rnd1000": {
+  "field": "rnd1000",
+  "amp_mm": 1.0,
+  "dF_mN": 1.1532104000565369
+ },
+ "window_g1_rnd1001": {
+  "field": "rnd1001",
+  "amp_mm": 1.0,
+  "dF_mN": 1.490234536144328
+ },
+ "window_g1_rnd1002": {
+  "field": "rnd1002",
+  "amp_mm": 1.0,
+  "dF_mN": 1.2023107702534617
+ }
+}

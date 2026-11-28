@@ -1,6 +1,6 @@
 {
  "stage": "gen",
- "gen": 1,
+ "gen": 2,
  "setup_run": 46113354235,
  "lineages": {
   "team": {
@@ -10,12 +10,12 @@
     "id": 0
    },
    "status": "active",
-   "parent": "",
+   "parent": "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz@0.5",
    "amp": 1.0,
    "dafoam_latest": "seedhybrid_lineages/team/dafoam_g0.npz",
-   "dafoam_at": "",
+   "dafoam_at": "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz@0.5",
    "esi_latest": null,
-   "next_seed": 1003,
+   "next_seed": 1006,
    "generations": {
     "1": {
      "parent": "",
@@ -39,6 +39,66 @@
       ],
       "team_g1_rnd1002": [
        "rnd1002",
+       1.0
+      ]
+     },
+     "result": {
+      "zero": [
+       185.11414988321178,
+       0.0005615245200910868
+      ],
+      "children": {
+       "team_g1_dafh": [
+        -2.025138981200911,
+        0.0014639286094873679
+       ],
+       "team_g1_rnd1000": [
+        1.806558443946443,
+        0.0018273445187554265
+       ],
+       "team_g1_rnd1001": [
+        1.4522724887657432,
+        0.0018794092205983175
+       ],
+       "team_g1_rnd1002": [
+        1.6540558832652437,
+        0.22025060231030566
+       ]
+      },
+      "failed": [
+       "team_g1_daf"
+      ],
+      "accepted": "team_g1_dafh",
+      "best": "team_g1_dafh",
+      "best_change_mN": -2.025138981200911
+     }
+    },
+    "2": {
+     "parent": "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz@0.5",
+     "amp": 1.0,
+     "children": {
+      "team_g2_daf": [
+       "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz",
+       1.0
+      ],
+      "team_g2_comb": [
+       "vec:seedhybrid_lineages/team/g2/guided.npy",
+       1.0
+      ],
+      "team_g2_es": [
+       "vec:seedhybrid_lineages/team/g2/es.npy",
+       1.0
+      ],
+      "team_g2_rnd1003": [
+       "rnd1003",
+       1.0
+      ],
+      "team_g2_rnd1004": [
+       "rnd1004",
+       1.0
+      ],
+      "team_g2_rnd1005": [
+       "rnd1005",
        1.0
       ]
      }
@@ -82,7 +142,10 @@
     "volume_mm3_half": 78469.1100809723,
     "watertight": true,
     "region_share_of_vertices": "0.2803806071590394"
-   }
+   },
+   "drag_steady_mN": [
+    183.08901090201087
+   ]
   },
   "d7": {
    "seed": {
@@ -91,12 +154,12 @@
     "id": 7
    },
    "status": "active",
-   "parent": "",
+   "parent": "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz@0.5",
    "amp": 1.0,
    "dafoam_latest": "seedhybrid_lineages/d7/dafoam_g0.npz",
-   "dafoam_at": "",
+   "dafoam_at": "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz@0.5",
    "esi_latest": null,
-   "next_seed": 1003,
+   "next_seed": 1006,
    "generations": {
     "1": {
      "parent": "",
@@ -120,6 +183,68 @@
       ],
       "d7_g1_rnd1002": [
        "rnd1002",
+       1.0
+      ]
+     },
+     "result": {
+      "zero": [
+       182.82728104632247,
+       0.12888404186280084
+      ],
+      "children": {
+       "d7_g1_daf": [
+        -0.44972193835110374,
+        0.08719414810751745
+       ],
+       "d7_g1_dafh": [
+        -1.2760434541688426,
+        0.11410488398942947
+       ],
+       "d7_g1_rnd1000": [
+        1.4711607246841254,
+        0.0859840223399948
+       ],
+       "d7_g1_rnd1001": [
+        -1.0257535989778717,
+        0.146065017509974
+       ],
+       "d7_g1_rnd1002": [
+        0.7661686060231148,
+        0.14257910730576517
+       ]
+      },
+      "failed": [],
+      "accepted": "d7_g1_dafh",
+      "best": "d7_g1_dafh",
+      "best_change_mN": -1.2760434541688426
+     }
+    },
+    "2": {
+     "parent": "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz@0.5",
+     "amp": 1.0,
+     "children": {
+      "d7_g2_daf": [
+       "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz",
+       1.0
+      ],
+      "d7_g2_comb": [
+       "vec:seedhybrid_lineages/d7/g2/guided.npy",
+       1.0
+      ],
+      "d7_g2_es": [
+       "vec:seedhybrid_lineages/d7/g2/es.npy",
+       1.0
+      ],
+      "d7_g2_rnd1003": [
+       "rnd1003",
+       1.0
+      ],
+      "d7_g2_rnd1004": [
+       "rnd1004",
+       1.0
+      ],
+      "d7_g2_rnd1005": [
+       "rnd1005",
        1.0
       ]
      }
@@ -163,7 +288,10 @@
     "volume_mm3_half": 82701.51966586652,
     "watertight": true,
     "region_share_of_vertices": "0.3062882613479279"
-   }
+   },
+   "drag_steady_mN": [
+    181.55123759215363
+   ]
   },
   "window": {
    "seed": {
@@ -172,12 +300,12 @@
     "id": 3
    },
    "status": "active",
-   "parent": "",
+   "parent": "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz@0.5",
    "amp": 1.0,
    "dafoam_latest": "seedhybrid_lineages/window/dafoam_g0.npz",
-   "dafoam_at": "",
+   "dafoam_at": "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz@0.5",
    "esi_latest": null,
-   "next_seed": 1003,
+   "next_seed": 1006,
    "generations": {
     "1": {
      "parent": "",
@@ -201,6 +329,68 @@
       ],
       "window_g1_rnd1002": [
        "rnd1002",
+       1.0
+      ]
+     },
+     "result": {
+      "zero": [
+       185.35708440047102,
+       0.040263435572729135
+      ],
+      "children": {
+       "window_g1_daf": [
+        -0.4474872715714753,
+        0.00012900523211034704
+       ],
+       "window_g1_dafh": [
+        -1.6860816948533284,
+        8.3885689329698e-05
+       ],
+       "window_g1_rnd1000": [
+        1.1532104000565369,
+        0.21729574972634405
+       ],
+       "window_g1_rnd1001": [
+        1.490234536144328,
+        0.025672706368795182
+       ],
+       "window_g1_rnd1002": [
+        1.2023107702534617,
+        0.08108540639653035
+       ]
+      },
+      "failed": [],
+      "accepted": "window_g1_dafh",
+      "best": "window_g1_dafh",
+      "best_change_mN": -1.6860816948533284
+     }
+    },
+    "2": {
+     "parent": "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz@0.5",
+     "amp": 1.0,
+     "children": {
+      "window_g2_daf": [
+       "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz",
+       1.0
+      ],
+      "window_g2_comb": [
+       "vec:seedhybrid_lineages/window/g2/guided.npy",
+       1.0
+      ],
+      "window_g2_es": [
+       "vec:seedhybrid_lineages/window/g2/es.npy",
+       1.0
+      ],
+      "window_g2_rnd1003": [
+       "rnd1003",
+       1.0
+      ],
+      "window_g2_rnd1004": [
+       "rnd1004",
+       1.0
+      ],
+      "window_g2_rnd1005": [
+       "rnd1005",
        1.0
       ]
      }
@@ -244,7 +434,10 @@
     "volume_mm3_half": 77608.59423464096,
     "watertight": true,
     "region_share_of_vertices": "0.2965324033046511"
-   }
+   },
+   "drag_steady_mN": [
+    183.6710027056177
+   ]
   },
   "team_noadj": {
    "seed": null,
@@ -254,11 +447,11 @@
    "enable_if": null,
    "status": "active",
    "parent": "",
-   "amp": 1.0,
+   "amp": 0.5,
    "dafoam_latest": null,
    "dafoam_at": "",
    "esi_latest": null,
-   "next_seed": 1005,
+   "next_seed": 1009,
    "generations": {
     "1": {
      "parent": "",
@@ -283,6 +476,68 @@
       "team_noadj_g1_rnd1004": [
        "rnd1004",
        1.0
+      ]
+     },
+     "result": {
+      "zero": [
+       185.1144525293586,
+       0.0006536695200887689
+      ],
+      "children": {
+       "team_noadj_g1_rnd1000": [
+        1.8057316245329673,
+        0.0017064064723161473
+       ],
+       "team_noadj_g1_rnd1001": [
+        1.452160827475467,
+        0.0017662854222566325
+       ],
+       "team_noadj_g1_rnd1002": [
+        1.6530259769320423,
+        0.22054422866043738
+       ],
+       "team_noadj_g1_rnd1003": [
+        10.72996350080939,
+        0.18884497365410716
+       ],
+       "team_noadj_g1_rnd1004": [
+        1.1642360493509898,
+        0.0006108328586910869
+       ]
+      },
+      "failed": [],
+      "accepted": null,
+      "best": "team_noadj_g1_rnd1004",
+      "best_change_mN": 1.1642360493509898
+     }
+    },
+    "2": {
+     "parent": "",
+     "amp": 0.5,
+     "children": {
+      "team_noadj_g2_comb": [
+       "vec:seedhybrid_lineages/team_noadj/g2/guided.npy",
+       0.5
+      ],
+      "team_noadj_g2_es": [
+       "vec:seedhybrid_lineages/team_noadj/g2/es.npy",
+       0.5
+      ],
+      "team_noadj_g2_rnd1005": [
+       "rnd1005",
+       0.5
+      ],
+      "team_noadj_g2_rnd1006": [
+       "rnd1006",
+       0.5
+      ],
+      "team_noadj_g2_rnd1007": [
+       "rnd1007",
+       0.5
+      ],
+      "team_noadj_g2_rnd1008": [
+       "rnd1008",
+       0.5
       ]
      }
     }
@@ -334,12 +589,12 @@
     "dafoam": "d7"
    },
    "status": "active",
-   "parent": "",
+   "parent": "rnd1001@1.0",
    "amp": 1.0,
    "dafoam_latest": null,
    "dafoam_at": "",
    "esi_latest": null,
-   "next_seed": 1005,
+   "next_seed": 1009,
    "generations": {
     "1": {
      "parent": "",
@@ -363,6 +618,68 @@
       ],
       "d7_noadj_g1_rnd1004": [
        "rnd1004",
+       1.0
+      ]
+     },
+     "result": {
+      "zero": [
+       182.82724774461911,
+       0.1288783600200354
+      ],
+      "children": {
+       "d7_noadj_g1_rnd1000": [
+        1.4712416035800686,
+        0.08590467280632227
+       ],
+       "d7_noadj_g1_rnd1001": [
+        -1.0258622233740482,
+        0.14613829909277784
+       ],
+       "d7_noadj_g1_rnd1002": [
+        0.7661750498594984,
+        0.14263223182006005
+       ],
+       "d7_noadj_g1_rnd1003": [
+        7.206773547949837,
+        0.19649872383736403
+       ],
+       "d7_noadj_g1_rnd1004": [
+        1.9878998973399291,
+        0.15182606525080103
+       ]
+      },
+      "failed": [],
+      "accepted": "d7_noadj_g1_rnd1001",
+      "best": "d7_noadj_g1_rnd1001",
+      "best_change_mN": -1.0258622233740482
+     }
+    },
+    "2": {
+     "parent": "rnd1001@1.0",
+     "amp": 1.0,
+     "children": {
+      "d7_noadj_g2_comb": [
+       "vec:seedhybrid_lineages/d7_noadj/g2/guided.npy",
+       1.0
+      ],
+      "d7_noadj_g2_es": [
+       "vec:seedhybrid_lineages/d7_noadj/g2/es.npy",
+       1.0
+      ],
+      "d7_noadj_g2_rnd1005": [
+       "rnd1005",
+       1.0
+      ],
+      "d7_noadj_g2_rnd1006": [
+       "rnd1006",
+       1.0
+      ],
+      "d7_noadj_g2_rnd1007": [
+       "rnd1007",
+       1.0
+      ],
+      "d7_noadj_g2_rnd1008": [
+       "rnd1008",
        1.0
       ]
      }
@@ -404,7 +721,10 @@
     "volume_mm3_half": 82701.51966586652,
     "watertight": true,
     "region_share_of_vertices": "0.3062882613479279"
-   }
+   },
+   "drag_steady_mN": [
+    181.80138552124507
+   ]
   },
   "window_noadj": {
    "seed": null,
@@ -561,6 +881,171 @@
       "dafoam": "window",
       "no_dafoam": "d7"
      }
+    }
+   }
+  },
+  {
+   "stage": "gen",
+   "gen": 1,
+   "run": "46156806568",
+   "lineages": {
+    "team": {
+     "zero": [
+      185.11414988321178,
+      0.0005615245200910868
+     ],
+     "children": {
+      "team_g1_dafh": [
+       -2.025138981200911,
+       0.0014639286094873679
+      ],
+      "team_g1_rnd1000": [
+       1.806558443946443,
+       0.0018273445187554265
+      ],
+      "team_g1_rnd1001": [
+       1.4522724887657432,
+       0.0018794092205983175
+      ],
+      "team_g1_rnd1002": [
+       1.6540558832652437,
+       0.22025060231030566
+      ]
+     },
+     "failed": [
+      "team_g1_daf"
+     ],
+     "accepted": "team_g1_dafh",
+     "best": "team_g1_dafh",
+     "best_change_mN": -2.025138981200911
+    },
+    "d7": {
+     "zero": [
+      182.82728104632247,
+      0.12888404186280084
+     ],
+     "children": {
+      "d7_g1_daf": [
+       -0.44972193835110374,
+       0.08719414810751745
+      ],
+      "d7_g1_dafh": [
+       -1.2760434541688426,
+       0.11410488398942947
+      ],
+      "d7_g1_rnd1000": [
+       1.4711607246841254,
+       0.0859840223399948
+      ],
+      "d7_g1_rnd1001": [
+       -1.0257535989778717,
+       0.146065017509974
+      ],
+      "d7_g1_rnd1002": [
+       0.7661686060231148,
+       0.14257910730576517
+      ]
+     },
+     "failed": [],
+     "accepted": "d7_g1_dafh",
+     "best": "d7_g1_dafh",
+     "best_change_mN": -1.2760434541688426
+    },
+    "window": {
+     "zero": [
+      185.35708440047102,
+      0.040263435572729135
+     ],
+     "children": {
+      "window_g1_daf": [
+       -0.4474872715714753,
+       0.00012900523211034704
+      ],
+      "window_g1_dafh": [
+       -1.6860816948533284,
+       8.3885689329698e-05
+      ],
+      "window_g1_rnd1000": [
+       1.1532104000565369,
+       0.21729574972634405
+      ],
+      "window_g1_rnd1001": [
+       1.490234536144328,
+       0.025672706368795182
+      ],
+      "window_g1_rnd1002": [
+       1.2023107702534617,
+       0.08108540639653035
+      ]
+     },
+     "failed": [],
+     "accepted": "window_g1_dafh",
+     "best": "window_g1_dafh",
+     "best_change_mN": -1.6860816948533284
+    },
+    "team_noadj": {
+     "zero": [
+      185.1144525293586,
+      0.0006536695200887689
+     ],
+     "children": {
+      "team_noadj_g1_rnd1000": [
+       1.8057316245329673,
+       0.0017064064723161473
+      ],
+      "team_noadj_g1_rnd1001": [
+       1.452160827475467,
+       0.0017662854222566325
+      ],
+      "team_noadj_g1_rnd1002": [
+       1.6530259769320423,
+       0.22054422866043738
+      ],
+      "team_noadj_g1_rnd1003": [
+       10.72996350080939,
+       0.18884497365410716
+      ],
+      "team_noadj_g1_rnd1004": [
+       1.1642360493509898,
+       0.0006108328586910869
+      ]
+     },
+     "failed": [],
+     "accepted": null,
+     "best": "team_noadj_g1_rnd1004",
+     "best_change_mN": 1.1642360493509898
+    },
+    "d7_noadj": {
+     "zero": [
+      182.82724774461911,
+      0.1288783600200354
+     ],
+     "children": {
+      "d7_noadj_g1_rnd1000": [
+       1.4712416035800686,
+       0.08590467280632227
+      ],
+      "d7_noadj_g1_rnd1001": [
+       -1.0258622233740482,
+       0.14613829909277784
+      ],
+      "d7_noadj_g1_rnd1002": [
+       0.7661750498594984,
+       0.14263223182006005
+      ],
+      "d7_noadj_g1_rnd1003": [
+       7.206773547949837,
+       0.19649872383736403
+      ],
+      "d7_noadj_g1_rnd1004": [
+       1.9878998973399291,
+       0.15182606525080103
+      ]
+     },
+     "failed": [],
+     "accepted": "d7_noadj_g1_rnd1001",
+     "best": "d7_noadj_g1_rnd1001",
+     "best_change_mN": -1.0258622233740482
     }
    }
   }

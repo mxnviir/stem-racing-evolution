@@ -1,0 +1,27 @@
+{
+ "d7_g1_daf": {
+  "field": "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz",
+  "amp_mm": 1.0,
+  "dF_mN": -0.44972193835110374
+ },
+ "d7_g1_dafh": {
+  "field": "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz",
+  "amp_mm": 0.5,
+  "dF_mN": -1.2760434541688426
+ },
+ "d7_g1_rnd1000": {
+  "field": "rnd1000",
+  "amp_mm": 1.0,
+  "dF_mN": 1.4711607246841254
+ },
+ "d7_g1_rnd1001": {
+  "field": "rnd1001",
+  "amp_mm": 1.0,
+  "dF_mN": -1.0257535989778717
+ },
+ "d7_g1_rnd1002": {
+  "field": "rnd1002",
+  "amp_mm": 1.0,
+  "dF_mN": 0.7661686060231148
+ }
+}

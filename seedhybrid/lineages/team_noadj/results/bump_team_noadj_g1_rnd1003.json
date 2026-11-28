@@ -1,0 +1,13 @@
+{
+ "D20_half_N": 0.1958483482336713,
+ "wall_s": 5114.7,
+ "converged": true,
+ "residual_p": 5.7260399926180596e-05,
+ "force_osc": 0.0021402161104294,
+ "force_drift": 2.570078303233588e-05,
+ "run_dir": "",
+ "force_mean_stderr": 0.00018884497365410715,
+ "bump": "team_noadj_g1_rnd1003",
+ "morph_fallback": false,
+ "run_dir_kept": "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/part2-simulation/cfd_case_template/runs/run_4184_3739b2a42f13"
+}

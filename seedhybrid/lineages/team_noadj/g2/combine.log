@@ -1,0 +1,4 @@
+es {"n_dirs": 5, "linear_model_mN_at_0p125": -1.492715642450988, "share_in_span": 0.9989699898983592, "predicted_mN": {"dafoam_coarse": -0.1197823461400137, "esi_coarse": 0.028673126233552605, "esi_resolved": 0.018060582516550718}}
+guided {"n_dirs": 5, "linear_model_mN_at_0p125": -1.492715642450988, "share_in_span": 0.9989699898983592, "predicted_mN": {"dafoam_coarse": -0.1197823461400137, "esi_coarse": 0.028673126233552605, "esi_resolved": 0.018060582516550718}}
+guided_daf {"n_dirs": 5, "linear_model_mN_at_0p125": -1.492715642450988, "share_in_span": 0.9989699898983592, "predicted_mN": {"dafoam_coarse": -0.1197823461400137, "esi_coarse": 0.028673126233552605, "esi_resolved": 0.018060582516550718}}
+guided_esi {"n_dirs": 5, "linear_model_mN_at_0p125": -1.492715642450988, "share_in_span": 0.9989699898983592, "predicted_mN": {"dafoam_coarse": -0.1197823461400137, "esi_coarse": 0.028673126233552605, "esi_resolved": 0.018060582516550718}}

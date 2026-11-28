@@ -1,6 +1,6 @@
 {
  "stage": "gen",
- "gen": 1,
+ "gen": 2,
  "setup_run": 46113354235,
  "lineages": [
   {
@@ -55,8 +55,8 @@
    "type": "child",
    "lineage": "team",
    "art": "team",
-   "name": "team_g1_zero",
-   "chainparent": "",
+   "name": "team_g2_zero",
+   "chainparent": "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz@0.5",
    "field": "zero",
    "amp": "0"
   },
@@ -64,8 +64,8 @@
    "type": "child",
    "lineage": "team",
    "art": "team",
-   "name": "team_g1_daf",
-   "chainparent": "",
+   "name": "team_g2_daf",
+   "chainparent": "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz@0.5",
    "field": "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz",
    "amp": "1"
   },
@@ -73,44 +73,61 @@
    "type": "child",
    "lineage": "team",
    "art": "team",
-   "name": "team_g1_dafh",
-   "chainparent": "",
-   "field": "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz",
-   "amp": "0.5"
-  },
-  {
-   "type": "child",
-   "lineage": "team",
-   "art": "team",
-   "name": "team_g1_rnd1000",
-   "chainparent": "",
-   "field": "rnd1000",
+   "name": "team_g2_comb",
+   "chainparent": "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz@0.5",
+   "field": "vec:seedhybrid_lineages/team/g2/guided.npy",
    "amp": "1"
   },
   {
    "type": "child",
    "lineage": "team",
    "art": "team",
-   "name": "team_g1_rnd1001",
-   "chainparent": "",
-   "field": "rnd1001",
+   "name": "team_g2_es",
+   "chainparent": "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz@0.5",
+   "field": "vec:seedhybrid_lineages/team/g2/es.npy",
    "amp": "1"
   },
   {
    "type": "child",
    "lineage": "team",
    "art": "team",
-   "name": "team_g1_rnd1002",
-   "chainparent": "",
-   "field": "rnd1002",
+   "name": "team_g2_rnd1003",
+   "chainparent": "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz@0.5",
+   "field": "rnd1003",
    "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "team",
+   "art": "team",
+   "name": "team_g2_rnd1004",
+   "chainparent": "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz@0.5",
+   "field": "rnd1004",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "team",
+   "art": "team",
+   "name": "team_g2_rnd1005",
+   "chainparent": "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz@0.5",
+   "field": "rnd1005",
+   "amp": "1"
+  },
+  {
+   "type": "dafoam",
+   "lineage": "team",
+   "art": "team",
+   "name": "team_daf_g2",
+   "parent": "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz@0.5",
+   "tag": "g2"
   },
   {
    "type": "child",
    "lineage": "d7",
    "art": "d7",
-   "name": "d7_g1_zero",
-   "chainparent": "",
+   "name": "d7_g2_zero",
+   "chainparent": "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz@0.5",
    "field": "zero",
    "amp": "0"
   },
@@ -118,8 +135,8 @@
    "type": "child",
    "lineage": "d7",
    "art": "d7",
-   "name": "d7_g1_daf",
-   "chainparent": "",
+   "name": "d7_g2_daf",
+   "chainparent": "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz@0.5",
    "field": "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz",
    "amp": "1"
   },
@@ -127,44 +144,61 @@
    "type": "child",
    "lineage": "d7",
    "art": "d7",
-   "name": "d7_g1_dafh",
-   "chainparent": "",
-   "field": "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz",
-   "amp": "0.5"
-  },
-  {
-   "type": "child",
-   "lineage": "d7",
-   "art": "d7",
-   "name": "d7_g1_rnd1000",
-   "chainparent": "",
-   "field": "rnd1000",
+   "name": "d7_g2_comb",
+   "chainparent": "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz@0.5",
+   "field": "vec:seedhybrid_lineages/d7/g2/guided.npy",
    "amp": "1"
   },
   {
    "type": "child",
    "lineage": "d7",
    "art": "d7",
-   "name": "d7_g1_rnd1001",
-   "chainparent": "",
-   "field": "rnd1001",
+   "name": "d7_g2_es",
+   "chainparent": "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz@0.5",
+   "field": "vec:seedhybrid_lineages/d7/g2/es.npy",
    "amp": "1"
   },
   {
    "type": "child",
    "lineage": "d7",
    "art": "d7",
-   "name": "d7_g1_rnd1002",
-   "chainparent": "",
-   "field": "rnd1002",
+   "name": "d7_g2_rnd1003",
+   "chainparent": "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz@0.5",
+   "field": "rnd1003",
    "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "d7",
+   "art": "d7",
+   "name": "d7_g2_rnd1004",
+   "chainparent": "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz@0.5",
+   "field": "rnd1004",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "d7",
+   "art": "d7",
+   "name": "d7_g2_rnd1005",
+   "chainparent": "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz@0.5",
+   "field": "rnd1005",
+   "amp": "1"
+  },
+  {
+   "type": "dafoam",
+   "lineage": "d7",
+   "art": "d7",
+   "name": "d7_daf_g2",
+   "parent": "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz@0.5",
+   "tag": "g2"
   },
   {
    "type": "child",
    "lineage": "window",
    "art": "window",
-   "name": "window_g1_zero",
-   "chainparent": "",
+   "name": "window_g2_zero",
+   "chainparent": "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz@0.5",
    "field": "zero",
    "amp": "0"
   },
@@ -172,8 +206,8 @@
    "type": "child",
    "lineage": "window",
    "art": "window",
-   "name": "window_g1_daf",
-   "chainparent": "",
+   "name": "window_g2_daf",
+   "chainparent": "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz@0.5",
    "field": "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz",
    "amp": "1"
   },
@@ -181,98 +215,124 @@
    "type": "child",
    "lineage": "window",
    "art": "window",
-   "name": "window_g1_dafh",
+   "name": "window_g2_comb",
+   "chainparent": "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz@0.5",
+   "field": "vec:seedhybrid_lineages/window/g2/guided.npy",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "window",
+   "art": "window",
+   "name": "window_g2_es",
+   "chainparent": "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz@0.5",
+   "field": "vec:seedhybrid_lineages/window/g2/es.npy",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "window",
+   "art": "window",
+   "name": "window_g2_rnd1003",
+   "chainparent": "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz@0.5",
+   "field": "rnd1003",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "window",
+   "art": "window",
+   "name": "window_g2_rnd1004",
+   "chainparent": "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz@0.5",
+   "field": "rnd1004",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "window",
+   "art": "window",
+   "name": "window_g2_rnd1005",
+   "chainparent": "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz@0.5",
+   "field": "rnd1005",
+   "amp": "1"
+  },
+  {
+   "type": "dafoam",
+   "lineage": "window",
+   "art": "window",
+   "name": "window_daf_g2",
+   "parent": "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz@0.5",
+   "tag": "g2"
+  },
+  {
+   "type": "child",
+   "lineage": "team_noadj",
+   "art": "team",
+   "name": "team_noadj_g2_zero",
    "chainparent": "",
-   "field": "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz",
+   "field": "zero",
+   "amp": "0"
+  },
+  {
+   "type": "child",
+   "lineage": "team_noadj",
+   "art": "team",
+   "name": "team_noadj_g2_comb",
+   "chainparent": "",
+   "field": "vec:seedhybrid_lineages/team_noadj/g2/guided.npy",
    "amp": "0.5"
   },
   {
    "type": "child",
-   "lineage": "window",
-   "art": "window",
-   "name": "window_g1_rnd1000",
+   "lineage": "team_noadj",
+   "art": "team",
+   "name": "team_noadj_g2_es",
    "chainparent": "",
-   "field": "rnd1000",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "window",
-   "art": "window",
-   "name": "window_g1_rnd1001",
-   "chainparent": "",
-   "field": "rnd1001",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "window",
-   "art": "window",
-   "name": "window_g1_rnd1002",
-   "chainparent": "",
-   "field": "rnd1002",
-   "amp": "1"
+   "field": "vec:seedhybrid_lineages/team_noadj/g2/es.npy",
+   "amp": "0.5"
   },
   {
    "type": "child",
    "lineage": "team_noadj",
    "art": "team",
-   "name": "team_noadj_g1_zero",
+   "name": "team_noadj_g2_rnd1005",
    "chainparent": "",
-   "field": "zero",
-   "amp": "0"
+   "field": "rnd1005",
+   "amp": "0.5"
   },
   {
    "type": "child",
    "lineage": "team_noadj",
    "art": "team",
-   "name": "team_noadj_g1_rnd1000",
+   "name": "team_noadj_g2_rnd1006",
    "chainparent": "",
-   "field": "rnd1000",
-   "amp": "1"
+   "field": "rnd1006",
+   "amp": "0.5"
   },
   {
    "type": "child",
    "lineage": "team_noadj",
    "art": "team",
-   "name": "team_noadj_g1_rnd1001",
+   "name": "team_noadj_g2_rnd1007",
    "chainparent": "",
-   "field": "rnd1001",
-   "amp": "1"
+   "field": "rnd1007",
+   "amp": "0.5"
   },
   {
    "type": "child",
    "lineage": "team_noadj",
    "art": "team",
-   "name": "team_noadj_g1_rnd1002",
+   "name": "team_noadj_g2_rnd1008",
    "chainparent": "",
-   "field": "rnd1002",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "team_noadj",
-   "art": "team",
-   "name": "team_noadj_g1_rnd1003",
-   "chainparent": "",
-   "field": "rnd1003",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "team_noadj",
-   "art": "team",
-   "name": "team_noadj_g1_rnd1004",
-   "chainparent": "",
-   "field": "rnd1004",
-   "amp": "1"
+   "field": "rnd1008",
+   "amp": "0.5"
   },
   {
    "type": "child",
    "lineage": "d7_noadj",
    "art": "d7",
-   "name": "d7_noadj_g1_zero",
-   "chainparent": "",
+   "name": "d7_noadj_g2_zero",
+   "chainparent": "rnd1001@1.0",
    "field": "zero",
    "amp": "0"
   },
@@ -280,45 +340,54 @@
    "type": "child",
    "lineage": "d7_noadj",
    "art": "d7",
-   "name": "d7_noadj_g1_rnd1000",
-   "chainparent": "",
-   "field": "rnd1000",
+   "name": "d7_noadj_g2_comb",
+   "chainparent": "rnd1001@1.0",
+   "field": "vec:seedhybrid_lineages/d7_noadj/g2/guided.npy",
    "amp": "1"
   },
   {
    "type": "child",
    "lineage": "d7_noadj",
    "art": "d7",
-   "name": "d7_noadj_g1_rnd1001",
-   "chainparent": "",
-   "field": "rnd1001",
+   "name": "d7_noadj_g2_es",
+   "chainparent": "rnd1001@1.0",
+   "field": "vec:seedhybrid_lineages/d7_noadj/g2/es.npy",
    "amp": "1"
   },
   {
    "type": "child",
    "lineage": "d7_noadj",
    "art": "d7",
-   "name": "d7_noadj_g1_rnd1002",
-   "chainparent": "",
-   "field": "rnd1002",
+   "name": "d7_noadj_g2_rnd1005",
+   "chainparent": "rnd1001@1.0",
+   "field": "rnd1005",
    "amp": "1"
   },
   {
    "type": "child",
    "lineage": "d7_noadj",
    "art": "d7",
-   "name": "d7_noadj_g1_rnd1003",
-   "chainparent": "",
-   "field": "rnd1003",
+   "name": "d7_noadj_g2_rnd1006",
+   "chainparent": "rnd1001@1.0",
+   "field": "rnd1006",
    "amp": "1"
   },
   {
    "type": "child",
    "lineage": "d7_noadj",
    "art": "d7",
-   "name": "d7_noadj_g1_rnd1004",
-   "chainparent": "",
-   "field": "rnd1004",
+   "name": "d7_noadj_g2_rnd1007",
+   "chainparent": "rnd1001@1.0",
+   "field": "rnd1007",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "d7_noadj",
+   "art": "d7",
+   "name": "d7_noadj_g2_rnd1008",
+   "chainparent": "rnd1001@1.0",
+   "field": "rnd1008",
    "amp": "1"
   }
  ]
