@@ -1,0 +1,290 @@
+{
+ "stations": 33,
+ "rectangularity_median": 0.7553439641358205,
+ "rectangularity_max": 0.8253919980641514,
+ "rectangularity_by_x": [
+  [
+   44.4,
+   0.755
+  ],
+  [
+   49.4,
+   0.762
+  ],
+  [
+   54.4,
+   0.766
+  ],
+  [
+   59.4,
+   0.775
+  ],
+  [
+   64.4,
+   0.768
+  ],
+  [
+   69.4,
+   0.756
+  ],
+  [
+   74.4,
+   0.765
+  ],
+  [
+   79.4,
+   0.765
+  ],
+  [
+   84.4,
+   0.73
+  ],
+  [
+   89.4,
+   0.704
+  ],
+  [
+   94.4,
+   0.695
+  ],
+  [
+   99.4,
+   0.728
+  ],
+  [
+   104.4,
+   0.784
+  ],
+  [
+   109.4,
+   0.782
+  ],
+  [
+   114.4,
+   0.78
+  ],
+  [
+   119.4,
+   0.778
+  ],
+  [
+   124.4,
+   0.776
+  ],
+  [
+   129.4,
+   0.825
+  ],
+  [
+   134.4,
+   0.81
+  ],
+  [
+   139.4,
+   0.707
+  ],
+  [
+   144.4,
+   0.72
+  ],
+  [
+   149.4,
+   0.755
+  ],
+  [
+   154.4,
+   0.698
+  ],
+  [
+   159.4,
+   0.672
+  ],
+  [
+   164.4,
+   0.654
+  ],
+  [
+   169.4,
+   0.689
+  ],
+  [
+   174.4,
+   0.776
+  ],
+  [
+   179.4,
+   0.793
+  ],
+  [
+   184.4,
+   0.591
+  ],
+  [
+   189.4,
+   0.556
+  ],
+  [
+   194.4,
+   0.538
+  ],
+  [
+   199.4,
+   0.545
+  ],
+  [
+   204.4,
+   0.548
+  ]
+ ],
+ "box_sections": [],
+ "flat_patches": [
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 0.0,
+   "area_mm2": 3011.2,
+   "label": "centre plane (closing face)"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.1,
+   "area_mm2": 369.3,
+   "label": "sidepod-top cap 27.175 mm (hard-coded in freeform.field)"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 24.0,
+   "area_mm2": 261.3,
+   "label": "halo pocket floor"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 17.65,
+   "area_mm2": 109.7,
+   "label": "ballast container floor (App. ix, internal)"
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 177.1,
+   "area_mm2": 67.5,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 8.0,
+   "area_mm2": 57.5,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 8.2,
+   "area_mm2": 57.2,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 3.0,
+   "area_mm2": 56.0,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 6.35,
+   "area_mm2": 50.3,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 9.8,
+   "area_mm2": 48.0,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.4,
+   "area_mm2": 47.6,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 39.35,
+   "area_mm2": 46.0,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.35,
+   "area_mm2": 43.0,
+   "label": "sidepod-top cap 27.175 mm (hard-coded in freeform.field)"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.2,
+   "area_mm2": 42.5,
+   "label": "sidepod-top cap 27.175 mm (hard-coded in freeform.field)"
+  },
+  {
+   "axis": "x",
+   "normal_sign": 1,
+   "at_mm": 183.55,
+   "area_mm2": 40.1,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "y",
+   "normal_sign": 1,
+   "at_mm": 14.2,
+   "area_mm2": 37.0,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.25,
+   "area_mm2": 35.0,
+   "label": "sidepod-top cap 27.175 mm (hard-coded in freeform.field)"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 26.15,
+   "area_mm2": 33.9,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 177.05,
+   "area_mm2": 30.8,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 26.3,
+   "area_mm2": 28.7,
+   "label": "UNEXPLAINED"
+  }
+ ],
+ "unexplained_flat_mm2": 600.6,
+ "cap_area_mm2": 515.3,
+ "crease_length_mm": 1327.8,
+ "body_area_mm2": 15909.4,
+ "flags": [
+  "unexplained flat patches 600.6 mm2",
+  "hard-coded sidepod-top cap 515.3 mm2"
+ ]
+}

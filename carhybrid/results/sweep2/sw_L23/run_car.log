@@ -1,0 +1,5 @@
+[run_car 08:26:01] 1-2 BODY + PARTS: parametric body sized against the manufactured parts [peak 0.0 GB]
+[run_car 08:29:35]   pass 1: body 24.191 g, car 53.252 g (+5.052); joints ; supports each [np.float64(2.39), np.float64(1.88)] [peak 5.9 GB]
+[run_car 08:29:35]   fixed skin, not sized: car 53.252 g as built [peak 5.9 GB]
+[run_car 08:29:35] 3 LEGAL [peak 5.9 GB]
+[run_car 08:31:19] done: {'n_checks': 180, 'n_failed': 3, 'failed': ['T5.1_diameter_min', 'T5.5_chamber_clear', 'block_body_inside_official_block']} [peak 5.9 GB]
