@@ -64,9 +64,19 @@ joined to or passing through the rear wing breaks its span there.
    - Element count, joint types and the support topology become discrete choices for the Bayesian layout search.
    - Chord, thickness, span, height, position and the strut numbers become continuous numbers for our hybrid
      (adjoint where DAFoam's surface sensitivity reaches them, measured steps elsewhere).
-   - The owner's earlier constraint "straight, level, no camber, no angle of attack" (2026-11-22/23) is a choice,
-     not a rule. **Owner to confirm whether it stays.** If lifted: camber, angle of attack and twist become numbers
-     within T9.5.2 ("horizontal chord") and T9.5.4 (≤ 15 mm height change).
+   - **Owner, 2026-11-28 evening:** the rear wing may take any shape the regulations allow ("have it bend"), but
+     with **no angle of attack**. This replaces the earlier "straight, level, no camber, no AoA" choice for the
+     rear wing. What that opens, each as searched numbers with nothing hard-coded:
+     - **spanwise bend:** the wing's height may vary along the span (gull, arch, droop, dihedral), within T9.5.4's
+       15.0 mm top-surface deviation over the minimum span;
+     - **planform:** sweep and a chord that varies along the span, each x-z section's chord 15.0–25.0 mm (T9.5.2);
+     - **thickness** varying along the span, 2.0–6.0 mm (T9.5.3);
+     - **a second vane** (T9.5.2: up to two elements, overlapping).
+
+     Every section's chord line stays level (AoA 0 everywhere, so no twist either). Open questions for the owner:
+     (i) camber: is a cambered section with a level chord line allowed (zero AoA but not symmetric)?
+     (ii) does the same freedom apply to the front wing (T8.6)? Until answered: rear symmetric sections; front
+     unchanged.
 4. **Tests before it is relied on:**
    - the referee's edge tests;
    - a sweep of random wing and support choices through builder and referee (target: every built car legal);
