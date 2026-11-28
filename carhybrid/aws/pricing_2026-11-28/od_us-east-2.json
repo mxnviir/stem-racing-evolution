@@ -1,0 +1,3082 @@
+{
+"p2.8xlarge": {
+"usd": 7.2,
+"vcpu": 32,
+"mem": 488.0,
+"cpu": "Intel Xeon E5-2686 v4 (Broadwell)",
+"ghz": "2.3 GHz",
+"arch": "64-bit"
+},
+"m8in.48xlarge": {
+"usd": 16.03968,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"u7i-6tb.112xlarge": {
+"usd": 62.79,
+"vcpu": 448,
+"mem": 6144.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "2.9 GHz",
+"arch": "64-bit"
+},
+"m5n.24xlarge": {
+"usd": 5.712,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"m6a.32xlarge": {
+"usd": 5.5296,
+"vcpu": 128,
+"mem": 512.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "3.6 GHz",
+"arch": "64-bit"
+},
+"r8i-flex.16xlarge": {
+"usd": 4.22304,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"trn1.32xlarge": {
+"usd": 21.5,
+"vcpu": 128,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Icelake)",
+"ghz": "Up to 3.5 GHz",
+"arch": "64-bit"
+},
+"r7a.32xlarge": {
+"usd": 9.7376,
+"vcpu": 128,
+"mem": 1024.0,
+"cpu": "AMD EPYC 9R14 Processor",
+"ghz": "Up to 3.7 GHz",
+"arch": "64-bit"
+},
+"r8idb.32xlarge": {
+"usd": 15.00608,
+"vcpu": 128,
+"mem": 1024.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"x8i.48xlarge": {
+"usd": 21.00768,
+"vcpu": 192,
+"mem": 3072.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r8ib.8xlarge": {
+"usd": 3.3472,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m8in.32xlarge": {
+"usd": 10.69312,
+"vcpu": 128,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r8idb.12xlarge": {
+"usd": 5.62728,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r7i.8xlarge": {
+"usd": 2.1168,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"c8g.48xlarge": {
+"usd": 7.63008,
+"vcpu": 192,
+"mem": 384.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"m8g.16xlarge": {
+"usd": 2.87232,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"r8ib.32xlarge": {
+"usd": 13.3888,
+"vcpu": 128,
+"mem": 1024.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"x8i.4xlarge": {
+"usd": 1.75064,
+"vcpu": 16,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"x8g.8xlarge": {
+"usd": 3.1264,
+"vcpu": 32,
+"mem": 512.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"x8g.16xlarge": {
+"usd": 6.2528,
+"vcpu": 64,
+"mem": 1024.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"r6in.8xlarge": {
+"usd": 2.78928,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"m8ib.16xlarge": {
+"usd": 5.34656,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"p5en.48xlarge": {
+"usd": 63.296,
+"vcpu": 192,
+"mem": 2048.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"trn1n.32xlarge": {
+"usd": 24.78,
+"vcpu": 128,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Icelake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"x2iedn.2xlarge": {
+"usd": 1.66725,
+"vcpu": 8,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Icelake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r6a.24xlarge": {
+"usd": 5.4432,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "3.6 GHz",
+"arch": "64-bit"
+},
+"i8ge.18xlarge": {
+"usd": 8.5428,
+"vcpu": 72,
+"mem": 576.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"h1.16xlarge": {
+"usd": 3.744,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon E5-2686 v4 (Broadwell)",
+"ghz": "2.3 GHz",
+"arch": "64-bit"
+},
+"c8id.96xlarge": {
+"usd": 21.28896,
+"vcpu": 384,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r8a.16xlarge": {
+"usd": 5.11232,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "AMD EPYC 9R45 Processor",
+"ghz": "Up to 4.5 GHz",
+"arch": "64-bit"
+},
+"r8gd.16xlarge": {
+"usd": 4.70272,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"m7g.16xlarge": {
+"usd": 2.6112,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AWS Graviton3 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"i4i.16xlarge": {
+"usd": 5.491,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r6a.48xlarge": {
+"usd": 10.8864,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "3.6 GHz",
+"arch": "64-bit"
+},
+"r6g.16xlarge": {
+"usd": 3.2256,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "AWS Graviton2 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"m6i.24xlarge": {
+"usd": 4.608,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r8in.16xlarge": {
+"usd": 6.6944,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"i8g.48xlarge": {
+"usd": 16.4736,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"m7i-flex.16xlarge": {
+"usd": 3.06432,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r8id.96xlarge": {
+"usd": 31.93344,
+"vcpu": 384,
+"mem": 3072.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"x2iedn.32xlarge": {
+"usd": 26.676,
+"vcpu": 128,
+"mem": 4096.0,
+"cpu": "Intel Xeon Scalable (Icelake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"x1e.4xlarge": {
+"usd": 3.336,
+"vcpu": 16,
+"mem": 488.0,
+"cpu": "High Frequency Intel Xeon E7-8880 v3 (Haswell)",
+"ghz": "2.3 GHz",
+"arch": "64-bit"
+},
+"m6gd.16xlarge": {
+"usd": 2.8928,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AWS Graviton2 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"m8id.48xlarge": {
+"usd": 12.52992,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m8idn.32xlarge": {
+"usd": 12.22016,
+"vcpu": 128,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"c7i.48xlarge": {
+"usd": 8.568,
+"vcpu": 192,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"r8idn.32xlarge": {
+"usd": 15.00608,
+"vcpu": 128,
+"mem": 1024.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r6i.8xlarge": {
+"usd": 2.016,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"u-18tb1.112xlarge": {
+"usd": 163.8,
+"vcpu": 448,
+"mem": 18432.0,
+"cpu": "Intel Xeon Platinum 8280L (Cascade Lake)",
+"ghz": "",
+"arch": "64-bit"
+},
+"r7g.16xlarge": {
+"usd": 3.4272,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "AWS Graviton3 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"g4dn.16xlarge": {
+"usd": 4.352,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon Family",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"m5ad.16xlarge": {
+"usd": 3.296,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AMD EPYC 7571",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"m5.24xlarge": {
+"usd": 4.608,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "Intel Xeon Platinum 8175",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"r8id.12xlarge": {
+"usd": 3.99168,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r7a.12xlarge": {
+"usd": 3.6516,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "AMD EPYC 9R14 Processor",
+"ghz": "Up to 3.7 GHz",
+"arch": "64-bit"
+},
+"i7i.8xlarge": {
+"usd": 3.0202,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Emerald Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"r6a.16xlarge": {
+"usd": 3.6288,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "3.6 GHz",
+"arch": "64-bit"
+},
+"gr6.8xlarge": {
+"usd": 2.4464,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "2.6 GHz",
+"arch": "64-bit"
+},
+"r5b.12xlarge": {
+"usd": 3.576,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"m8a.24xlarge": {
+"usd": 5.84256,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "AMD EPYC 9R45 Processor",
+"ghz": "Up to 4.5 GHz",
+"arch": "64-bit"
+},
+"m8idb.32xlarge": {
+"usd": 12.22016,
+"vcpu": 128,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"c9gd.48xlarge": {
+"usd": 10.2528,
+"vcpu": 192,
+"mem": 384.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"m9gd.24xlarge": {
+"usd": 6.0336,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"m6g.16xlarge": {
+"usd": 2.464,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AWS Graviton2 Processor",
+"ghz": "",
+"arch": "64-bit"
+},
+"c8i.96xlarge": {
+"usd": 17.99232,
+"vcpu": 384,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r5.16xlarge": {
+"usd": 4.032,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon Platinum 8175",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"c8a.48xlarge": {
+"usd": 10.34592,
+"vcpu": 192,
+"mem": 384.0,
+"cpu": "AMD EPYC 9R45 Processor",
+"ghz": "Up to 4.5 GHz",
+"arch": "64-bit"
+},
+"r5.12xlarge": {
+"usd": 3.024,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Platinum 8175",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"z1d.12xlarge": {
+"usd": 4.464,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Platinum 8151",
+"ghz": "4 GHz",
+"arch": "64-bit"
+},
+"r7gd.16xlarge": {
+"usd": 4.3546,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "AWS Graviton3 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"u-12tb1.112xlarge": {
+"usd": 109.2,
+"vcpu": 448,
+"mem": 12288.0,
+"cpu": "Intel Xeon Scalable (Skylake)",
+"ghz": "",
+"arch": "64-bit"
+},
+"m8g.24xlarge": {
+"usd": 4.30848,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"r5d.24xlarge": {
+"usd": 6.912,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon Platinum 8175",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"m8ib.48xlarge": {
+"usd": 16.03968,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r9g.12xlarge": {
+"usd": 3.08208,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"m5ad.24xlarge": {
+"usd": 4.944,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "AMD EPYC 7571",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"m5d.16xlarge": {
+"usd": 3.616,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon Platinum 8175",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"r5ad.16xlarge": {
+"usd": 4.192,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "AMD EPYC 7571",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"m7i.24xlarge": {
+"usd": 4.8384,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"r8idn.12xlarge": {
+"usd": 5.62728,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r8idn.96xlarge": {
+"usd": 45.01824,
+"vcpu": 384,
+"mem": 3072.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m8i.24xlarge": {
+"usd": 5.08032,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m4.16xlarge": {
+"usd": 3.2,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon E5-2686 v4 (Broadwell)",
+"ghz": "2.4 GHz",
+"arch": "64-bit"
+},
+"m5a.24xlarge": {
+"usd": 4.128,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "AMD EPYC 7571",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"c8i.48xlarge": {
+"usd": 8.99616,
+"vcpu": 192,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m8azn.24xlarge": {
+"usd": 9.91008,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "AMD EPYC 9575F",
+"ghz": "Up to 5 GHz",
+"arch": "64-bit"
+},
+"x1e.8xlarge": {
+"usd": 6.672,
+"vcpu": 32,
+"mem": 976.0,
+"cpu": "High Frequency Intel Xeon E7-8880 v3 (Haswell)",
+"ghz": "2.3 GHz",
+"arch": "64-bit"
+},
+"r7a.48xlarge": {
+"usd": 14.6064,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "AMD EPYC 9R14 Processor",
+"ghz": "Up to 3.7 GHz",
+"arch": "64-bit"
+},
+"x1.16xlarge": {
+"usd": 6.669,
+"vcpu": 64,
+"mem": 976.0,
+"cpu": "High Frequency Intel Xeon E7-8880 v3 (Haswell)",
+"ghz": "2.3 GHz",
+"arch": "64-bit"
+},
+"r8in.48xlarge": {
+"usd": 20.0832,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"g4ad.16xlarge": {
+"usd": 3.468,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AMD EPYC 7R32",
+"ghz": "2.8 GHz",
+"arch": "64-bit"
+},
+"r5b.16xlarge": {
+"usd": 4.768,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"r7iz.12xlarge": {
+"usd": 4.464,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r5b.8xlarge": {
+"usd": 2.384,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"r7i.16xlarge": {
+"usd": 4.2336,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"m8idn.48xlarge": {
+"usd": 18.33024,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m8ib.24xlarge": {
+"usd": 8.01984,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"c9g.48xlarge": {
+"usd": 8.31744,
+"vcpu": 192,
+"mem": 384.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"r6i.32xlarge": {
+"usd": 8.064,
+"vcpu": 128,
+"mem": 1024.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"m8ib.96xlarge": {
+"usd": 32.07936,
+"vcpu": 384,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"u7in-24tb.224xlarge": {
+"usd": 270.73128,
+"vcpu": 896,
+"mem": 24576.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "2.9 GHz",
+"arch": "64-bit"
+},
+"i8g.8xlarge": {
+"usd": 2.7456,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"g7.48xlarge": {
+"usd": 28.51328,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m8idn.16xlarge": {
+"usd": 6.11008,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"c8i.32xlarge": {
+"usd": 5.99744,
+"vcpu": 128,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"x2idn.32xlarge": {
+"usd": 13.338,
+"vcpu": 128,
+"mem": 2048.0,
+"cpu": "Intel Xeon Scalable (Icelake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"m8id.96xlarge": {
+"usd": 25.05984,
+"vcpu": 384,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m8gd.16xlarge": {
+"usd": 3.69024,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"g7e.12xlarge": {
+"usd": 8.28608,
+"vcpu": 48,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Emerald Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"i3en.24xlarge": {
+"usd": 10.848,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon Platinum 8175",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"i8ge.12xlarge": {
+"usd": 5.6952,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"m7i.16xlarge": {
+"usd": 3.2256,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"r5n.16xlarge": {
+"usd": 4.768,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"g6e.48xlarge": {
+"usd": 30.13118,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "2.6 GHz",
+"arch": "64-bit"
+},
+"m6idn.32xlarge": {
+"usd": 10.18368,
+"vcpu": 128,
+"mem": 512.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"i7ie.24xlarge": {
+"usd": 12.4752,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Emerald Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"x2gd.12xlarge": {
+"usd": 4.008,
+"vcpu": 48,
+"mem": 768.0,
+"cpu": "AWS Graviton2 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"c6in.32xlarge": {
+"usd": 7.2576,
+"vcpu": 128,
+"mem": 256.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r8i.12xlarge": {
+"usd": 3.33408,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m7a.16xlarge": {
+"usd": 3.70944,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AMD EPYC 9R14 Processor",
+"ghz": "Up to 3.7 GHz",
+"arch": "64-bit"
+},
+"m6id.32xlarge": {
+"usd": 7.5936,
+"vcpu": 128,
+"mem": 512.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"m5dn.24xlarge": {
+"usd": 6.528,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"m8i.96xlarge": {
+"usd": 20.32128,
+"vcpu": 384,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r6i.12xlarge": {
+"usd": 3.024,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"im4gn.16xlarge": {
+"usd": 5.82067,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AWS Graviton2 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"c8in.32xlarge": {
+"usd": 8.70912,
+"vcpu": 128,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m9gd.48xlarge": {
+"usd": 12.0672,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"m7gd.16xlarge": {
+"usd": 3.4171,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AWS Graviton3 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"hpc7a.48xlarge": {
+"usd": 7.2,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "AMD EPYC 9R14 Processor",
+"ghz": "3.7 GHz",
+"arch": "64-bit"
+},
+"m8idb.24xlarge": {
+"usd": 9.16512,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r7gd.12xlarge": {
+"usd": 3.2659,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "AWS Graviton3 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"x8g.4xlarge": {
+"usd": 1.5632,
+"vcpu": 16,
+"mem": 256.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"m8in.96xlarge": {
+"usd": 32.07936,
+"vcpu": 384,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m9g.16xlarge": {
+"usd": 3.13088,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"u-24tb1.112xlarge": {
+"usd": 218.4,
+"vcpu": 448,
+"mem": 24576.0,
+"cpu": "Intel Xeon Platinum 8280L (Cascade Lake)",
+"ghz": "",
+"arch": "64-bit"
+},
+"p5.4xlarge": {
+"usd": 0.0,
+"vcpu": 16,
+"mem": 256.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "2.95 GHz",
+"arch": "64-bit"
+},
+"m8idb.96xlarge": {
+"usd": 36.66048,
+"vcpu": 384,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"c7a.32xlarge": {
+"usd": 6.56896,
+"vcpu": 128,
+"mem": 256.0,
+"cpu": "AMD EPYC 9R14 Processor",
+"ghz": "Up to 3.7 GHz",
+"arch": "64-bit"
+},
+"g7e.8xlarge": {
+"usd": 5.26824,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Emerald Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"i8g.16xlarge": {
+"usd": 5.4912,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"m8idb.48xlarge": {
+"usd": 18.33024,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r6idn.32xlarge": {
+"usd": 12.50496,
+"vcpu": 128,
+"mem": 1024.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r8i.16xlarge": {
+"usd": 4.44544,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m6idn.24xlarge": {
+"usd": 7.63776,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"trn3.48xlarge": {
+"usd": 171.928,
+"vcpu": 192,
+"mem": 2048.0,
+"cpu": "Intel Xeon Scalable (Emerald Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"r8ib.96xlarge": {
+"usd": 40.1664,
+"vcpu": 384,
+"mem": 3072.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"hpc8a.96xlarge": {
+"usd": 7.92,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "AMD EPYC 9R45 Processor",
+"ghz": "4.5 GHz",
+"arch": "64-bit"
+},
+"r8id.16xlarge": {
+"usd": 5.32224,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"x2gd.16xlarge": {
+"usd": 5.344,
+"vcpu": 64,
+"mem": 1024.0,
+"cpu": "AWS Graviton2 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"x2gd.8xlarge": {
+"usd": 2.672,
+"vcpu": 32,
+"mem": 512.0,
+"cpu": "AWS Graviton2 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"r6in.16xlarge": {
+"usd": 5.57856,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r6id.16xlarge": {
+"usd": 4.8384,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"x1.32xlarge": {
+"usd": 13.338,
+"vcpu": 128,
+"mem": 1952.0,
+"cpu": "High Frequency Intel Xeon E7-8880 v3 (Haswell)",
+"ghz": "2.3 GHz",
+"arch": "64-bit"
+},
+"r9gd.8xlarge": {
+"usd": 2.56288,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"m8a.48xlarge": {
+"usd": 11.68512,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "AMD EPYC 9R45 Processor",
+"ghz": "Up to 4.5 GHz",
+"arch": "64-bit"
+},
+"r7i.24xlarge": {
+"usd": 6.3504,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"r8id.48xlarge": {
+"usd": 15.96672,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"c8in.48xlarge": {
+"usd": 13.06368,
+"vcpu": 192,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r8g.12xlarge": {
+"usd": 2.82768,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"m6in.16xlarge": {
+"usd": 4.45536,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"d3.8xlarge": {
+"usd": 3.99552,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"m6a.24xlarge": {
+"usd": 4.1472,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "3.6 GHz",
+"arch": "64-bit"
+},
+"r8id.8xlarge": {
+"usd": 2.66112,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"hpc7a.12xlarge": {
+"usd": 7.2,
+"vcpu": 24,
+"mem": 768.0,
+"cpu": "AMD EPYC 9R14 Processor",
+"ghz": "3.7 GHz",
+"arch": "64-bit"
+},
+"r8i.32xlarge": {
+"usd": 8.89088,
+"vcpu": 128,
+"mem": 1024.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"inf2.48xlarge": {
+"usd": 12.98127,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "2.95 GHz",
+"arch": "64-bit"
+},
+"r8i.8xlarge": {
+"usd": 2.22272,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"u-9tb1.112xlarge": {
+"usd": 81.9,
+"vcpu": 448,
+"mem": 9216.0,
+"cpu": "Intel Xeon Scalable (Skylake)",
+"ghz": "",
+"arch": "64-bit"
+},
+"g7.24xlarge": {
+"usd": 14.25664,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"c7a.48xlarge": {
+"usd": 9.85344,
+"vcpu": 192,
+"mem": 384.0,
+"cpu": "AMD EPYC 9R14 Processor",
+"ghz": "Up to 3.7 GHz",
+"arch": "64-bit"
+},
+"r7iz.16xlarge": {
+"usd": 5.952,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r8idb.96xlarge": {
+"usd": 45.01824,
+"vcpu": 384,
+"mem": 3072.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r5a.8xlarge": {
+"usd": 1.808,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AMD EPYC 7571",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"r8in.96xlarge": {
+"usd": 40.1664,
+"vcpu": 384,
+"mem": 3072.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r8ib.24xlarge": {
+"usd": 10.0416,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"u-3tb1.56xlarge": {
+"usd": 27.3,
+"vcpu": 224,
+"mem": 3072.0,
+"cpu": "Intel Xeon Scalable (Skylake)",
+"ghz": "2.1 GHz",
+"arch": "64-bit"
+},
+"g6e.16xlarge": {
+"usd": 7.57719,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "2.6 GHz",
+"arch": "64-bit"
+},
+"r5n.12xlarge": {
+"usd": 3.576,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"m6a.16xlarge": {
+"usd": 2.7648,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "3.6 GHz",
+"arch": "64-bit"
+},
+"u7in-16tb.224xlarge": {
+"usd": 180.47558,
+"vcpu": 896,
+"mem": 16384.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "2.9 GHz",
+"arch": "32-bit or 64-bit"
+},
+"m5.16xlarge": {
+"usd": 3.072,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon Platinum 8175",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"m6i.16xlarge": {
+"usd": 3.072,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"i7i.16xlarge": {
+"usd": 6.0403,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Emerald Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"c8gn.48xlarge": {
+"usd": 11.376,
+"vcpu": 192,
+"mem": 384.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.8 GHz",
+"arch": "64-bit"
+},
+"m8i.32xlarge": {
+"usd": 6.77376,
+"vcpu": 128,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r8ib.16xlarge": {
+"usd": 6.6944,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r6in.24xlarge": {
+"usd": 8.36784,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"m8in.16xlarge": {
+"usd": 5.34656,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r9gd.48xlarge": {
+"usd": 15.37728,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"r6id.32xlarge": {
+"usd": 9.6768,
+"vcpu": 128,
+"mem": 1024.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"trn2.48xlarge": {
+"usd": 0.0,
+"vcpu": 192,
+"mem": 2048.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "Up to 3.9 GHz",
+"arch": "64-bit"
+},
+"r7i.48xlarge": {
+"usd": 12.7008,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"r6in.12xlarge": {
+"usd": 4.18392,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r6g.8xlarge": {
+"usd": 1.6128,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AWS Graviton2 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"u7i-8tb.112xlarge": {
+"usd": 83.72,
+"vcpu": 448,
+"mem": 8192.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "2.9 GHz",
+"arch": "64-bit"
+},
+"r6gd.8xlarge": {
+"usd": 1.8432,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AWS Graviton2 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"m9g.48xlarge": {
+"usd": 9.39264,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"r5n.24xlarge": {
+"usd": 7.152,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"m8gd.48xlarge": {
+"usd": 11.07072,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"r6idn.12xlarge": {
+"usd": 4.68936,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"g6.16xlarge": {
+"usd": 3.3968,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "2.6 GHz",
+"arch": "64-bit"
+},
+"m9gd.16xlarge": {
+"usd": 4.0224,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"i4i.12xlarge": {
+"usd": 4.118,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r8ib.12xlarge": {
+"usd": 5.0208,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"i7i.12xlarge": {
+"usd": 4.5302,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Emerald Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"r8gd.24xlarge": {
+"usd": 7.05408,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"r8in.24xlarge": {
+"usd": 10.0416,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r5a.12xlarge": {
+"usd": 2.712,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "AMD EPYC 7571",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"x8i.12xlarge": {
+"usd": 5.25192,
+"vcpu": 48,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r8a.24xlarge": {
+"usd": 7.66848,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "AMD EPYC 9R45 Processor",
+"ghz": "Up to 4.5 GHz",
+"arch": "64-bit"
+},
+"r8idn.8xlarge": {
+"usd": 3.75152,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"p5.48xlarge": {
+"usd": 0.0,
+"vcpu": 192,
+"mem": 2048.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "2.95 GHz",
+"arch": "64-bit"
+},
+"g5.24xlarge": {
+"usd": 8.144,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "AMD EPYC 7R32",
+"ghz": "2.8 GHz",
+"arch": "64-bit"
+},
+"x2iedn.8xlarge": {
+"usd": 6.669,
+"vcpu": 32,
+"mem": 1024.0,
+"cpu": "Intel Xeon Scalable (Icelake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"m6idn.16xlarge": {
+"usd": 5.09184,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"x8i.8xlarge": {
+"usd": 3.50128,
+"vcpu": 32,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r8a.48xlarge": {
+"usd": 15.33696,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "AMD EPYC 9R45 Processor",
+"ghz": "Up to 4.5 GHz",
+"arch": "64-bit"
+},
+"c6a.32xlarge": {
+"usd": 4.896,
+"vcpu": 128,
+"mem": 256.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "3.6 GHz",
+"arch": "64-bit"
+},
+"r5dn.16xlarge": {
+"usd": 5.344,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"x1e.32xlarge": {
+"usd": 26.688,
+"vcpu": 128,
+"mem": 3904.0,
+"cpu": "High Frequency Intel Xeon E7-8880 v3 (Haswell)",
+"ghz": "2.3 GHz",
+"arch": "64-bit"
+},
+"r6g.12xlarge": {
+"usd": 2.4192,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "AWS Graviton2 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"r6idn.24xlarge": {
+"usd": 9.37872,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r6idn.8xlarge": {
+"usd": 3.12624,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"p3.16xlarge": {
+"usd": 24.48,
+"vcpu": 64,
+"mem": 488.0,
+"cpu": "Intel Xeon E5-2686 v4 (Broadwell)",
+"ghz": "2.3 GHz",
+"arch": "64-bit"
+},
+"i4g.8xlarge": {
+"usd": 2.47104,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AWS Graviton2 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"m6a.48xlarge": {
+"usd": 8.2944,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "3.6 GHz",
+"arch": "64-bit"
+},
+"c6id.32xlarge": {
+"usd": 6.4512,
+"vcpu": 128,
+"mem": 256.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r8in.32xlarge": {
+"usd": 13.3888,
+"vcpu": 128,
+"mem": 1024.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"x2idn.24xlarge": {
+"usd": 10.0035,
+"vcpu": 96,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Icelake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"m8a.16xlarge": {
+"usd": 3.89504,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AMD EPYC 9R45 Processor",
+"ghz": "Up to 4.5 GHz",
+"arch": "64-bit"
+},
+"m8g.48xlarge": {
+"usd": 8.61696,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"i4i.8xlarge": {
+"usd": 2.746,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r5.24xlarge": {
+"usd": 6.048,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon Platinum 8175",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"r6id.8xlarge": {
+"usd": 2.4192,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r6id.12xlarge": {
+"usd": 3.6288,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"m8i.48xlarge": {
+"usd": 10.16064,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r8gd.48xlarge": {
+"usd": 14.10816,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"r5dn.24xlarge": {
+"usd": 8.016,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"r6gd.12xlarge": {
+"usd": 2.7648,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "AWS Graviton2 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"r7a.24xlarge": {
+"usd": 7.3032,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "AMD EPYC 9R14 Processor",
+"ghz": "Up to 3.7 GHz",
+"arch": "64-bit"
+},
+"r8idb.8xlarge": {
+"usd": 3.75152,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r7g.12xlarge": {
+"usd": 2.5704,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "AWS Graviton3 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"r9g.48xlarge": {
+"usd": 12.32832,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"hpc7a.24xlarge": {
+"usd": 7.2,
+"vcpu": 48,
+"mem": 768.0,
+"cpu": "AMD EPYC 9R14 Processor",
+"ghz": "3.7 GHz",
+"arch": "64-bit"
+},
+"r7iz.8xlarge": {
+"usd": 2.976,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r6gd.16xlarge": {
+"usd": 3.6864,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "AWS Graviton2 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"hpc7a.96xlarge": {
+"usd": 7.2,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "AMD EPYC 9R14 Processor",
+"ghz": "3.7 GHz",
+"arch": "64-bit"
+},
+"x8i.16xlarge": {
+"usd": 7.00256,
+"vcpu": 64,
+"mem": 1024.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"g6e.24xlarge": {
+"usd": 15.06559,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "2.6 GHz",
+"arch": "64-bit"
+},
+"r7g.8xlarge": {
+"usd": 1.7136,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AWS Graviton3 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"r8gd.12xlarge": {
+"usd": 3.52704,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"m9g.24xlarge": {
+"usd": 4.69632,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"r8id.24xlarge": {
+"usd": 7.98336,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m8idb.16xlarge": {
+"usd": 6.11008,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"g6.24xlarge": {
+"usd": 6.6752,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "2.6 GHz",
+"arch": "64-bit"
+},
+"r6a.12xlarge": {
+"usd": 2.7216,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "3.6 GHz",
+"arch": "64-bit"
+},
+"r9g.8xlarge": {
+"usd": 2.05472,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"m6in.32xlarge": {
+"usd": 8.91072,
+"vcpu": 128,
+"mem": 512.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"m7a.24xlarge": {
+"usd": 5.56416,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "AMD EPYC 9R14 Processor",
+"ghz": "Up to 3.7 GHz",
+"arch": "64-bit"
+},
+"r6a.32xlarge": {
+"usd": 7.2576,
+"vcpu": 128,
+"mem": 1024.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "3.6 GHz",
+"arch": "64-bit"
+},
+"m8id.24xlarge": {
+"usd": 6.26496,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"x2iedn.4xlarge": {
+"usd": 3.3345,
+"vcpu": 16,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Icelake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r8i.96xlarge": {
+"usd": 26.67264,
+"vcpu": 384,
+"mem": 3072.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r7a.16xlarge": {
+"usd": 4.8688,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "AMD EPYC 9R14 Processor",
+"ghz": "Up to 3.7 GHz",
+"arch": "64-bit"
+},
+"r5dn.8xlarge": {
+"usd": 2.672,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"g5.48xlarge": {
+"usd": 16.288,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "AMD EPYC 7R32",
+"ghz": "2.8 GHz",
+"arch": "64-bit"
+},
+"r8idn.24xlarge": {
+"usd": 11.25456,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"g6e.12xlarge": {
+"usd": 10.49264,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "2.6 GHz",
+"arch": "64-bit"
+},
+"m5a.16xlarge": {
+"usd": 2.752,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AMD EPYC 7571",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"r8i-flex.8xlarge": {
+"usd": 2.11152,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"i4i.24xlarge": {
+"usd": 8.2368,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"u7i-12tb.224xlarge": {
+"usd": 125.58182,
+"vcpu": 896,
+"mem": 12288.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "2.9 GHz",
+"arch": "64-bit"
+},
+"r7a.8xlarge": {
+"usd": 2.4344,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AMD EPYC 9R14 Processor",
+"ghz": "Up to 3.7 GHz",
+"arch": "64-bit"
+},
+"u-6tb1.112xlarge": {
+"usd": 54.6,
+"vcpu": 448,
+"mem": 6144.0,
+"cpu": "Intel Xeon Scalable (Skylake)",
+"ghz": "",
+"arch": "64-bit"
+},
+"r6in.32xlarge": {
+"usd": 11.15712,
+"vcpu": 128,
+"mem": 1024.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"m6id.24xlarge": {
+"usd": 5.6952,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r8idb.16xlarge": {
+"usd": 7.50304,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m8idn.24xlarge": {
+"usd": 9.16512,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r8i-flex.12xlarge": {
+"usd": 3.16728,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r5ad.8xlarge": {
+"usd": 2.096,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AMD EPYC 7571",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"r8g.48xlarge": {
+"usd": 11.31072,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"g3.16xlarge": {
+"usd": 4.56,
+"vcpu": 64,
+"mem": 488.0,
+"cpu": "Intel Xeon E5-2686 v4 (Broadwell)",
+"ghz": "2.3 GHz",
+"arch": "64-bit"
+},
+"i7i.24xlarge": {
+"usd": 9.0605,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Emerald Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"x8i.32xlarge": {
+"usd": 14.00512,
+"vcpu": 128,
+"mem": 2048.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r5a.24xlarge": {
+"usd": 5.424,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "AMD EPYC 7571",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"g5.16xlarge": {
+"usd": 4.096,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "AMD EPYC 7R32",
+"ghz": "2.8 GHz",
+"arch": "64-bit"
+},
+"x8i.64xlarge": {
+"usd": 28.01024,
+"vcpu": 256,
+"mem": 4096.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m8i-flex.16xlarge": {
+"usd": 3.2176,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"i4i.32xlarge": {
+"usd": 10.9824,
+"vcpu": 128,
+"mem": 1024.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"c6a.48xlarge": {
+"usd": 7.344,
+"vcpu": 192,
+"mem": 384.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "3.6 GHz",
+"arch": "64-bit"
+},
+"r5.8xlarge": {
+"usd": 2.016,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Platinum 8175",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"c8gd.48xlarge": {
+"usd": 9.40608,
+"vcpu": 192,
+"mem": 384.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"r5d.16xlarge": {
+"usd": 4.608,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon Platinum 8175",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"r8in.12xlarge": {
+"usd": 5.0208,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"hpc6id.32xlarge": {
+"usd": 5.7,
+"vcpu": 64,
+"mem": 1024.0,
+"cpu": "Intel Xeon Scalable (Icelake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r7iz.32xlarge": {
+"usd": 11.904,
+"vcpu": 128,
+"mem": 1024.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"x1e.16xlarge": {
+"usd": 13.344,
+"vcpu": 64,
+"mem": 1952.0,
+"cpu": "High Frequency Intel Xeon E7-8880 v3 (Haswell)",
+"ghz": "2.3 GHz",
+"arch": "64-bit"
+},
+"m5dn.16xlarge": {
+"usd": 4.352,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"r8i.24xlarge": {
+"usd": 6.66816,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m5n.16xlarge": {
+"usd": 3.808,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"r8g.24xlarge": {
+"usd": 5.65536,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"m6id.16xlarge": {
+"usd": 3.7968,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"c8in.96xlarge": {
+"usd": 26.12736,
+"vcpu": 384,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m8in.24xlarge": {
+"usd": 8.01984,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"i8g.24xlarge": {
+"usd": 8.2368,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"r6id.24xlarge": {
+"usd": 7.2576,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r8a.8xlarge": {
+"usd": 2.55616,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AMD EPYC 9R45 Processor",
+"ghz": "Up to 4.5 GHz",
+"arch": "64-bit"
+},
+"r5ad.24xlarge": {
+"usd": 6.288,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "AMD EPYC 7571",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"g7e.24xlarge": {
+"usd": 16.57216,
+"vcpu": 96,
+"mem": 1024.0,
+"cpu": "Intel Xeon Scalable (Emerald Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"c8gb.48xlarge": {
+"usd": 11.376,
+"vcpu": 192,
+"mem": 384.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.8 GHz",
+"arch": "64-bit"
+},
+"r5b.24xlarge": {
+"usd": 7.152,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"c8id.32xlarge": {
+"usd": 7.09632,
+"vcpu": 128,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r5dn.12xlarge": {
+"usd": 4.008,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"m8idn.96xlarge": {
+"usd": 36.66048,
+"vcpu": 384,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r8i.48xlarge": {
+"usd": 13.33632,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m8id.16xlarge": {
+"usd": 4.17664,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m7a.48xlarge": {
+"usd": 11.12832,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "AMD EPYC 9R14 Processor",
+"ghz": "Up to 3.7 GHz",
+"arch": "64-bit"
+},
+"r5d.8xlarge": {
+"usd": 2.304,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Platinum 8175",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"r9g.16xlarge": {
+"usd": 4.10944,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"r7gd.8xlarge": {
+"usd": 2.1773,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AWS Graviton3 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"i7ie.48xlarge": {
+"usd": 24.9504,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Emerald Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"r8idn.16xlarge": {
+"usd": 7.50304,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"p2.16xlarge": {
+"usd": 14.4,
+"vcpu": 64,
+"mem": 732.0,
+"cpu": "Intel Xeon E5-2686 v4 (Broadwell)",
+"ghz": "2.3 GHz",
+"arch": "64-bit"
+},
+"p4d.24xlarge": {
+"usd": 21.95764,
+"vcpu": 96,
+"mem": 1152.0,
+"cpu": "Intel Xeon Platinum 8275L",
+"ghz": "3 GHz",
+"arch": "64-bit"
+},
+"m5d.24xlarge": {
+"usd": 5.424,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "Intel Xeon Platinum 8175",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"p5e.48xlarge": {
+"usd": 63.296,
+"vcpu": 192,
+"mem": 2048.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "2.95 GHz",
+"arch": "64-bit"
+},
+"inf2.24xlarge": {
+"usd": 6.49063,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "2.95 GHz",
+"arch": "64-bit"
+},
+"r9gd.16xlarge": {
+"usd": 5.12576,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"i8g.12xlarge": {
+"usd": 4.1184,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"i7i.48xlarge": {
+"usd": 18.121,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Emerald Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"i4g.16xlarge": {
+"usd": 4.94208,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "AWS Graviton2 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"r8g.16xlarge": {
+"usd": 3.77024,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"x2gd.4xlarge": {
+"usd": 1.336,
+"vcpu": 16,
+"mem": 256.0,
+"cpu": "AWS Graviton2 Processor",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"g6e.8xlarge": {
+"usd": 4.52856,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "2.6 GHz",
+"arch": "64-bit"
+},
+"i3en.12xlarge": {
+"usd": 5.424,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Platinum 8175",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"r8g.8xlarge": {
+"usd": 1.88512,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"x8i.24xlarge": {
+"usd": 10.50384,
+"vcpu": 96,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"m6in.24xlarge": {
+"usd": 6.68304,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r7i.12xlarge": {
+"usd": 3.1752,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"m8ib.32xlarge": {
+"usd": 10.69312,
+"vcpu": 128,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r6i.16xlarge": {
+"usd": 4.032,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"m8gd.24xlarge": {
+"usd": 5.53536,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"g7e.48xlarge": {
+"usd": 33.14432,
+"vcpu": 192,
+"mem": 2048.0,
+"cpu": "Intel Xeon Scalable (Emerald Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"r4.16xlarge": {
+"usd": 4.256,
+"vcpu": 64,
+"mem": 488.0,
+"cpu": "Intel Xeon E5-2686 v4 (Broadwell)",
+"ghz": "2.3 GHz",
+"arch": "64-bit"
+},
+"r8idn.48xlarge": {
+"usd": 22.50912,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"g6.48xlarge": {
+"usd": 13.3504,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "2.6 GHz",
+"arch": "64-bit"
+},
+"x8g.48xlarge": {
+"usd": 18.7584,
+"vcpu": 192,
+"mem": 3072.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"r6i.24xlarge": {
+"usd": 6.048,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"c6i.32xlarge": {
+"usd": 5.44,
+"vcpu": 128,
+"mem": 256.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"m6i.32xlarge": {
+"usd": 6.144,
+"vcpu": 128,
+"mem": 512.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"hpc6a.48xlarge": {
+"usd": 2.88,
+"vcpu": 96,
+"mem": 384.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "2.95 GHz",
+"arch": "64-bit"
+},
+"i3.16xlarge": {
+"usd": 4.992,
+"vcpu": 64,
+"mem": 488.0,
+"cpu": "Intel Xeon E5-2686 v4 (Broadwell)",
+"ghz": "2.3 GHz",
+"arch": "64-bit"
+},
+"r6a.8xlarge": {
+"usd": 1.8144,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AMD EPYC 7R13 Processor",
+"ghz": "3.6 GHz",
+"arch": "64-bit"
+},
+"x8i.96xlarge": {
+"usd": 48.74438,
+"vcpu": 384,
+"mem": 6144.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r5n.8xlarge": {
+"usd": 2.384,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Platinum 8259 (Cascade Lake)",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"r5ad.12xlarge": {
+"usd": 3.144,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "AMD EPYC 7571",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"x8g.12xlarge": {
+"usd": 4.6896,
+"vcpu": 48,
+"mem": 768.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"m7a.32xlarge": {
+"usd": 7.41888,
+"vcpu": 128,
+"mem": 512.0,
+"cpu": "AMD EPYC 9R14 Processor",
+"ghz": "Up to 3.7 GHz",
+"arch": "64-bit"
+},
+"m7i.48xlarge": {
+"usd": 9.6768,
+"vcpu": 192,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Sapphire Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"r9gd.12xlarge": {
+"usd": 3.84432,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"r8a.12xlarge": {
+"usd": 3.83424,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "AMD EPYC 9R45 Processor",
+"ghz": "Up to 4.5 GHz",
+"arch": "64-bit"
+},
+"i7ie.18xlarge": {
+"usd": 9.3564,
+"vcpu": 72,
+"mem": 576.0,
+"cpu": "Intel Xeon Scalable (Emerald Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"i7ie.12xlarge": {
+"usd": 6.2376,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Emerald Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"m8id.32xlarge": {
+"usd": 8.35328,
+"vcpu": 128,
+"mem": 512.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r6idn.16xlarge": {
+"usd": 6.25248,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "Intel Xeon 8375C (Ice Lake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r5a.16xlarge": {
+"usd": 3.616,
+"vcpu": 64,
+"mem": 512.0,
+"cpu": "AMD EPYC 7571",
+"ghz": "2.5 GHz",
+"arch": "64-bit"
+},
+"r8idb.24xlarge": {
+"usd": 11.25456,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r8in.8xlarge": {
+"usd": 3.3472,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"r8id.32xlarge": {
+"usd": 10.64448,
+"vcpu": 128,
+"mem": 1024.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"i8ge.48xlarge": {
+"usd": 22.7808,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"i8ge.24xlarge": {
+"usd": 11.3904,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"x8g.24xlarge": {
+"usd": 9.3792,
+"vcpu": 96,
+"mem": 1536.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"r9gd.24xlarge": {
+"usd": 7.68864,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"r8ib.48xlarge": {
+"usd": 20.0832,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"x2idn.16xlarge": {
+"usd": 6.669,
+"vcpu": 64,
+"mem": 1024.0,
+"cpu": "Intel Xeon Scalable (Icelake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"r8gd.8xlarge": {
+"usd": 2.35136,
+"vcpu": 32,
+"mem": 256.0,
+"cpu": "AWS Graviton4 Processor",
+"ghz": "2.7 GHz",
+"arch": "64-bit"
+},
+"r9g.24xlarge": {
+"usd": 6.16416,
+"vcpu": 96,
+"mem": 768.0,
+"cpu": "AWS Graviton5 Processor",
+"ghz": "3.3 GHz",
+"arch": "64-bit"
+},
+"c8id.48xlarge": {
+"usd": 10.64448,
+"vcpu": 192,
+"mem": 384.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"u-6tb1.56xlarge": {
+"usd": 46.40391,
+"vcpu": 224,
+"mem": 6144.0,
+"cpu": "Intel Xeon Scalable (Skylake)",
+"ghz": "",
+"arch": "64-bit"
+},
+"m8i.16xlarge": {
+"usd": 3.38688,
+"vcpu": 64,
+"mem": 256.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"p6-b200.48xlarge": {
+"usd": 113.9328,
+"vcpu": 192,
+"mem": 2048.0,
+"cpu": "Intel Xeon Scalable (Emerald Rapids)",
+"ghz": "3.2 GHz",
+"arch": "64-bit"
+},
+"r5d.12xlarge": {
+"usd": 3.456,
+"vcpu": 48,
+"mem": 384.0,
+"cpu": "Intel Xeon Platinum 8175",
+"ghz": "3.1 GHz",
+"arch": "64-bit"
+},
+"r8idb.48xlarge": {
+"usd": 22.50912,
+"vcpu": 192,
+"mem": 1536.0,
+"cpu": "Intel Xeon Scalable (Granite Rapids)",
+"ghz": "3.9 GHz",
+"arch": "64-bit"
+},
+"x2iedn.16xlarge": {
+"usd": 13.338,
+"vcpu": 64,
+"mem": 2048.0,
+"cpu": "Intel Xeon Scalable (Icelake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+},
+"x2iedn.24xlarge": {
+"usd": 20.007,
+"vcpu": 96,
+"mem": 3072.0,
+"cpu": "Intel Xeon Scalable (Icelake)",
+"ghz": "3.5 GHz",
+"arch": "64-bit"
+}
+}

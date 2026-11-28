@@ -34,6 +34,7 @@ finish() {
   [ "${NO_POWEROFF:-0}" = 1 ] || { sync; shutdown -h now; }
   exit 0
 }
+$AWS s3 cp --only-show-errors "$PREFIX/status.json" "$W/status.json" > /dev/null 2>&1 || true   # a resumed run keeps its record
 status setup
 ( while :; do sleep 60; push_status; done ) & PUSHER=$!
 trap 'kill $PUSHER 2>/dev/null' EXIT
@@ -84,7 +85,7 @@ for i, c in enumerate(m["cases"]):
     u = c.get("u", "zero"); u = u if isinstance(u, str) else json.dumps(u)
     lay = c.get("layout", "team"); lay = lay if isinstance(lay, str) else json.dumps(lay)
     env = {"NAME": c["name"], "LAYOUT": lay, "U": u or "zero", "K": g("k") or "0",
-           "BG_DIV": g("bg_div") or str(m["bg_div"]), "GRID": g("grid"), "NP": g("np"), "SCORE_NP": g("score_np") or "4",
+           "BG_DIV": g("bg_div") or str(m["bg_div"]), "GRID": g("grid"), "NP": g("np"), "SCORE_NP": g("score_np"),
            "GATE_DOMAIN_JSON": dom, "DAF_PRIMAL_ONLY": "1" if c.get("primal_only") else "",
            "DAF_FUNCS": g("funcs") or "D,L", "DAF_PRIMAL_ITERS": g("daf_primal_iters") or "300",
            "DAF_GMRES_TOL": g("gmres_tol") or "1e-6", "DAF_GMRES_ITERS": g("gmres_iters") or "6000",
@@ -93,12 +94,20 @@ for i, c in enumerate(m["cases"]):
     (d / f"{i:02d}_{c['name']}.env").write_text("".join(f"export {k}={shlex.quote(v)}\n" for k, v in env.items()))
 PY
 STOP_ON_FAIL=$(python3 -c "import json; print(1 if json.load(open('$M')).get('stop_on_fail', True) else 0)")
+# MPI ranks: one per PHYSICAL core (sparse CFD is memory-bandwidth bound: a second hyperthread per core adds little and
+# each DAFoam rank costs its own ~0.5 GB of baseline memory). The score uses them all too: on GitHub it keeps the audit
+# protocol's 4 ranks, but here its only job is the converged state DAFoam starts from (gate F1 compares DAFoam with
+# it; the line search scores candidates on GitHub with 4 ranks), and 4 ranks would take ~2 h of a 64-192-core machine.
+PHYS=$(lscpu -p=Core,Socket 2>/dev/null | grep -v '^#' | sort -u | wc -l); [ "$PHYS" -gt 0 ] 2>/dev/null || PHYS=$(nproc)
+say "MPI ranks default: $PHYS (physical cores; $(nproc) vCPU)"
 mkdir -p "$R/out" "$W/tmp"
 for E in "$W"/cases/*.env; do
   ( . "$E"; echo "$NAME" ) > "$W/current_name"; NAME=$(cat "$W/current_name")
   status running "$NAME"; say "case $NAME: start"; push_status
-  ( . "$E"; [ -z "$NP" ] && unset NP
-    export CAR=$W/car_$NAME RUNNER_TEMP=$W/tmp ADJ=adj EVO=evo OUT=out/$NAME
+  # resume (launch.sh RESUME=<run_id>): a case already finished in this run's S3 folder is not run again
+  if $AWS s3 ls "$PREFIX/out/$NAME/fine_adjoint.json" > /dev/null 2>&1; then say "case $NAME: already in S3, skipped"; continue; fi
+  ( . "$E"; NP=${NP:-$PHYS}; SCORE_NP=${SCORE_NP:-$PHYS}
+    export NP SCORE_NP CAR=$W/car_$NAME RUNNER_TEMP=$W/tmp ADJ=adj EVO=evo OUT=out/$NAME
     rm -rf "$CAR"; bash carhybrid/fine_adjoint.sh ) > "$W/current_job.log" 2>&1
   RC=$?
   mkdir -p "out/$NAME"; cp "$W/current_job.log" "out/$NAME/job.log"; rm -f "$W/current_job.log"

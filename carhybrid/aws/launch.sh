@@ -7,8 +7,16 @@
 #   bash carhybrid/aws/launch.sh <batch>            # a key of carhybrid/request.json "batches", e.g. aws_smoke, f0, p1f
 #
 # Environment (all optional):
-#   TYPE        instance type (default r7i.16xlarge: 64 vCPU, 512 GiB; aws_smoke defaults to r7i.4xlarge, 128 GiB)
-#   SPOT=1      spot instead of on-demand (cheaper; AWS can reclaim it mid-run: finished cases are already in S3)
+#   TYPE        instance type, or a comma-separated list tried in order until one starts (spot capacity for large
+#               types comes and goes). Default by region (carhybrid/aws/README.md, "Which instance"):
+#                 us-east-1/us-east-2: m7a.32xlarge,r7a.16xlarge,m7a.48xlarge,m8a.48xlarge,r8a.16xlarge,m6a.32xlarge
+#                 ap-south-1:          m8i.32xlarge,m6a.32xlarge,r8i.16xlarge,r8i.24xlarge,r6a.16xlarge
+#               aws_smoke: m7a.4xlarge,m6a.4xlarge,m8i.4xlarge (64 GiB is plenty for 129 k cells)
+#   SPOT=0      on-demand instead of spot (default SPOT=1: spot only; ONDEMAND_FALLBACK=1 also tries the same list
+#               on-demand, at ~3-5x the price, when no spot type starts). hpc7a / hpc6a are on-demand only:
+#               TYPE=hpc7a.96xlarge SPOT=0
+#   RESUME=<run_id>  start a new instance on an earlier run (same code, same manifest, same S3 folder): the cases
+#               already finished there are skipped. For a run stopped by a spot interruption or MAX_HOURS.
 #   MAX_HOURS   hard stop: the instance powers off (and terminates) after this many hours (default: the batch's
 #               "aws_max_hours" note, else 8 h per case, at most 48)
 #   DISK_GB     root volume (default 500 GB gp3)
@@ -32,12 +40,17 @@ WF=.github/workflows/carhybrid.yml
 EVO_SHA=$(sed -n 's/^ *EVO_SHA: *//p' $WF | head -1); ADJ_SHA=$(sed -n 's/^ *ADJ_SHA: *//p' $WF | head -1)
 PY_DEPS=$(sed -n 's/^ *PY_DEPS: *//p' $WF | head -1)
 ADJ_REPO=${ADJ_REPO:-$ROOT/../stem-racing-adjoint}
-RUN_ID=${BATCH}_$(date -u +%Y%m%dT%H%M%SZ)
+RUN_ID=${RESUME:-${BATCH}_$(date -u +%Y%m%dT%H%M%SZ)}
 PREFIX=s3://$BUCKET/runs/$RUN_ID
 say() { echo "[launch] $*"; }
 
 # ---------------------------------------------------------------- the batch and its manifest
 WORKD=$(mktemp -d); trap 'rm -rf "$WORKD"' EXIT
+if [ -n "${RESUME:-}" ]; then
+  aws s3 cp --only-show-errors "$PREFIX/manifest.json" "$WORKD/manifest.json" || { echo "no run $RESUME in s3://$BUCKET/runs/"; exit 1; }
+  [ "$(python3 -c "import json; print(json.load(open('$WORKD/manifest.json'))['batch'])")" = "$BATCH" ] || { echo "run $RESUME is not batch $BATCH"; exit 1; }
+  say "resuming run $RESUME (same code and manifest; finished cases are skipped)"
+else
 python3 - "$BATCH" "$RUN_ID" "$WORKD/manifest.json" "$EVO_SHA" "$ADJ_SHA" "$(git rev-parse HEAD)" "$PY_DEPS" \
          "${STOP_ON_FAIL:-1}" <<'PY'
 import json, sys
@@ -58,11 +71,6 @@ json.dump({"run_id": run_id, "batch": batch, "cases": cases, "domain_m": R["doma
           open(out, "w"), indent=1)
 print(f"{len(cases)} cases: " + ", ".join(names))
 PY
-NCASES=$(python3 -c "import json; print(len(json.load(open('$WORKD/manifest.json'))['cases']))")
-MH=$(python3 -c "import json; print(json.load(open('$WORKD/manifest.json')).get('aws_max_hours') or '')")
-MAX_HOURS=${MAX_HOURS:-${MH:-$(( NCASES * 8 > 48 ? 48 : NCASES * 8 ))}}
-DEFAULT_TYPE=r7i.16xlarge; [ "$BATCH" = aws_smoke ] && DEFAULT_TYPE=r7i.4xlarge
-TYPE=${TYPE:-$DEFAULT_TYPE}
 
 # ---------------------------------------------------------------- the code (three pinned trees in one archive)
 if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
@@ -81,6 +89,16 @@ git archive "$EVO_SHA" | tar -x -C "$WORKD/repo/evo"
 git -C "$ADJ_REPO" archive "$ADJ_SHA" | tar -x -C "$WORKD/repo/adj"
 tar -czf "$WORKD/code.tgz" -C "$WORKD" repo
 say "code: repo $(git rev-parse --short HEAD), builder ${EVO_SHA:0:7}, adjoint ${ADJ_SHA:0:7}; $(du -h "$WORKD/code.tgz" | cut -f1)"
+fi
+NCASES=$(python3 -c "import json; print(len(json.load(open('$WORKD/manifest.json'))['cases']))")
+MH=$(python3 -c "import json; print(json.load(open('$WORKD/manifest.json')).get('aws_max_hours') or '')")
+MAX_HOURS=${MAX_HOURS:-${MH:-$(( NCASES * 8 > 48 ? 48 : NCASES * 8 ))}}
+case "$REGION" in
+  ap-south-1) DEFAULT_TYPES=m8i.32xlarge,m6a.32xlarge,r8i.16xlarge,r8i.24xlarge,r6a.16xlarge ;;
+  *)          DEFAULT_TYPES=m7a.32xlarge,r7a.16xlarge,m7a.48xlarge,m8a.48xlarge,r8a.16xlarge,m6a.32xlarge ;;
+esac
+[ "$BATCH" = aws_smoke ] && DEFAULT_TYPES=m7a.4xlarge,m6a.4xlarge,m8i.4xlarge
+TYPES=${TYPE:-$DEFAULT_TYPES}
 
 # ---------------------------------------------------------------- user data: fetch the code, start the runner
 cat > "$WORKD/user_data.sh" <<EOF
@@ -101,36 +119,55 @@ nohup bash /opt/ch/repo/carhybrid/aws/instance_run.sh > /opt/ch/instance.log 2>&
 EOF
 
 AMI_PARAM=/aws/service/canonical/ubuntu/server/24.04/stable/current/amd64/hvm/ebs-gp3/ami-id
-MARKET=(); [ "${SPOT:-0}" = 1 ] && MARKET=(--instance-market-options 'MarketType=spot,SpotOptions={SpotInstanceType=one-time,InstanceInterruptionBehavior=terminate}')
 NET=(--security-group-ids "${SG_ID:-sg-dryrun}")
 [ -n "${SUBNET_ID:-}" ] && NET=(--network-interfaces "DeviceIndex=0,SubnetId=$SUBNET_ID,Groups=$SG_ID,AssociatePublicIpAddress=true")
 KEY=(); [ -n "${KEY_NAME:-}" ] && KEY=(--key-name "$KEY_NAME")
+SPOT=${SPOT:-1}
+# the attempts: each type as spot (SPOT=1), then, with ONDEMAND_FALLBACK=1, each as on-demand, in order
+ATTEMPTS=()
+IFS=, read -r -a TL <<< "$TYPES"
+if [ "$SPOT" = 1 ]; then for t in "${TL[@]}"; do case "$t" in hpc*) ;; *) ATTEMPTS+=("spot:$t");; esac; done; fi
+if [ "$SPOT" != 1 ] || [ "${ONDEMAND_FALLBACK:-0}" = 1 ]; then for t in "${TL[@]}"; do ATTEMPTS+=("ondemand:$t"); done; fi
 
-say "batch $BATCH -> run $RUN_ID: $NCASES cases on $TYPE ($([ "${SPOT:-0}" = 1 ] && echo spot || echo on-demand)), ${DISK_GB:-500} GB," \
-    "hard stop after $MAX_HOURS h; results to $PREFIX/out/"
+say "batch $BATCH -> run $RUN_ID: $NCASES cases; tries ${ATTEMPTS[*]}; ${DISK_GB:-500} GB; hard stop after $MAX_HOURS h;" \
+    "results to $PREFIX/out/"
 if [ "${DRY_RUN:-0}" = 1 ]; then
   say "DRY_RUN: manifest"; cat "$WORKD/manifest.json"; say "DRY_RUN: user data"; cat "$WORKD/user_data.sh"
-  say "DRY_RUN: archive contents (top)"; tar -tzf "$WORKD/code.tgz" | awk -F/ 'NF<=3' | head -30
-  [ -n "${KEEP_DRY:-}" ] && cp "$WORKD/code.tgz" "$WORKD/manifest.json" "$WORKD/user_data.sh" "$KEEP_DRY/"
+  if [ -f "$WORKD/code.tgz" ]; then say "DRY_RUN: archive contents (top)"; tar -tzf "$WORKD/code.tgz" | awk -F/ 'NF<=3' | head -30; fi
+  [ -n "${KEEP_DRY:-}" ] && cp "$WORKD"/* "$KEEP_DRY/"
   exit 0
 fi
 
-aws s3 cp --only-show-errors "$WORKD/code.tgz" "$PREFIX/code.tgz"
-aws s3 cp --only-show-errors "$WORKD/manifest.json" "$PREFIX/manifest.json"
+if [ -z "${RESUME:-}" ]; then
+  aws s3 cp --only-show-errors "$WORKD/code.tgz" "$PREFIX/code.tgz"
+  aws s3 cp --only-show-errors "$WORKD/manifest.json" "$PREFIX/manifest.json"
+else
+  aws s3 rm --only-show-errors "$PREFIX/DONE" 2>/dev/null || true
+fi
 AMI=$(aws ssm get-parameter --name "$AMI_PARAM" --query Parameter.Value --output text)
-IID=$(aws ec2 run-instances --image-id "$AMI" --instance-type "$TYPE" --count 1 \
-  --iam-instance-profile Name="$PROFILE_NAME" "${NET[@]}" "${KEY[@]}" "${MARKET[@]}" \
-  --instance-initiated-shutdown-behavior terminate \
-  --metadata-options HttpTokens=required,HttpEndpoint=enabled \
-  --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeSize=${DISK_GB:-500},VolumeType=gp3,DeleteOnTermination=true}" \
-  --user-data "file://$WORKD/user_data.sh" \
-  --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=carhybrid-$RUN_ID},{Key=carhybrid-run,Value=$RUN_ID}]" \
-  --query 'Instances[0].InstanceId' --output text)
-echo "{\"run_id\": \"$RUN_ID\", \"instance_id\": \"$IID\", \"type\": \"$TYPE\", \"region\": \"$REGION\", \"ami\": \"$AMI\"}" \
+IID=""
+for A in "${ATTEMPTS[@]}"; do
+  MARKET=(); T=${A#*:}
+  [ "${A%%:*}" = spot ] && MARKET=(--instance-market-options 'MarketType=spot,SpotOptions={SpotInstanceType=one-time,InstanceInterruptionBehavior=terminate}')
+  if OUTP=$(aws ec2 run-instances --image-id "$AMI" --instance-type "$T" --count 1 \
+      --iam-instance-profile Name="$PROFILE_NAME" "${NET[@]}" "${KEY[@]}" "${MARKET[@]}" \
+      --instance-initiated-shutdown-behavior terminate \
+      --metadata-options HttpTokens=required,HttpEndpoint=enabled \
+      --block-device-mappings "DeviceName=/dev/sda1,Ebs={VolumeSize=${DISK_GB:-500},VolumeType=gp3,DeleteOnTermination=true}" \
+      --user-data "file://$WORKD/user_data.sh" \
+      --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=carhybrid-$RUN_ID},{Key=carhybrid-run,Value=$RUN_ID}]" \
+      --query 'Instances[0].InstanceId' --output text 2>&1); then
+    IID=$OUTP; MKT=${A%%:*}; TYPE=$T; break
+  fi
+  say "$A did not start: $(echo "$OUTP" | tail -1 | cut -c1-200)"
+done
+[ -n "$IID" ] || { say "no instance type in the list could start (capacity or quota): nothing launched"; exit 1; }
+echo "{\"run_id\": \"$RUN_ID\", \"instance_id\": \"$IID\", \"type\": \"$TYPE\", \"market\": \"$MKT\", \"region\": \"$REGION\", \"ami\": \"$AMI\", \"started\": \"$(date -u +%FT%TZ)\"}" \
   | aws s3 cp --only-show-errors - "$PREFIX/instance.json"
 mkdir -p "$(dirname "$CONF")/runs"; echo "$IID" > "$(dirname "$CONF")/runs/$RUN_ID"
-say "instance $IID started"
+say "instance $IID started: $TYPE ($MKT)"
 echo
 echo "  status:   bash carhybrid/aws/status.sh $RUN_ID"
 echo "  results:  bash carhybrid/aws/fetch.sh $RUN_ID        (into carhybrid/results/$BATCH/)"
+echo "  resume:   RESUME=$RUN_ID bash carhybrid/aws/launch.sh $BATCH     (after a spot interruption or MAX_HOURS)"
 echo "  stop now: aws ec2 terminate-instances --instance-ids $IID"

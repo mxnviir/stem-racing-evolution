@@ -31,7 +31,7 @@ target: the adjoint must be on the mesh the score uses. F0 below measures the la
 ## Where things run
 
 - **AWS EC2, driven by the AWS CLI** (`carhybrid/aws/`, README there): `launch.sh <batch>` ships this repository at
-  HEAD plus the pinned builder and adjoint code to S3, starts one instance (default r7i.16xlarge, 64 vCPU, 512 GiB),
+  HEAD plus the pinned builder and adjoint code to S3, starts one instance (spot by default; m7a.32xlarge in Ohio: 128 cores, 512 GiB; aws/README.md section 5),
   which installs exactly what the GitHub workflow installs, runs the batch's `fine_adjoint` cases one at a time with
   `carhybrid/fine_adjoint.sh` (build -> production mesh and solve, the score, frame k -> DAFoam from that converged
   state: same mesh, schemes, BCs -> gradient mapped to the free-form numbers), copies each case's results to S3 as it

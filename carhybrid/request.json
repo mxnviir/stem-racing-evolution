@@ -1115,6 +1115,38 @@
     "k": 3,
     "bg_div": 12.889
    }
+  ],
+  "aws_scaling": [
+   {
+    "name": "scal_team_bg10.23_np128",
+    "type": "fine_adjoint",
+    "layout": "team",
+    "u": "zero",
+    "k": 0,
+    "bg_div": 10.23,
+    "np": 128,
+    "score_np": 128
+   },
+   {
+    "name": "scal_team_bg10.23_np64",
+    "type": "fine_adjoint",
+    "layout": "team",
+    "u": "zero",
+    "k": 0,
+    "bg_div": 10.23,
+    "np": 64,
+    "score_np": 128
+   },
+   {
+    "name": "scal_team_bg10.23_np32",
+    "type": "fine_adjoint",
+    "layout": "team",
+    "u": "zero",
+    "k": 0,
+    "bg_div": 10.23,
+    "np": 32,
+    "score_np": 128
+   }
   ]
  },
  "_sweep1_note": "readiness sweep, build only (no CFD): 24 scrambled-Sobol layouts over the 12 stage-1 genes (seed 20261128) and 8 stage-2 perturbations of the team layout (45 free-form numbers ~ N(0, 0.5), clipped +-2, as CMA's sigma 0.5)",
@@ -1130,5 +1162,7 @@
  "_aws_smoke_aws_max_hours": 6,
  "_p1f_note": "Gate P1F's gradients (carhybrid/FINE_ADJOINT.md): the production-mesh DAFoam gradient of the team car on frames 1-3 (frame 0 is f0_team_bg12.889_k0). Run only after f0 passes F0-F3. The line candidates along their mean are ordinary 'score' cases (hosted runners).",
  "_p1f_aws_max_hours": 36,
- "_f0_aws_max_hours": 36
+ "_f0_aws_max_hours": 36,
+ "_aws_scaling_note": "How DAFoam's time scales with MPI ranks (the instance-size question), measured: the team car, frame 0, bg_div 10.23 (~1.24 M cells), the same score each time (128 ranks), DAFoam on 128 / 64 / 32 ranks. Run on a 128-core machine (TYPE=m7a.32xlarge) with STOP_ON_FAIL=0; resources.json gives each phase's wall time and dafoam_gmres.json the seconds per GMRES iteration and the iteration count at each rank count. About 3-5 h, a few USD on spot.",
+ "_aws_scaling_aws_max_hours": 10
 }
