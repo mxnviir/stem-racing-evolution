@@ -62,6 +62,7 @@ jobs:
         timeout-minutes: 330
         run: |
           docker run --rm --shm-size=8g -e IN_TGZ=/io/in.tgz -e OUT_DIR=/io/out -e NP=4 -e PROGRESS_S=100000 -v $PWD/io:/io $IMG || echo "chain exit $?"
+          sudo chown -R $(id -u):$(id -g) io
           mkdir -p io/out/run && tar xzf io/out/out.tgz -C io/out/run 2>/dev/null || true
           cat io/out/result.json | head -c 3000 || true
           { echo '## adjoint'; head -c 3000 io/out/result.json 2>/dev/null | sed 's/^/    /'; } >> "$GITHUB_STEP_SUMMARY"
@@ -70,6 +71,7 @@ jobs:
         run: |
           if [ -f io/out/run/gradient.json ]; then
             docker run --rm -e PYTHONDONTWRITEBYTECODE=1 -v $PWD:/w -w /w --entrypoint python $IMG -W ignore search/adjoint/e2e_job.py fd io/out/run/gradient.json io/fd
+            sudo chown -R $(id -u):$(id -g) io
             echo "fd=$(python3 -c "import json;print(json.dumps([c['id'] for c in json.load(open('io/fd/fd_cases.json'))]))")" >> "$GITHUB_OUTPUT"
           else
             echo 'fd=[]' >> "$GITHUB_OUTPUT"
@@ -105,6 +107,7 @@ jobs:
           mkdir -p io
           python3 search/adjoint/aws/batch.py package adj/fd/${{ matrix.id }}.json io/in.tgz --adjoint-repo _adjoint
           docker run --rm --shm-size=8g -e IN_TGZ=/io/in.tgz -e OUT_DIR=/io/out -e NP=4 -e PROGRESS_S=100000 -v $PWD/io:/io $IMG || echo "exit $?"
+          sudo chown -R $(id -u):$(id -g) io
           mkdir -p out/${{ matrix.id }} && cp io/out/result.json io/out/fine_adjoint.log out/${{ matrix.id }}/ 2>/dev/null || true
           tar xzf io/out/out.tgz -C out/${{ matrix.id }} steady/steady.json production.json 2>/dev/null || true
           head -c 1500 io/out/result.json || true

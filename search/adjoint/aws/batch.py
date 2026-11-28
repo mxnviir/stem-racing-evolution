@@ -54,7 +54,7 @@ def _git(repo, *a):
 def _archive(repo: Path, paths, prefix: str, tf: tarfile.TarFile, allow_dirty: bool, ref="HEAD"):
     if ref == "HEAD" and not allow_dirty and _git(repo, "status", "--porcelain", "--", *paths).strip():
         raise SystemExit(f"{repo}: uncommitted changes under {paths}; commit them (or --allow-dirty)")
-    if ref != "HEAD" and subprocess.run(["git", "-C", str(repo), "cat-file", "-e", f"{ref}^{{commit}}"]).returncode != 0:
+    if ref != "HEAD" and subprocess.run(["git", "-C", str(repo), "cat-file", "-e", f"{ref}^{{commit}}"], stderr=subprocess.DEVNULL).returncode != 0:
         subprocess.run(["git", "-C", str(repo), "fetch", "-q", "--depth", "1", "origin", ref], check=True)
     data = subprocess.run(["git", "-C", str(repo), "archive", "--format=tar", f"--prefix={prefix}/", ref, "--", *paths],
                           check=True, capture_output=True).stdout

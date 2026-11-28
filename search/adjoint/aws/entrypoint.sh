@@ -6,7 +6,7 @@
 #        or OUT_DIR = a local folder
 #   NP: MPI ranks (default: every CPU the container sees); KEEP_STATE=1 also returns the steady flow (warm starts)
 set -uo pipefail
-NP=${NP:-$(nproc)}
+NP=${NP:-$(nproc --all)}       # --all: the image sets OMP_NUM_THREADS=1, which plain nproc obeys
 W=/scratch/job
 mkdir -p $W/in $W/run
 say() { echo "[entrypoint $(date -u +%H:%M:%S)] $*"; }
@@ -17,7 +17,7 @@ else
   cp "${IN_TGZ:?S3_IN or IN_TGZ}" $W/in.tgz || exit 2
 fi
 tar xzf $W/in.tgz -C $W/in || exit 2
-say "job $(python -c "import json;print(json.load(open('$W/in/job.json')).get('id'))"), NP $NP, $(nproc) CPUs, $(free -g | awk '/Mem/{print $2}') GB"
+say "job $(python -c "import json;print(json.load(open('$W/in/job.json')).get('id'))"), NP $NP, $(nproc --all) CPUs, $(free -g | awk '/Mem/{print $2}') GB"
 
 pack() {   # the results (small) and, with KEEP_STATE=1, the steady flow
   cd $W/run
