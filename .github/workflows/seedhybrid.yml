@@ -1,0 +1,230 @@
+name: seedhybrid
+run-name: "Seeded hybrid: ${{ github.event_name == 'workflow_dispatch' && 'next stage' || 'request file' }}"
+
+# seedhybrid/README.md. One stage per run: "setup" (each seed: legal geometry, its own wall-resolved base mesh and
+# steady state, a coarse DAFoam gradient) or a generation (every lineage's children as chained morphs of its base mesh,
+# plus a fresh DAFoam gradient at each moved parent and an ESI map at each parent re-run). The collect job ingests the
+# results, decides each lineage's next parent (seedhybrid/driver.py), commits, and dispatches the next stage
+# (config "auto", no seedhybrid/STOP file). The CFD code is mxnviir/stem-racing-adjoint at a pinned commit, patched only
+# by seedhybrid/patch_adj.py (opt-in: moves confined to the legal sidepod region).
+on:
+  push:
+    branches: [claude/wizardly-brahmagupta-1edalc]
+    paths: ["seedhybrid/request.json"]
+  workflow_dispatch:
+
+permissions: { contents: write, actions: write }
+
+env:
+  ADJ_SHA: 9ab9092debd0e0297b290d886bf45a765045448c
+  PY_DEPS: scikit-learn==1.9.1 numpy==2.4.6 scipy==1.17.1 pandas trimesh==5.2.0 scikit-image shapely rtree==1.4.1 mapbox-earcut manifold3d==3.5.4 fast_simplification==0.2.0 jax jaxlib matplotlib pymeshlab==2025.7.post1 numba cadquery-ocp
+  GH_TOKEN: ${{ github.token }}
+  OMPI_MCA_rmaps_base_oversubscribe: "1"
+  OMPI_MCA_hwloc_base_use_hwthreads_as_cpus: "1"
+  OMPI_ALLOW_RUN_AS_ROOT: "1"
+  OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: "1"
+  SP: adj/research/sidepod_opt
+
+jobs:
+  init:
+    runs-on: ubuntu-24.04
+    outputs:
+      stage: ${{ steps.r.outputs.stage }}
+      cases: ${{ steps.r.outputs.cases }}
+      lineages: ${{ steps.r.outputs.lineages }}
+      setup_run: ${{ steps.r.outputs.setup_run }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: r
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os
+          r = json.load(open("seedhybrid/request.json"))
+          print("stage=" + r["stage"]); print("cases=" + json.dumps(r["cases"] or [{"name": "none", "type": "none"}]))
+          print("lineages=" + json.dumps(r["lineages"])); print("setup_run=" + str(r.get("setup_run") or os.environ["GITHUB_RUN_ID"]))
+          PY
+
+  geom:
+    name: "geom ${{ matrix.lin.name }}"
+    needs: init
+    if: needs.init.outputs.stage == 'setup'
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        lin: ${{ fromJSON(needs.init.outputs.lineages) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with: { repository: mxnviir/stem-racing-adjoint, ref: "${{ env.ADJ_SHA }}", path: adj }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: deps
+        run: |
+          (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
+          for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
+          pip install $PY_DEPS
+      - name: seed geometry (legal build, remesh, region taper)
+        env: { LIN: "${{ toJSON(matrix.lin) }}" }
+        run: |
+          python seedhybrid/patch_adj.py adj
+          python -W ignore seedhybrid/prep.py geom adj "$LIN" out/${{ matrix.lin.name }}_geom 2>&1 | grep -v "Qt\|plugin\|Cannot load\|^$" | tail -3
+          cp out/${{ matrix.lin.name }}_geom/geom.tgz geom.tgz
+      - uses: actions/upload-artifact@v4
+        with: { name: "geom-${{ matrix.lin.name }}", path: geom.tgz, retention-days: 60 }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: "out-${{ matrix.lin.name }}_geom", path: out/, retention-days: 60 }
+
+  case:
+    name: "${{ matrix.case.name }}"
+    needs: [init, geom]
+    if: always() && needs.init.result == 'success' && needs.init.outputs.stage != 'stopped' && needs.geom.result != 'failure'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        case: ${{ fromJSON(needs.init.outputs.cases) }}
+    steps:
+      - name: room (free disk, 10 GB swap)
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          sudo fallocate -l 10G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with: { repository: mxnviir/stem-racing-adjoint, ref: "${{ env.ADJ_SHA }}", path: adj }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - uses: actions/cache@v4
+        with: { path: ~/ofdebs, key: openfoam2412-260127-noble-debs }
+      - name: OpenFOAM v2412 + python deps
+        timeout-minutes: 30
+        run: |
+          (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
+          for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
+          bash adj/.github/scripts/install_openfoam.sh
+          pip install $PY_DEPS
+          if [ "${{ matrix.case.type }}" = "dafoam" ]; then for i in 1 2 3; do docker pull dafoam/opt-packages:v5.1.1 && break; sleep 30; done; fi
+      - name: lineage geometry and data
+        run: |
+          python seedhybrid/patch_adj.py adj
+          mkdir -p /tmp/geom && gh run download ${{ needs.init.outputs.setup_run }} -R ${{ github.repository }} -n geom-${{ matrix.case.lineage }} -D /tmp/geom
+          tar xzf /tmp/geom/geom.tgz -C $SP
+          mkdir -p $SP/seedhybrid_lineages && cp -r seedhybrid/lineages/. $SP/seedhybrid_lineages/ 2>/dev/null || true
+          mkdir -p out/${{ matrix.case.name }}
+      - name: base state (fresh wall-resolved mesh, production 1000 its, then the steady model 1200 its)
+        if: matrix.case.type == 'base'
+        timeout-minutes: 330
+        working-directory: ${{ env.SP }}
+        run: |
+          source /usr/lib/openfoam/openfoam2412/etc/bashrc || true
+          O=$GITHUB_WORKSPACE/out/${{ matrix.case.name }}
+          GATE_DOMAIN_DX_MM=0 PRODCHECK_WALL_RESOLVED=1 PRODCHECK_RES=resolved PRODCHECK_RESULTS=$O PRODCHECK_KEEP=$PWD/gate/state_prod \
+            PRODCHECK_ITERS=1000 PRODCHECK_TIMEOUT=10000 python -W ignore -u prodcheck.py gate/original_rm base 4 cold > $O/prodcheck.log 2>&1 || { tail -c 3000 $O/prodcheck.log; exit 1; }
+          tail -c 600 $O/prodcheck.log
+          python -W ignore -u fine_campaign/steady_base.py gate/state_prod gate/refA_base $O 4 1200 | tail -3
+          rm -rf gate/state_prod
+          tar czf $GITHUB_WORKSPACE/base.tgz gate/refA_base
+          cat $O/base.json
+      - uses: actions/upload-artifact@v4
+        if: matrix.case.type == 'base'
+        with: { name: "base-${{ matrix.case.lineage }}", path: base.tgz, retention-days: 60 }
+      - name: DAFoam gradient at the parent (coarse steady state, then the discrete adjoint)
+        if: matrix.case.type == 'dafoam'
+        timeout-minutes: 320
+        working-directory: ${{ env.SP }}
+        env: { PARENT: "${{ matrix.case.parent }}" }
+        run: |
+          source /usr/lib/openfoam/openfoam2412/etc/bashrc || true
+          O=$GITHUB_WORKSPACE/out/${{ matrix.case.name }}
+          if [ -z "$PARENT" ]; then DESIGN=gate/original_rm; else
+            STEP_PARENT="${PARENT//|/+}" STEP_REGION=1 STEP_NORMAL_SIGMA_MM=1.5 STEP_ZMIN_MM=1.5 GATE_RES=resolved GATE_RESULTS=/tmp/gr \
+              python -W ignore esi/make_step.py dafdesign zero 0 | tail -1 | cut -c1-400
+            DESIGN=gate/bump_dafdesign; fi
+          GATE_RES=coarse GATE_RESULTS=/tmp/gr CFD_DIV_U="bounded Gauss upwind" \
+            python -W ignore -u hybrid/coarse_state.py "$DESIGN" gate/refA_hyb 5000 $O/state.json 2>&1 | tail -3
+          python dafoam/make_case.py --src gate/refA_hyb --out gate/dafoam_case --iters 300 | tail -1
+          env DAF_ADJ=Krylov DAF_PC_FILL=0 DAF_PC_LEVEL=1 DAF_GMRES_ITERS=2000 DAF_GMRES_RESTART=200 \
+            dafoam/run_docker.sh gate/dafoam_case 4 > $O/dafoam.out 2>&1 || true
+          grep -E "DAFOAM|Killed|Maximum resident" $O/dafoam.out || tail -30 $O/dafoam.out
+          cp gate/dafoam_case/dafoam_sens.npz gate/dafoam_case/dafoam_sens.json $O/ 2>/dev/null || echo "no gradient"
+      - name: child (chained explicit morph of the lineage's base mesh, warm start, 1000 steady iterations)
+        if: matrix.case.type == 'child'
+        timeout-minutes: 330
+        working-directory: ${{ env.SP }}
+        env: { PARENT: "${{ matrix.case.chainparent }}", FIELD: "${{ matrix.case.field }}", AMP: "${{ matrix.case.amp }}", NAME: "${{ matrix.case.name }}" }
+        run: |
+          source /usr/lib/openfoam/openfoam2412/etc/bashrc || true
+          O=$GITHUB_WORKSPACE/out/$NAME
+          gh run download ${{ needs.init.outputs.setup_run }} -R ${{ github.repository }} -n base-${{ matrix.case.lineage }} -D /tmp/base
+          tar xzf /tmp/base/base.tgz -C . && rm -rf /tmp/base
+          D=gate/refA_base
+          for t in $(ls "$D" | grep -E '^[0-9]+$' | sort -n -r); do
+            if [ -f "$D/$t/polyMesh/points" ]; then cp "$D/$t/polyMesh/points" "$D/constant/polyMesh/points"; break; fi; done
+          mkdir -p gate_results_resolved_up
+          python3 -c "import json,pathlib; pathlib.Path('gate_results_resolved_up/base.json').write_text(json.dumps({'run_dir_kept': str(pathlib.Path('gate/refA_base').resolve())}))"
+          export GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up GATE_ITERS=1000 GATE_TIMEOUT=14000 \
+                 CFD_DIV_U="bounded Gauss upwind" GATE_WALL_RESOLVED=1 GATE_MORPH_REF_RM=1 P2_MORPH_STRICT=1 P2_WARM_COPY=1 \
+                 P2_MORPH_EXPLICIT=1 P2_MORPH_D0_MM=0.5 P2_MORPH_DELTA_MM=5 P2_MORPH_STRICT_RULE=acceptable \
+                 STEP_REGION=1 STEP_EDGE_MASK_MM=0 STEP_NORMAL_SIGMA_MM=1.5 STEP_ZMIN_MM=1.5
+          if [ -n "${{ matrix.case.esi_after }}" ]; then export GATE_KEEP_RUN=1; fi
+          set +e
+          python -W ignore -u hybrid/chain_solve.py "$NAME" "$PARENT" "$FIELD" "$AMP" > $O/chain.log 2>&1
+          RC=$?
+          set -e
+          echo "rc $RC"; grep -h "CHAIN\|morph checkMesh" $O/chain.log | head -20; tail -3 $O/chain.log | cut -c1-400
+          mkdir -p $GITHUB_WORKSPACE/out/bumps/forces
+          cp gate_results_resolved_up/bump_$NAME.json $GITHUB_WORKSPACE/out/bumps/ 2>/dev/null || true
+          cp -r gate_results_resolved_up/forces/bump_$NAME $GITHUB_WORKSPACE/out/bumps/forces/ 2>/dev/null || true
+          cat gate_results_resolved_up/bump_$NAME.json 2>/dev/null | head -c 800 || true
+          if [ "$RC" = 0 ] && [ -n "${{ matrix.case.esi_after }}" ]; then   # ESI (frozen) on this converged parent state
+            K=$(python3 -c "import json;print(json.load(open('gate_results_resolved_up/bump_$NAME.json'))['run_dir_kept'])")
+            python -W ignore -u esi/esi_on_state.py "$K" gate/esi_after frozen 4 ${{ matrix.case.esi_after }} 100 > $O/esi_after.log 2>&1 || echo "esi_after failed"
+            cp gate/esi_after/esi_sens.npz gate/esi_after/esi_sens.json $O/ 2>/dev/null || true
+            tail -3 $O/esi_after.log
+          fi
+          exit $RC
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: "out-${{ matrix.case.name }}", path: out/, retention-days: 60 }
+
+  collect:
+    needs: [init, case]
+    if: always() && needs.init.result == 'success' && needs.init.outputs.stage != 'stopped'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "${{ github.ref_name }}", fetch-depth: 0 }
+      - uses: actions/checkout@v4
+        with: { repository: mxnviir/stem-racing-adjoint, ref: "${{ env.ADJ_SHA }}", path: adj }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: deps
+        run: |
+          (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
+          for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
+          pip install $PY_DEPS
+          python seedhybrid/patch_adj.py adj
+      - uses: actions/download-artifact@v4
+        with: { pattern: "out-*", merge-multiple: true, path: /tmp/res }
+      - name: ingest, decide, write the next stage, commit, dispatch
+        run: |
+          mkdir -p /tmp/res/_setup
+          gh run download ${{ needs.init.outputs.setup_run }} -R ${{ github.repository }} -p 'geom-*' -D /tmp/res/_setup
+          ls /tmp/res /tmp/res/_setup
+          set +e
+          python -W ignore seedhybrid/driver.py advance /tmp/res ${{ github.run_id }} adj 2>&1 | grep -v "Qt\|plugin\|Cannot load\|^$"
+          RC=${PIPESTATUS[0]}
+          set -e
+          echo "driver rc $RC"
+          [ "$RC" = 0 ] || [ "$RC" = 3 ] || exit 1
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add seedhybrid
+          git commit -m "seedhybrid: stage results and next request (run ${{ github.run_id }})" || true
+          for i in 1 2 3 4 5; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((i*10)); done
+          AUTO=$(python3 -c "import json;print(json.load(open('seedhybrid/config.json')).get('auto', False))")
+          if [ "$RC" = 0 ] && [ "$AUTO" = "True" ] && [ ! -f seedhybrid/STOP ]; then
+            gh workflow run seedhybrid.yml -R ${{ github.repository }} --ref ${{ github.ref_name }}; echo "next stage dispatched"
+          else echo "not dispatching (rc $RC, auto $AUTO, STOP $( [ -f seedhybrid/STOP ] && echo yes || echo no ))"; fi

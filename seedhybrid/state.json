@@ -1,0 +1,55 @@
+{
+ "stage": "setup",
+ "gen": 0,
+ "setup_run": null,
+ "lineages": {
+  "team": {
+   "seed": {
+    "kind": "seedevo",
+    "campaign": "seedevo/campaign_poc",
+    "id": 0
+   },
+   "status": "setup",
+   "parent": "",
+   "amp": 1.0,
+   "dafoam_latest": null,
+   "dafoam_at": "",
+   "esi_latest": null,
+   "next_seed": 1000,
+   "generations": {},
+   "base": null
+  },
+  "d7": {
+   "seed": {
+    "kind": "seedevo",
+    "campaign": "seedevo/campaign_poc",
+    "id": 7
+   },
+   "status": "setup",
+   "parent": "",
+   "amp": 1.0,
+   "dafoam_latest": null,
+   "dafoam_at": "",
+   "esi_latest": null,
+   "next_seed": 1000,
+   "generations": {},
+   "base": null
+  },
+  "window": {
+   "seed": {
+    "kind": "seedevo",
+    "campaign": "seedevo/campaign_poc",
+    "id": 3
+   },
+   "status": "setup",
+   "parent": "",
+   "amp": 1.0,
+   "dafoam_latest": null,
+   "dafoam_at": "",
+   "esi_latest": null,
+   "next_seed": 1000,
+   "generations": {},
+   "base": null
+  }
+ }
+}

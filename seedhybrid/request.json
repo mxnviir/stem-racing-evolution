@@ -1,0 +1,69 @@
+{
+ "stage": "setup",
+ "gen": 0,
+ "setup_run": null,
+ "lineages": [
+  {
+   "name": "team",
+   "seed": {
+    "kind": "seedevo",
+    "campaign": "seedevo/campaign_poc",
+    "id": 0
+   }
+  },
+  {
+   "name": "d7",
+   "seed": {
+    "kind": "seedevo",
+    "campaign": "seedevo/campaign_poc",
+    "id": 7
+   }
+  },
+  {
+   "name": "window",
+   "seed": {
+    "kind": "seedevo",
+    "campaign": "seedevo/campaign_poc",
+    "id": 3
+   }
+  }
+ ],
+ "cases": [
+  {
+   "type": "base",
+   "lineage": "team",
+   "name": "team_base"
+  },
+  {
+   "type": "dafoam",
+   "lineage": "team",
+   "name": "team_daf_g0",
+   "parent": "",
+   "tag": "g0"
+  },
+  {
+   "type": "base",
+   "lineage": "d7",
+   "name": "d7_base"
+  },
+  {
+   "type": "dafoam",
+   "lineage": "d7",
+   "name": "d7_daf_g0",
+   "parent": "",
+   "tag": "g0"
+  },
+  {
+   "type": "base",
+   "lineage": "window",
+   "name": "window_base"
+  },
+  {
+   "type": "dafoam",
+   "lineage": "window",
+   "name": "window_daf_g0",
+   "parent": "",
+   "tag": "g0"
+  }
+ ]
+}
