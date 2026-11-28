@@ -1,5 +1,203 @@
 === head
-bash: line 10:   243 Floating point exception(core dumped) renumberMesh -overwrite > log.renumberMesh 2>&1
+ 
+-------------------------------------------------------------------------------
+|                               DAFoam v5.1.1                                 |
+-------------------------------------------------------------------------------
+ 
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2506                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _615aae61d7-20250627 OPENFOAM=2506 version=v2506
+Arch   : "LSB;label=32;scalar=64"
+Exec   : decomposePar
+Date   : Nov 28 2026
+Time   : 13:14:10
+Host   : 10c5a77a25f8
+PID    : 328
+I/O    : uncollated
+Case   : /home/dafoamuser/case
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+
+
+Decomposing mesh
+
+Create mesh
+
+Calculating distribution of cells
+Decomposition method scotch [4] (region region0)
+
+Finished decomposition in 0.22 s
+
 === key lines
+205:Global Adjoint States: 1187370
+277:Global Adjoint States: 1187370
+759:    raise AnalysisError("Mesh quality error!")
+760:openmdao.core.analysis_error.AnalysisError: 'cruise.coupling.solver' <class DAFoamSolver>: Error calling solve_nonlinear(), Mesh quality error!
+785:    raise AnalysisError("Mesh quality error!")
+786:openmdao.core.analysis_error.AnalysisError: 'cruise.coupling.solver' <class DAFoamSolver>: Error calling solve_nonlinear(), Mesh quality error!
+819:    raise AnalysisError("Mesh quality error!")
+820:openmdao.core.analysis_error.AnalysisError: 'cruise.coupling.solver' <class DAFoamSolver>: Error calling solve_nonlinear(), Mesh quality error!
+845:    raise AnalysisError("Mesh quality error!")
+846:openmdao.core.analysis_error.AnalysisError: 'cruise.coupling.solver' <class DAFoamSolver>: Error calling solve_nonlinear(), Mesh quality error!
 === tail
-bash: line 10:   243 Floating point exception(core dumped) renumberMesh -overwrite > log.renumberMesh 2>&1
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 941, in _gs_iter
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/mphys/core/scenario.py", line 92, in _solve_nonlinear
+    return super()._solve_nonlinear(*args, **kwargs)
+    self._nonlinear_solver._solve_with_cache_check()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/core/group.py", line 2585, in _solve_nonlinear
+    raise err
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 937, in _gs_iter
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 26, in _solve_with_cache_check
+    self.solve()  # don't use caching
+    ^^^^^^^^^^^^
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 45, in solve
+    self._gs_iter()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 941, in _gs_iter
+    raise err
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 937, in _gs_iter
+    subsys._solve_nonlinear()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/mphys/core/scenario.py", line 16, in wrapped_method
+    return method(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/mphys/core/scenario.py", line 92, in _solve_nonlinear
+    return super()._solve_nonlinear(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/core/group.py", line 2585, in _solve_nonlinear
+    self._nonlinear_solver._solve_with_cache_check()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 26, in _solve_with_cache_check
+    self.solve()  # don't use caching
+    ^^^^^^^^^^^^
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 45, in solve
+    self._gs_iter()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 941, in _gs_iter
+    raise err
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 937, in _gs_iter
+    subsys._solve_nonlinear()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/core/group.py", line 2585, in _solve_nonlinear
+    self._nonlinear_solver._solve_with_cache_check()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 26, in _solve_with_cache_check
+    self.solve()  # don't use caching
+    ^^^^^^^^^^^^
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 45, in solve
+    self._gs_iter()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 941, in _gs_iter
+    raise err
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 937, in _gs_iter
+    subsys._solve_nonlinear()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/core/implicitcomponent.py", line 226, in _solve_nonlinear
+    self.solve_nonlinear(self._inputs, self._outputs)
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/dafoam/mphys/mphys_dafoam.py", line 360, in solve_nonlinear
+    raise AnalysisError("Mesh quality error!")
+openmdao.core.analysis_error.AnalysisError: 'cruise.coupling.solver' <class DAFoamSolver>: Error calling solve_nonlinear(), Mesh quality error!
+    self._nonlinear_solver._solve_with_cache_check()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 26, in _solve_with_cache_check
+    self.solve()  # don't use caching
+    ^^^^^^^^^^^^
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 45, in solve
+    self._gs_iter()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 941, in _gs_iter
+    raise err
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 937, in _gs_iter
+    subsys._solve_nonlinear()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/core/group.py", line 2585, in _solve_nonlinear
+    self._nonlinear_solver._solve_with_cache_check()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 26, in _solve_with_cache_check
+    self.solve()  # don't use caching
+    ^^^^^^^^^^^^
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 45, in solve
+    self._gs_iter()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 941, in _gs_iter
+    raise err
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 937, in _gs_iter
+    subsys._solve_nonlinear()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/core/implicitcomponent.py", line 226, in _solve_nonlinear
+    self.solve_nonlinear(self._inputs, self._outputs)
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/dafoam/mphys/mphys_dafoam.py", line 360, in solve_nonlinear
+    raise AnalysisError("Mesh quality error!")
+openmdao.core.analysis_error.AnalysisError: 'cruise.coupling.solver' <class DAFoamSolver>: Error calling solve_nonlinear(), Mesh quality error!
+    subsys._solve_nonlinear()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/mphys/core/scenario.py", line 16, in wrapped_method
+    return method(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/mphys/core/scenario.py", line 92, in _solve_nonlinear
+    return super()._solve_nonlinear(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/core/group.py", line 2585, in _solve_nonlinear
+    self._nonlinear_solver._solve_with_cache_check()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 26, in _solve_with_cache_check
+    self.solve()  # don't use caching
+    ^^^^^^^^^^^^
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 45, in solve
+    self._gs_iter()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 941, in _gs_iter
+    raise err
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 937, in _gs_iter
+    subsys._solve_nonlinear()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/core/group.py", line 2585, in _solve_nonlinear
+    self._nonlinear_solver._solve_with_cache_check()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 26, in _solve_with_cache_check
+    self.solve()  # don't use caching
+    ^^^^^^^^^^^^
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 45, in solve
+    self._gs_iter()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 941, in _gs_iter
+    raise err
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 937, in _gs_iter
+    subsys._solve_nonlinear()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/core/implicitcomponent.py", line 226, in _solve_nonlinear
+    self.solve_nonlinear(self._inputs, self._outputs)
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/dafoam/mphys/mphys_dafoam.py", line 360, in solve_nonlinear
+    raise AnalysisError("Mesh quality error!")
+openmdao.core.analysis_error.AnalysisError: 'cruise.coupling.solver' <class DAFoamSolver>: Error calling solve_nonlinear(), Mesh quality error!
+    self._nonlinear_solver._solve_with_cache_check()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 26, in _solve_with_cache_check
+    self.solve()  # don't use caching
+    ^^^^^^^^^^^^
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 45, in solve
+    self._gs_iter()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 941, in _gs_iter
+    raise err
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 937, in _gs_iter
+    subsys._solve_nonlinear()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/core/group.py", line 2585, in _solve_nonlinear
+    self._nonlinear_solver._solve_with_cache_check()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 26, in _solve_with_cache_check
+    self.solve()  # don't use caching
+    ^^^^^^^^^^^^
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/nonlinear/nonlinear_runonce.py", line 45, in solve
+    self._gs_iter()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 941, in _gs_iter
+    raise err
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/solvers/solver.py", line 937, in _gs_iter
+    subsys._solve_nonlinear()
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/openmdao/core/implicitcomponent.py", line 226, in _solve_nonlinear
+    self.solve_nonlinear(self._inputs, self._outputs)
+  File "/home/dafoamuser/dafoam/packages/miniconda3/lib/python3.12/site-packages/dafoam/mphys/mphys_dafoam.py", line 360, in solve_nonlinear
+    raise AnalysisError("Mesh quality error!")
+openmdao.core.analysis_error.AnalysisError: 'cruise.coupling.solver' <class DAFoamSolver>: Error calling solve_nonlinear(), Mesh quality error!
+Finalising parallel run
+Finalising parallel run
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[35895,1],3]
+  Exit code:    1
+--------------------------------------------------------------------------

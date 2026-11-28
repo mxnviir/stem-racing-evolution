@@ -941,7 +941,7 @@
  },
  "legal": true,
  "lattice": null,
- "build_s": 304,
+ "build_s": 307,
  "failed_all": [
   "T5.1_diameter_min",
   "T5.5_chamber_clear",
@@ -956,13 +956,13 @@
    "foam_g": 0.10708722351972486,
    "printed_g": 4.82290389463821
   },
-  "car_g": 50.7261391322388,
+  "car_g": 50.72599725193047,
   "foam_g": 25.994137815662967,
   "lead_g": 0.0,
   "lead_cap_g": 15.797829105582927,
-  "race_mass_g": 71.87613913223879,
-  "com_x_car_mm": 160.50113491331567,
-  "com_z_mm": 23.35299567762646,
+  "race_mass_g": 71.87599725193047,
+  "com_x_car_mm": 160.50101225754074,
+  "com_z_mm": 23.35288725802188,
   "items": {
    "foam": [
     25.994,
@@ -971,8 +971,8 @@
    ],
    "printed": [
     10.174,
-    100.555,
-    24.223
+    100.553,
+    24.222
    ],
    "wheels_front": [
     7.155,
@@ -1044,11 +1044,11 @@
   "cavity_mm3": 0.14,
   "wrap_pitch_mm": 0.3,
   "cartridge": "official",
-  "cfd_faces": 1003464,
-  "car_volume_mm3": 193308,
+  "cfd_faces": 1003448,
+  "car_volume_mm3": 193306,
   "merged_volume_mm3": 192707,
-  "wrap_p99_mm": 0.135,
-  "wrap_max_mm": 0.193,
+  "wrap_p99_mm": 0.137,
+  "wrap_max_mm": 0.203,
   "one_piece": true,
   "watertight": true,
   "wheels": {
