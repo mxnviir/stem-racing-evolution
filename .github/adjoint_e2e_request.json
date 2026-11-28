@@ -1,1 +1,1 @@
-{"go": "e2e-1", "plan": "search/adjoint/E2E_TEST.md"}
+{"go": "e2e-2", "plan": "search/adjoint/E2E_TEST.md", "note": "relaunch with the masked link (e2e-1 cancelled during its image build, before any result)"}
