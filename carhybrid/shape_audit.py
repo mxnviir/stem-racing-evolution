@@ -41,6 +41,15 @@ def main(folder, out_json):
     # the halo's seat (halo_seat.py): the body meets the pocket's rim (24 + 3.175 = 27.175 mm) flush, by the owner's
     # 2026-11-23 rule (no trench), and T4.4.2 keeps it at or under the rim ahead of / beside the halo: a flat ring there
     halo = (ref_a + d["d_halo"], ref_a + d["d_halo"] + 50.0) if "d_halo" in d else None
+    # the nose's foam/print joint (evo_patches/nose_material.py): the glued face at x_cut and the tenon's pocket
+    x_cut = None
+    for src in (folder / "nose_split.json", folder / "summary.json"):
+        if src.exists():
+            js = json.loads(src.read_text())
+            x_cut = js.get("x_cut_mm") or ((js.get("mass") or {}).get("nose_split") or {}).get("x_cut_mm")
+            if x_cut:
+                break
+    axles = (d["x_front"], d["x_front"] + d["W"]) if "x_front" in d and "W" in d else ()
     # sections
     rect, stations = [], np.arange(ref_a + 5.0, rear - 25.0, 5.0)
     for x in stations:
@@ -73,6 +82,8 @@ def main(folder, out_json):
                 continue
             pos = k * 0.05
             label = None
+            cc = c[al][sel]
+            (cc_x0, cc_y0, cc_z0), (cc_x1, cc_y1, cc_z1) = cc.min(0), np.abs(cc).max(0) * [0, 1, 1] + cc.max(0) * [1, 0, 0]
             if name == "y" and abs(pos) < 0.1:
                 label = "centre plane (closing face)"
             elif name == "x" and abs(pos - rear) < 0.6:
@@ -85,12 +96,32 @@ def main(folder, out_json):
                 label = "sidepod-top cap 27.175 mm (hard-coded in freeform.field)"
             elif name == "z" and abs(pos - (POCKET_FLOOR_Z_MM - 6.35)) < 0.2:
                 label = "ballast container floor (App. ix, internal)"
-            elif name == "x" and abs(pos - (rear - 52.0)) < 0.6:
+            elif name == "x" and abs(pos - (rear - 52.0)) < 2.5:
                 label = "cartridge chamber end (52 mm bore, internal)"
+            elif name == "x" and sg < 0 and x_cut and abs(pos - x_cut) < 0.3:
+                label = "nose glued face at x_cut (foam meets print; covered by the print)"
+            elif x_cut and cc_x0 >= x_cut - 0.5 and cc_x1 <= x_cut + 20.0 and (
+                    (name == "y" and abs(abs(pos) - 4.0) < 0.15) or (name == "z" and sg < 0)):
+                label = "tenon pocket (nose joint, internal)"
+            elif (name == "y" and abs(abs(pos) - 3.0) < 0.15) or (name == "z" and sg < 0 and abs(pos - 8.0) < 0.3):
+                label = "official block underside slot (6 x 6 mm, kept unmachined)"
+            elif name == "x" and sg < 0 and cc_y1 < 4.5 and cc_z1 < 12.5:
+                label = "official block underside slot end"
+            elif name == "x" and sg < 0 and halo is not None and abs(pos - halo[1]) < 0.6:
+                label = "halo rear face seat (body backs the halo, team rule)"
+            elif name == "z" and sg > 0 and halo is not None and halo[1] <= cc_x0 <= halo[1] + 15.0:
+                label = "halo-canister loft deck (required body behind the halo)"
+            elif name == "y" and abs(abs(pos) - 6.35) < 0.15:
+                label = "ballast container side wall (App. ix, internal)"
+            elif name == "z" and abs(pos - 14.12) < 0.35 and cc_x1 - cc_x0 < 6.0:
+                label = "axle-height feature (fixed hardware)"
+            elif name == "y" and axles and any(abs(0.5 * (cc_x0 + cc_x1) - a) < 15.0 for a in axles):
+                label = "wheel zone face (T7.9 clearance round a wheel)"
             elif name == "z" and pos < 2.0:
                 label = "floor near the track"
             patches.append({"axis": name, "normal_sign": sg, "at_mm": round(pos, 2), "area_mm2": round(area, 1),
-                            "label": label or "UNEXPLAINED"})
+                            "label": label or "UNEXPLAINED",
+                            "bbox_mm": [np.round(cc.min(0), 1).tolist(), np.round(cc.max(0), 1).tolist()]})
     patches.sort(key=lambda p: -p["area_mm2"])
     # creases
     ang = m.face_adjacency_angles
