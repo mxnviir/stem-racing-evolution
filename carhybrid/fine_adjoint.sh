@@ -59,7 +59,15 @@ json.dump({"name": "$NAME", "design": "folder:$CAR/cfd", "k": int("$K"), "bg_div
            "np": int("$SCORE_NP"), "keep_state": "$WORK/state", "timeout_s": int("${SCORE_TIMEOUT_S:-60000}")},
           open(sys.argv[1], "w"))
 PY
-$PY -W ignore audit/run_case.py "$ADJ" "$WORK/case.json" "$OUT" | tail -1
+for TRY in 1 2 3; do
+  $PY -W ignore audit/run_case.py "$ADJ" "$WORK/case.json" "$OUT" | tail -1
+  # decomposePar of a coarse layered mesh dies with SIGFPE in boundBox now and then, on a decomposition that changes
+  # from run to run (seen at bg_div 4 on the same car: passed, then failed); it fails in the first minutes, so retry
+  if grep -q "decomposePar -force' died with <Signals.SIGFPE" "$OUT/prodcheck.log" 2>/dev/null && [ $TRY -lt 3 ]; then
+    say "decomposePar SIGFPE (try $TRY): meshing again"; continue
+  fi
+  break
+done
 echo "=== result"; head -c 1500 "$OUT/result.json"; echo
 if ! $PY -c "import json,sys; r=json.load(open('$OUT/result.json')); sys.exit(0 if r.get('converged') and 'path' in (r.get('kept_state') or {}) else 1)"; then
   echo "=== prodcheck tail"; tail -c 3000 "$OUT/prodcheck.log" 2>/dev/null
