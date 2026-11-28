@@ -108,7 +108,8 @@ def step_steady(job, prod: dict, work: Path, n_proc: int) -> dict:
     if sj.exists():
         return json.loads(sj.read_text())
     s = job.get("steady", {})
-    return steady.run(Path(prod["state"]), work / "steady", n_proc, int(s.get("extra", 2000)), float(s.get("span_mN", 0.10)))
+    return steady.run(Path(prod["state"]), work / "steady", n_proc, int(s.get("extra", 2000)), float(s.get("span_mN", 0.10)),
+                      s.get("schemes"))
 
 
 def dafoam_health(logtext: str) -> dict:

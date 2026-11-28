@@ -84,10 +84,11 @@ reconstructPar -latestTime > log.reconstruct.{t0} 2>&1; rm -rf processor*"""
     return t0
 
 
-def run(prod: Path, work: Path, n_proc=4, extra=2000, span_mN=0.10) -> dict:
+def run(prod: Path, work: Path, n_proc=4, extra=2000, span_mN=0.10, schemes=None) -> dict:
+    """schemes: the rungs to use, by name (default both, in order)."""
     work.mkdir(parents=True, exist_ok=True)
     src, rungs = Path(prod), []
-    for name, div_u in SCHEMES:
+    for name, div_u in [r for r in SCHEMES if schemes is None or r[0] in schemes]:
         dst = work / f"steady_{name}"
         t0 = continue_run(src, dst, n_proc, extra, div_u)
         D = drag_mN(dst)

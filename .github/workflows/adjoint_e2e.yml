@@ -20,10 +20,21 @@ jobs:
   image:
     runs-on: ubuntu-24.04
     timeout-minutes: 120
+    outputs:
+      variants: ${{ steps.v.outputs.variants }}
+      single: ${{ steps.v.outputs.single }}
     steps:
       - name: room
         run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true; df -h / | tail -1
       - uses: actions/checkout@v4
+      - id: v
+        name: the variants asked (E2E_TEST.md amendment 1; default the registered "A")
+        run: |
+          python3 - <<'PY2' >> "$GITHUB_OUTPUT"
+          import json
+          v = json.load(open(".github/adjoint_e2e_request.json")).get("variants", ["A"])
+          print("variants=" + json.dumps(v)); print("single=" + (v[0] if len(v) == 1 else ""))
+          PY2
       - name: build and push the AWS container
         run: |
           echo "${{ github.token }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
@@ -34,9 +45,14 @@ jobs:
           docker images $IMG
 
   adjoint:
+    name: "adjoint ${{ matrix.variant }}"
     needs: image
     runs-on: ubuntu-24.04
     timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: ${{ fromJSON(needs.image.outputs.variants) }}
     outputs:
       fd: ${{ steps.fd.outputs.fd }}
     steps:
@@ -55,7 +71,7 @@ jobs:
       - name: the job (team car, v = 0, coarse), packaged as for AWS
         run: |
           mkdir -p io
-          docker run --rm -e PYTHONDONTWRITEBYTECODE=1 -v $PWD:/w -w /w --entrypoint python $IMG -W ignore search/adjoint/e2e_job.py base io/job.json
+          docker run --rm -e PYTHONDONTWRITEBYTECODE=1 -v $PWD:/w -w /w --entrypoint python $IMG -W ignore search/adjoint/e2e_job.py base io/job.json --variant ${{ matrix.variant }}
           python3 search/adjoint/aws/batch.py package io/job.json io/in.tgz --adjoint-repo _adjoint
           ls -la io
       - name: the chain in the container (car, production, steady, DAFoam, link)
@@ -69,8 +85,8 @@ jobs:
       - id: fd
         name: the forward checks' jobs
         run: |
-          if [ -f io/out/run/gradient.json ]; then
-            docker run --rm -e PYTHONDONTWRITEBYTECODE=1 -v $PWD:/w -w /w --entrypoint python $IMG -W ignore search/adjoint/e2e_job.py fd io/out/run/gradient.json io/fd
+          if [ -f io/out/run/gradient.json ] && [ "${{ needs.image.outputs.single }}" = "${{ matrix.variant }}" ]; then
+            docker run --rm -e PYTHONDONTWRITEBYTECODE=1 -v $PWD:/w -w /w --entrypoint python $IMG -W ignore search/adjoint/e2e_job.py fd io/out/run/gradient.json io/fd --variant ${{ matrix.variant }}
             sudo chown -R $(id -u):$(id -g) io
             echo "fd=$(python3 -c "import json;print(json.dumps([c['id'] for c in json.load(open('io/fd/fd_cases.json'))]))")" >> "$GITHUB_OUTPUT"
           else
@@ -78,11 +94,11 @@ jobs:
           fi
       - uses: actions/upload-artifact@v4
         if: always()
-        with: { name: adjoint, path: io/, retention-days: 30 }
+        with: { name: "adjoint-${{ matrix.variant }}", path: io/, retention-days: 30 }
 
   fd:
-    needs: adjoint
-    if: needs.adjoint.outputs.fd != '[]' && needs.adjoint.outputs.fd != ''
+    needs: [image, adjoint]
+    if: needs.image.outputs.single != '' && needs.adjoint.outputs.fd != '[]' && needs.adjoint.outputs.fd != ''
     runs-on: ubuntu-24.04
     timeout-minutes: 355
     strategy:
@@ -98,7 +114,7 @@ jobs:
       - uses: actions/checkout@v4
         with: { repository: mxnviir/stem-racing-adjoint, ref: "${{ env.ADJOINT_REF }}", path: _adjoint }
       - uses: actions/download-artifact@v4
-        with: { name: adjoint, path: adj }
+        with: { name: "adjoint-${{ needs.image.outputs.single }}", path: adj }
       - name: run the car to its steady state in the container
         timeout-minutes: 330
         run: |
@@ -116,7 +132,7 @@ jobs:
         with: { name: "fd-${{ matrix.id }}", path: out/, retention-days: 30 }
 
   verdict:
-    needs: [adjoint, fd]
+    needs: [image, adjoint, fd]
     if: always() && needs.adjoint.result != 'skipped'
     runs-on: ubuntu-24.04
     steps:
@@ -126,15 +142,20 @@ jobs:
         with: { path: /tmp/a }
       - name: marks, and the results into the repository
         run: |
-          D=docs/checks/adjoint_e2e/${{ github.run_id }}
-          mkdir -p $D/adjoint $D/fd
-          cp /tmp/a/adjoint/out/result.json /tmp/a/adjoint/out/fine_adjoint.log $D/adjoint/ 2>/dev/null || true
-          cp /tmp/a/adjoint/out/run/gradient.json /tmp/a/adjoint/out/run/dafoam.json /tmp/a/adjoint/out/run/production.json $D/adjoint/ 2>/dev/null || true
-          cp /tmp/a/adjoint/out/run/steady/steady.json $D/adjoint/ 2>/dev/null || true
-          tail -c 200000 /tmp/a/adjoint/out/run/dafoam_case/log.dafoam > $D/adjoint/log.dafoam.tail 2>/dev/null || true
-          cp /tmp/a/adjoint/fd/fd_cases.json $D/ 2>/dev/null || true
-          for d in /tmp/a/fd-*; do [ -d "$d" ] && cp -r "$d"/. $D/fd/; done
-          python3 search/adjoint/e2e_verdict.py $D $D/verdict.json | tee -a "$GITHUB_STEP_SUMMARY" || true
+          R=docs/checks/adjoint_e2e/${{ github.run_id }}
+          for A in /tmp/a/adjoint-*; do
+            [ -d "$A" ] || continue
+            V=${A##*/adjoint-}; D=$R/$V
+            mkdir -p $D/adjoint $D/fd
+            cp $A/out/result.json $A/out/fine_adjoint.log $D/adjoint/ 2>/dev/null || true
+            cp $A/out/run/gradient.json $A/out/run/grad_core.json $A/out/run/dafoam.json $A/out/run/production.json $D/adjoint/ 2>/dev/null || true
+            cp $A/out/run/steady/steady.json $D/adjoint/ 2>/dev/null || true
+            tail -c 200000 $A/out/run/dafoam_case/log.dafoam > $D/adjoint/log.dafoam.tail 2>/dev/null || true
+            cp $A/fd/fd_cases.json $D/ 2>/dev/null || true
+            if [ "$V" = "${{ needs.image.outputs.single }}" ]; then for d in /tmp/a/fd-*; do [ -d "$d" ] && cp -r "$d"/. $D/fd/; done; fi
+            { echo "### variant $V"; python3 search/adjoint/e2e_verdict.py $D $D/verdict.json; } | tee -a "$GITHUB_STEP_SUMMARY" || true
+          done
+          D=$R
           git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add $D
           git commit -m "adjoint_e2e: results of run ${{ github.run_id }} [skip ci]" || exit 0

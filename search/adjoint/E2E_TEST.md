@@ -39,3 +39,24 @@ piece runs and joins up, inside the very container AWS will run.
 Anything about the 2.1 M-cell wall-resolved adjoint: its memory, its convergence (it stalled on some designs
 before), the wall-resolved boundary conditions in DAFoam. The first AWS job is that test; its result is read the
 same way (E1, and E2 with fresh-mesh checks on the fine mesh if wanted).
+
+## Amendment 1 (2026-11-28 18:10, after e2e-4; before any probe)
+**e2e-4 (run 46163110187): E1 FAIL, the adjoint did not converge.**
+- **What worked in the container:** the car built; the production run was coarse (93,932 cells, 229.20 mN); the
+  linearUpwind continuation was steady (span 0.0002 mN, so the upwind rung was not used); DAFoam's primal reproduced
+  OpenFOAM's drag to 0.0001 %.
+- **What failed:** both Krylov adjoints (D and L) stalled. D went 3.15e-2 to 2.12e-2 by iteration 200, then stayed
+  flat to 2000 (PetscConvergedReason -3). L stalled at 5.2e-2. The settings were the registered coarse ones (PC fill 0,
+  level 1, restart 200).
+- **Why that is not new:** the same settings converged on the coarse mesh's first-order upwind steady flow before
+  (adjoint repo ROUTES.md 2026-11-20) and stalled on linearUpwind states.
+
+**Probes (one run, no forward checks).** The same car and chain, three variants:
+- `pc`: linearUpwind base, stronger preconditioner (fill 1, level 2, restart 400, 3000 iterations);
+- `upwind`: an upwind-only steady base, the registered preconditioner;
+- `upwind_pc`: both changes.
+
+**Read-out:** whether DAFoam's drag adjoint converges (`converged_D`), its iterations and time. The full test (E1, E2
+with the six forward checks) is then re-run with the first converging variant in this order: `pc` (it keeps the
+owner's linearUpwind-first choice), then `upwind`, then `upwind_pc`. Taking the adjoint on an upwind base for the AWS
+jobs changes the owner's choice, so it goes to the owner first. Marks unchanged.
