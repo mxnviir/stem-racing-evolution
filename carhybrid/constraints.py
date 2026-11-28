@@ -435,7 +435,9 @@ def split_sharp(C: Constraints, tol_mm=0.05):
         o["rows"] += 1; o["worst_mm"] = max(o["worst_mm"], float(s_all[k]))
         o["x"] = [min(o["x"][0], C.tags[k][2]), max(o["x"][1], C.tags[k][2])]
     keep = ~sharp
-    D = Constraints(C.A[keep], C.b[keep], [t for t, k in zip(C.tags, keep) if k], C.n, C.grid,
+    # rows kept with a slack of at most tol_mm are met to within it: their bound is relaxed by that slack, so the
+    # reachable set is feasible exactly (the L1 program's u meets it) and a QP can project onto it
+    D = Constraints(C.A[keep], C.b[keep] + s_all[keep] + 1e-9, [t for t, k in zip(C.tags, keep) if k], C.n, C.grid,
                     dict(C.info, sharp_rows=int(sharp.sum()), sharp=rep, constrained_rows=int(keep.sum())))
     D._ctx = C._ctx
     D._sharp_tags = [t for t, k in zip(C.tags, sharp) if k]

@@ -28,6 +28,8 @@ W5 The engine's own gates measured per section (chord, thickness, top-surface de
 W7 The rise is cut when the wing, placed at the lowest height T9.6 allows, would top T9.4.3's 65 mm (wing1:
    wg_L08 and wg_L12, rise 11-13 mm, broke T9.4.3/T3.5); the height is then found again. Recorded as
    info["rise_cut_for_T9.4.3_mm"].
+W8 The assembly saves the wing engine's inputs (parts/rwing_ctx.pkl: design, body, clearance parts) so
+   carhybrid/wing_grad.py can rebuild the wing at perturbed numbers (the wing and strut gradient).
 W6 The parameters: rw_camber (+-0.06) is released (it was fixed at 0); new shape parameters rw_camber_pos, rw_rise,
    rw_rise_p, rw_sweep, rw_sweep_p, rw_tip_chord_ratio, rw_tip_t_ratio; rw_aoa stays fixed at 0.
 L7 (in car/build/legality.py, the referee) T9.5.1 strict: the rear span is the longest stretch of the wing that no
@@ -40,6 +42,7 @@ import json
 from pathlib import Path
 
 RW = "car/parts/rear_wing_engine.py"
+AS = "car/parts/assembly.py"
 LG = "search/layout/layout_genes.py"
 LP = "search/layout/layout_params.json"
 REF = "car/build/legality.py"
@@ -307,6 +310,18 @@ def _wing(d, x_le, z):'''),
         d = dataclasses.replace(d, rise_mm=float(np.sign(_r) * max(0.0, abs(_r) - _over - 0.1)))
         info["rise_cut_for_T9.4.3_mm"] = round(float(info["shape"]["rise_mm"]) - float(d.rise_mm), 3)
     info["shape"]["rise_mm"] = float(d.rise_mm)'''),
+    dict(id="W8_wing_context_saved", file=AS,
+         old='''        res = rwe.build(rear, body, x_front_mm, W_mm, wheel_r, clear_of=[halo] + sup + [wheel_meshes["wheelR"]],
+                        forward_parts=forward)''',
+         new='''        res = rwe.build(rear, body, x_front_mm, W_mm, wheel_r, clear_of=[halo] + sup + [wheel_meshes["wheelR"]],
+                        forward_parts=forward)
+        try:                                              # evo_patches W8: the engine's inputs, for the wing gradient
+            import pickle                                 # (carhybrid/wing_grad.py rebuilds the wing at perturbed numbers)
+            with open(out / "rwing_ctx.pkl", "wb") as _fh:
+                pickle.dump(dict(design=rear, body=body, x_front_mm=x_front_mm, W_mm=W_mm, wheel_rear=wheel_r,
+                                 clear_of=[halo] + sup + [wheel_meshes["wheelR"]], forward_parts=forward), _fh)
+        except Exception as _e:                           # noqa: BLE001  (never fails the build)
+            info["rwing_ctx_error"] = repr(_e)'''),
     dict(id="L7a_strict_span_fn", file=REF,
          old='''def _wing_checks(assembly: dict, body_mm, parts_mm: dict) -> dict:''',
          new='''def _rear_span_strict(elements, blockers, tol_mm=0.05):
