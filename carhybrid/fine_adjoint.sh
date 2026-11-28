@@ -49,7 +49,7 @@ say "case $NAME: layout ${LAYOUT:0:60} u ${U:0:60} k $K bg_div $BG_DIV grid ${GR
 phase build
 if [ ! -f "$CAR/rec.json" ] || [ ! -d "$CAR/cfd" ]; then
   rm -rf "$CAR"
-  $PY -W ignore carhybrid/make_car.py "$EVO" "$LAYOUT" "$U" "$CAR" ${GRID:+--grid "$GRID"} > "$OUT/make_car.log" 2>&1 || { tail -c 2500 "$OUT/make_car.log"; say "BUILD FAILED"; }
+  $PY -W ignore carhybrid/make_car.py "$EVO" "$LAYOUT" "$U" "$CAR" ${GRID:+--grid "$GRID"} ${WING:+--wing "$WING"} > "$OUT/make_car.log" 2>&1 || { tail -c 2500 "$OUT/make_car.log"; say "BUILD FAILED"; }
 fi
 [ -d "$CAR/cfd" ] || { say "no car folder $CAR/cfd: stop"; exit 1; }
 
@@ -189,6 +189,13 @@ if [ -z "${STOP:-}" ] && [ -f "$OUT/dafoam_sens.npz" ]; then
   $PY -W ignore carhybrid/grad.py "$EVO" "$CAR/rec.json" "$OUT/dafoam_sens.npz" "$U" "$OUT/grad.json" "${GA[@]}" 2>&1 | tail -20 \
     || say "grad mapping failed"
   echo "=== grad.json"; head -c 2000 "$OUT/grad.json" 2>/dev/null; echo
+  # the rear wing's and its struts' numbers (carhybrid/wing_grad.py; WING_GRAD = "default" or a comma list of names)
+  if [ -n "${WING_GRAD:-}" ] && [ -f "$CAR/evo/parts/rwing_ctx.pkl" ]; then
+    WA=(--l20 "$L20" --d20 "$D20"); [ "$WING_GRAD" != "default" ] && WA+=(--names "$WING_GRAD")
+    say "wing_grad.py ${WA[*]}"
+    $PY -W ignore carhybrid/wing_grad.py "$EVO" "$CAR" "$OUT/dafoam_sens.npz" "$OUT/wing_grad.json" "${WA[@]}" 2>&1 | tail -8 \
+      || say "wing gradient failed"
+  elif [ -n "${WING_GRAD:-}" ]; then say "no rwing_ctx.pkl (builder without evo_patches W8): no wing gradient"; fi
 fi
 phase end
 

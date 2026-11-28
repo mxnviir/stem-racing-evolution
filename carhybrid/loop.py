@@ -2,6 +2,9 @@
 
     python carhybrid/loop.py init <layout> <grid> [--arm adjoint|random] [--radius 0.25] [--seed 20261128]
                                   [--max-iter 20] [--bg-div 12.889] [--runner bigmem] [--np N] [--force]
+                                  [--wing default|rw_chord,rwsup_out,... --evo <evolution checkout>]
+        --wing: the rear wing's and its struts' numbers join the body's (x = [u; s], s in [-1, 1] over each number's
+        layout_params.json range, started at the layout's own values); the gradient stage adds wing_grad.py's dT/ds
         a new arm at u = 0 (state carhybrid/loop/state.json) and its first stage in carhybrid/request.json
     python carhybrid/loop.py advance <results dir> <run id> [--evo <evolution checkout>] [--arm <arm>]
         ingest the finished stage (results dir = carhybrid/results/<batch>, the batch this arm is waiting on), write the
@@ -50,6 +53,10 @@ GROW, SHRINK, R_MIN, R_MAX = 1.5, 0.5, 0.02, 1.0
 RADIUS0, MAX_ITER, SEED = 0.25, 20, 20261128
 BG_DIV = 12.889                    # production background division for the whole car (FINE_ADJOINT.md interfaces)
 EXIT_NEXT, EXIT_STOP, EXIT_REFUSED = 0, 3, 2
+DEFAULT_WING = ("rw_chord", "rw_t", "rw_half_span", "rw_x_le", "rw_lift", "rw_camber", "rw_camber_pos", "rw_rise",
+                "rw_rise_p", "rw_sweep", "rw_sweep_p", "rw_tip_chord_ratio", "rw_tip_t_ratio",
+                "rwsup_out", "rwsup_fwd", "rwsup_leave", "rwsup_arrive", "rwsup_chord", "rwsup_thick", "rwsup_flare",
+                "rwsup_round", "rwsup_mid_x", "rwsup_mid_y", "rwsup_mid_z", "rwsup_swell")   # = wing_grad.DEFAULT_NAMES
 
 
 # ------------------------------------------------------------------ files
@@ -78,6 +85,52 @@ def grid_n(grid):
 def u_str(u):
     u = np.asarray(u, float)
     return "zero" if not np.any(u) else json.dumps([round(float(v), 6) for v in u])
+
+
+# ------------------------------------------------------------------ the rear wing's and struts' numbers (optional)
+# An arm started with --wing carries s (one number per name in [-1, 1]: its place in layout_params.json's lo..hi)
+# beside the body's u. The line works on x = [u; s]; the gradient stage adds carhybrid/wing_grad.py's dT/ds.
+def nw(A):
+    return len(A.get("wing_names") or [])
+
+
+def xvec(A):
+    return [float(v) for v in A["u"]] + [float(v) for v in (A.get("s") or [])]
+
+
+def split_x(A, x):
+    x = [float(v) for v in x]
+    return x[:A["n"]], x[A["n"]:]
+
+
+def wing_json(A, s):
+    out = {}
+    for nm, v in zip(A["wing_names"], s):
+        lo, hi = A["wing_ranges"][nm]
+        out[nm] = round(0.5 * (lo + hi) + float(v) * 0.5 * (hi - lo), 6)
+    return json.dumps(out)
+
+
+def wing_start(evo, layout, names):
+    """(ranges, s0) of the named numbers on this layout: layout_params.json's lo..hi, the decoded layout's own values."""
+    sys.path.insert(0, str(HERE))
+    import make_car as MC
+    evo = Path(evo).resolve()
+    if str(evo) not in sys.path:
+        sys.path.insert(0, str(evo))
+    import repo_paths; repo_paths.add()
+    import layout_genes as LG
+    P = {q["name"]: q for q in json.loads((evo / "search" / "layout" / "layout_params.json").read_text())["params"]}
+    rw = LG.decode(MC.genes_of(evo, layout))["rwing"]
+    ranges, s0 = {}, []
+    for nm in names:
+        lo, hi = float(P[nm]["lo"]), float(P[nm]["hi"])
+        if hi <= lo:
+            raise SystemExit(f"loop: {nm} has a range of zero width (mode {P[nm]['mode']})")
+        th = rw[MC.RW_KEYS[nm]] if nm in MC.RW_KEYS else rw.get("support", {}).get(MC.SUP_KEYS[nm[6:]], P[nm]["value"])
+        ranges[nm] = (lo, hi)
+        s0.append(round(float(np.clip((float(th) - 0.5 * (lo + hi)) / (0.5 * (hi - lo)), -1.0, 1.0)), 6))
+    return ranges, s0
 
 
 def batch_name(A, stage, retry=0):
@@ -120,26 +173,32 @@ def grad_cases(A, batch):
          "bg_div": A["bg_div"], "grid": A["grid"], "runner": A["runner"]}
     if A.get("np"):
         c["np"] = int(A["np"])
+    if nw(A):
+        c["wing"], c["wing_grad"] = wing_json(A, A["s"]), ",".join(A["wing_names"])
     return [c]
 
 
 def line_cases(A, batch):
-    u, d, r = np.asarray(A["u"], float), np.asarray(A["direction"], float), A["radius"]
-    cands = {"base": u}
+    x, d, r = np.asarray(xvec(A), float), np.asarray(A["direction"], float), A["radius"]
+    cands = {"base": x}
     for tag, a in STEPS:
-        cands[tag] = np.clip(u + a * r * d, -1.0, 1.0)
-    A["candidates"] = {tag: [round(float(v), 6) for v in uc] for tag, uc in cands.items()}
+        cands[tag] = np.clip(x + a * r * d, -1.0, 1.0)
+    A["candidates"] = {tag: [round(float(v), 6) for v in xc] for tag, xc in cands.items()}   # x = [u; s]
     cases = []
-    for tag, uc in A["candidates"].items():
+    for tag, xc in A["candidates"].items():
+        uc, sc = split_x(A, xc)
         for k in FRAMES:
-            cases.append({"name": f"{batch}_{tag}_k{k}", "type": "score", "layout": A["layout"], "k": k,
-                          "u": u_str(uc), "grid": A["grid"]})
+            c = {"name": f"{batch}_{tag}_k{k}", "type": "score", "layout": A["layout"], "k": k, "u": u_str(uc),
+                 "grid": A["grid"]}
+            if nw(A):
+                c["wing"] = wing_json(A, sc)
+            cases.append(c)
     return cases
 
 
 def random_direction(A):
     rng = np.random.default_rng([int(A["seed"]), int(A["i"])])
-    return rng.standard_normal(A["n"])
+    return rng.standard_normal(A["n"] + nw(A))
 
 
 def write_request(A, stage, retry=0):
@@ -160,7 +219,7 @@ def next_stage(A):
     if A["arm"] == "adjoint":
         return write_request(A, "grad")
     d0 = random_direction(A)
-    d = project(np.asarray(A["u"], float), d0)
+    d = project(np.asarray(xvec(A), float), d0)
     if d is None:
         return stop(A, "no feasible direction (every component at a face of the box)")
     A["direction"] = d.tolist()
@@ -202,6 +261,18 @@ def ingest_grad(A, R):
         dT = np.asarray(g.get("dT_du_s") or [], float)
         if len(dT) != A["n"] or not np.all(np.isfinite(dT)) or not np.any(dT):
             why = f"unusable gradient (length {len(dT)}, grid {A['n']})"
+    if why is None and nw(A):
+        wg = load(D / "wing_grad.json")
+        if wg is None or list(wg.get("names") or []) != list(A["wing_names"]):
+            why = "no wing_grad.json for this arm's wing numbers (carhybrid/wing_grad.py failed or was not run)"
+        else:
+            ds_ = np.asarray([0.0 if v is None else float(v) for v in wg["dT_ds_s"]], float)
+            if not np.all(np.isfinite(ds_)):
+                why = "unusable wing gradient"
+            else:
+                rec["wing"] = {"branch_change": wg.get("branch_change"), "norm_dT_ds_s": wg.get("norm_dT_ds_s"),
+                               "base_topology": wg.get("base_topology")}
+                dT = np.r_[dT, ds_]
     if why is not None:
         rec["gate"] = why
         A["history"].append({"stage": "grad", **rec})
@@ -216,7 +287,7 @@ def ingest_grad(A, R):
     gm = np.mean(same, 0)
     rec.update(norm_dT_du_s=float(np.linalg.norm(dT)), n_averaged=len(same),
                **{k: g.get(k) for k in ("D20_N_used", "L20_N_used", "lead_g", "norm_terms_s", "largest_share")})
-    d = project(np.asarray(A["u"], float), -gm)
+    d = project(np.asarray(xvec(A), float), -gm)
     A["history"].append({"stage": "grad", **rec})
     if d is None:
         return stop(A, f"iteration {A['i']}: no feasible descent direction in the box")
@@ -258,7 +329,7 @@ def ingest_line(A, R, evo):
         ok = all(v[0] is not None for v in fr.values())
         rows[tag] = {"ok": ok, "frames": {str(k): v[2] for k, v in fr.items()},
                      "T": [fr[k][0] for k in FRAMES] if ok else None, "se": [fr[k][1] for k in FRAMES] if ok else None}
-    log = {"stage": "line", "i": A["i"], "batch": batch, "radius": A["radius"], "u": A["u"],
+    log = {"stage": "line", "i": A["i"], "batch": batch, "radius": A["radius"], "u": A["u"], "s": A.get("s"),
            "direction_info": {k: v for k, v in (A.get("direction_info") or {}).items() if k != "g"},
            "candidates": {}, "accepted": None}
     g = (A.get("direction_info") or {}).get("g")
@@ -275,7 +346,7 @@ def ingest_line(A, R, evo):
             r = rows[tag]
             c = {"a": a, "ok": r["ok"], "frames": r["frames"], "u": A["candidates"][tag]}
             if g is not None:
-                c["predicted_s"] = float(np.dot(g, np.asarray(A["candidates"][tag]) - np.asarray(A["u"])))
+                c["predicted_s"] = float(np.dot(g, np.asarray(A["candidates"][tag]) - np.asarray(xvec(A))))
             if r["ok"]:
                 Dk = np.asarray(r["T"]) - Tb
                 se_b = float(np.sqrt(np.sum(np.asarray(r["se"]) ** 2 + sb ** 2)) / len(Dk))
@@ -293,7 +364,9 @@ def ingest_line(A, R, evo):
                 log["accepted"] = best
     r0 = A["radius"]
     if log["accepted"]:
-        A["u"] = A["candidates"][log["accepted"]]
+        A["u"], s_new = split_x(A, A["candidates"][log["accepted"]])
+        if nw(A):
+            A["s"] = s_new
         A["grads_at_u"] = []
         if log["accepted"] == STEPS[-1][0]:
             A["radius"] = min(r0 * GROW, R_MAX)
@@ -313,7 +386,7 @@ def ingest_line(A, R, evo):
 
 # ------------------------------------------------------------------ commands
 def init(layout, grid, arm="adjoint", radius=RADIUS0, seed=SEED, max_iter=MAX_ITER, bg_div=BG_DIV, runner="bigmem",
-         np_=None, force=False):
+         np_=None, force=False, wing=None, evo="evo"):
     assert arm in ("adjoint", "random"), arm
     S = load(state_path(), {"arms": {}})
     if arm in S["arms"] and not force:
@@ -324,6 +397,10 @@ def init(layout, grid, arm="adjoint", radius=RADIUS0, seed=SEED, max_iter=MAX_IT
          "radius0": float(radius), "i": 0, "seed": int(seed), "max_iter": int(max_iter), "bg_div": float(bg_div),
          "runner": runner, "np": np_, "status": "active", "stage": None, "pending": None, "pending_cases": [],
          "retry": 0, "grads_at_u": [], "history": [], "runs": [], "accepted": []}
+    if wing:
+        names = list(DEFAULT_WING) if wing == "default" else [w for w in wing.split(",") if w]
+        A["wing_names"] = names
+        A["wing_ranges"], A["s"] = wing_start(evo, layout, names)
     batch, cases = next_stage(A)
     S["arms"][arm] = A
     save(state_path(), S)
@@ -403,7 +480,8 @@ def main(argv):
         return init(argv[1], argv[2], arm=opt("--arm", "adjoint"), radius=float(opt("--radius", RADIUS0)),
                     seed=int(opt("--seed", SEED)), max_iter=int(opt("--max-iter", MAX_ITER)),
                     bg_div=float(opt("--bg-div", BG_DIV)), runner=opt("--runner", "bigmem"),
-                    np_=int(opt("--np")) if opt("--np") else None, force="--force" in argv)
+                    np_=int(opt("--np")) if opt("--np") else None, force="--force" in argv,
+                    wing=opt("--wing"), evo=opt("--evo", os.environ.get("CARHYBRID_EVO", "evo")))
     if cmd == "advance":
         return advance(argv[1], argv[2], evo=opt("--evo", os.environ.get("CARHYBRID_EVO", "evo")), arm=opt("--arm"))
     if cmd == "reissue":

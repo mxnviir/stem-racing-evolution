@@ -168,6 +168,8 @@ jobs:
           K: "${{ matrix.case.k || 0 }}"
           BG_DIV: "${{ matrix.case.bg_div || needs.init.outputs.bgdiv }}"
           GRID: "${{ matrix.case.grid || '' }}"
+          WING: "${{ matrix.case.wing || '' }}"
+          WING_GRAD: "${{ matrix.case.wing_grad || '' }}"
           NP: "${{ matrix.case.np || '' }}"
           SCORE_NP: "${{ matrix.case.score_np || 4 }}"
           GATE_DOMAIN_JSON: "${{ needs.init.outputs.domain }}"

@@ -327,6 +327,9 @@ def project(C: Constraints, v, rho=1.0, iters=4000, tol=1e-7):
     return _project_admm(C, v, rho, iters, tol)
 
 
+_HIGHS_OPTS = {}
+
+
 def _project_highs(C: Constraints, v):
     import highspy
     import scipy.sparse as sp
@@ -347,6 +350,8 @@ def _project_highs(C: Constraints, v):
     H.start_, H.index_, H.value_ = np.arange(n + 1), np.arange(n), np.ones(n)
     h = highspy.Highs()
     h.setOptionValue("output_flag", False)
+    for k_, v_ in _HIGHS_OPTS.items():
+        h.setOptionValue(k_, v_)
     h.setOptionValue("time_limit", 1800.0)
     h.passModel(model)
     h.run()

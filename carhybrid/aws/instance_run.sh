@@ -86,6 +86,7 @@ for i, c in enumerate(m["cases"]):
     lay = c.get("layout", "team"); lay = lay if isinstance(lay, str) else json.dumps(lay)
     env = {"NAME": c["name"], "LAYOUT": lay, "U": u or "zero", "K": g("k") or "0",
            "BG_DIV": g("bg_div") or str(m["bg_div"]), "GRID": g("grid"), "NP": g("np"), "SCORE_NP": g("score_np"),
+           "WING": g("wing"), "WING_GRAD": g("wing_grad"),
            "GATE_DOMAIN_JSON": dom, "DAF_PRIMAL_ONLY": "1" if c.get("primal_only") else "",
            "DAF_FUNCS": g("funcs") or "D,L", "DAF_PRIMAL_ITERS": g("daf_primal_iters") or "300",
            "DAF_GMRES_TOL": g("gmres_tol") or "1e-6", "DAF_GMRES_ITERS": g("gmres_iters") or "6000",

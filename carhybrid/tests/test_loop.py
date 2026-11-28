@@ -284,3 +284,45 @@ def test_race_time_without_checkout(env, monkeypatch):
     assert advance(env, R) == 0
     h = arm(env, "random")["history"][-1]
     assert h["accepted"] == "a1" and h["candidates"]["a1"]["delta_s"] == pytest.approx(-0.001)
+
+
+def test_wing_numbers_join_the_body(env, monkeypatch):
+    """--wing: x = [u; s]; the grad case asks for wing_grad, the line moves both, acceptance splits them back."""
+    names = ["rw_rise", "rwsup_out"]
+    monkeypatch.setattr(LP, "wing_start", lambda evo, layout, nm: ({"rw_rise": (-13.5, 13.5), "rwsup_out": (-60.0, 60.0)},
+                                                                   [0.0, 0.5]))
+    assert LP.main(["init", "team", GRID, "--wing", ",".join(names)]) == 0
+    A = arm(env)
+    assert A["wing_names"] == names and A["s"] == [0.0, 0.5]
+    c = check_request(env, A, "grad", 1)[0]
+    assert c["wing_grad"] == "rw_rise,rwsup_out" and json.loads(c["wing"]) == {"rw_rise": 0.0, "rwsup_out": 30.0}
+    # a grad without wing_grad.json stops the arm (the wing numbers would be moved blind)
+    rng = np.random.default_rng(4)
+    g0 = rng.standard_normal(N) * 1e-3
+    R = write_grad(env, A, g0)
+    gw = [2e-3, None]                                       # rwsup_out: a branch change, no derivative
+    (R / A["pending_cases"][0] / "wing_grad.json").write_text(json.dumps({"names": names, "dT_ds_s": gw,
+                                                                          "branch_change": ["rwsup_out"]}))
+    assert advance(env, R) == 0
+    A = arm(env)
+    full = np.r_[g0, 2e-3, 0.0]
+    assert len(A["direction"]) == N + 2 and np.allclose(A["direction"], -full / np.linalg.norm(full))
+    cases = check_request(env, A, "line", 8)
+    a1 = next(c for c in cases if c["name"].endswith("_a1_k0"))
+    w = json.loads(a1["wing"])
+    s_a1 = np.clip(np.r_[0.0, 0.5] + 0.25 * np.asarray(A["direction"][N:]), -1, 1)
+    assert w["rw_rise"] == pytest.approx(13.5 * s_a1[0], abs=1e-5) and w["rwsup_out"] == pytest.approx(60 * s_a1[1], abs=1e-5)
+    drag = {"base": 233.0, "a05": 232.5, "a1": 231.0, "a2": 234.0}
+    assert advance(env, write_line(env, A, lambda t, k: drag[t])) == 0
+    A = arm(env)
+    assert A["history"][-1]["accepted"] == "a1" and len(A["u"]) == N and np.allclose(A["s"], s_a1, atol=1e-6)
+    c = check_request(env, A, "grad", 1)[0]
+    assert json.loads(c["wing"])["rw_rise"] == pytest.approx(13.5 * s_a1[0], abs=1e-5)
+
+
+def test_wing_arm_without_wing_grad_stops(env, monkeypatch):
+    monkeypatch.setattr(LP, "wing_start", lambda evo, layout, nm: ({"rw_rise": (-13.5, 13.5)}, [0.0]))
+    assert LP.main(["init", "team", GRID, "--wing", "rw_rise"]) == 0
+    A = arm(env)
+    assert advance(env, write_grad(env, A, np.ones(N) * 1e-3)) == 3
+    assert "wing_grad" in arm(env)["stop_reason"]
