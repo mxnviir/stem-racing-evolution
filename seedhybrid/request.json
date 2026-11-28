@@ -1,7 +1,7 @@
 {
- "stage": "setup",
- "gen": 0,
- "setup_run": null,
+ "stage": "gen",
+ "gen": 1,
+ "setup_run": 46113354235,
  "lineages": [
   {
    "name": "team",
@@ -26,44 +26,246 @@
     "campaign": "seedevo/campaign_poc",
     "id": 3
    }
+  },
+  {
+   "name": "team_noadj",
+   "base_of": "team",
+   "guides": false
+  },
+  {
+   "name": "d7_noadj",
+   "base_of": "d7",
+   "guides": false,
+   "enable_if": {
+    "dafoam": "d7"
+   }
+  },
+  {
+   "name": "window_noadj",
+   "base_of": "window",
+   "guides": false,
+   "enable_if": {
+    "dafoam": "window",
+    "no_dafoam": "d7"
+   }
   }
  ],
  "cases": [
   {
-   "type": "base",
+   "type": "child",
    "lineage": "team",
-   "name": "team_base"
+   "art": "team",
+   "name": "team_g1_zero",
+   "chainparent": "",
+   "field": "zero",
+   "amp": "0"
   },
   {
-   "type": "dafoam",
+   "type": "child",
    "lineage": "team",
-   "name": "team_daf_g0",
-   "parent": "",
-   "tag": "g0"
+   "art": "team",
+   "name": "team_g1_rnd1000",
+   "chainparent": "",
+   "field": "rnd1000",
+   "amp": "1"
   },
   {
-   "type": "base",
+   "type": "child",
+   "lineage": "team",
+   "art": "team",
+   "name": "team_g1_rnd1001",
+   "chainparent": "",
+   "field": "rnd1001",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "team",
+   "art": "team",
+   "name": "team_g1_rnd1002",
+   "chainparent": "",
+   "field": "rnd1002",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "team",
+   "art": "team",
+   "name": "team_g1_rnd1003",
+   "chainparent": "",
+   "field": "rnd1003",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "team",
+   "art": "team",
+   "name": "team_g1_rnd1004",
+   "chainparent": "",
+   "field": "rnd1004",
+   "amp": "1"
+  },
+  {
+   "type": "child",
    "lineage": "d7",
-   "name": "d7_base"
+   "art": "d7",
+   "name": "d7_g1_zero",
+   "chainparent": "",
+   "field": "zero",
+   "amp": "0"
   },
   {
-   "type": "dafoam",
+   "type": "child",
    "lineage": "d7",
-   "name": "d7_daf_g0",
-   "parent": "",
-   "tag": "g0"
+   "art": "d7",
+   "name": "d7_g1_rnd1000",
+   "chainparent": "",
+   "field": "rnd1000",
+   "amp": "1"
   },
   {
-   "type": "base",
-   "lineage": "window",
-   "name": "window_base"
+   "type": "child",
+   "lineage": "d7",
+   "art": "d7",
+   "name": "d7_g1_rnd1001",
+   "chainparent": "",
+   "field": "rnd1001",
+   "amp": "1"
   },
   {
-   "type": "dafoam",
+   "type": "child",
+   "lineage": "d7",
+   "art": "d7",
+   "name": "d7_g1_rnd1002",
+   "chainparent": "",
+   "field": "rnd1002",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "d7",
+   "art": "d7",
+   "name": "d7_g1_rnd1003",
+   "chainparent": "",
+   "field": "rnd1003",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "d7",
+   "art": "d7",
+   "name": "d7_g1_rnd1004",
+   "chainparent": "",
+   "field": "rnd1004",
+   "amp": "1"
+  },
+  {
+   "type": "child",
    "lineage": "window",
-   "name": "window_daf_g0",
-   "parent": "",
-   "tag": "g0"
+   "art": "window",
+   "name": "window_g1_zero",
+   "chainparent": "",
+   "field": "zero",
+   "amp": "0"
+  },
+  {
+   "type": "child",
+   "lineage": "window",
+   "art": "window",
+   "name": "window_g1_rnd1000",
+   "chainparent": "",
+   "field": "rnd1000",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "window",
+   "art": "window",
+   "name": "window_g1_rnd1001",
+   "chainparent": "",
+   "field": "rnd1001",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "window",
+   "art": "window",
+   "name": "window_g1_rnd1002",
+   "chainparent": "",
+   "field": "rnd1002",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "window",
+   "art": "window",
+   "name": "window_g1_rnd1003",
+   "chainparent": "",
+   "field": "rnd1003",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "window",
+   "art": "window",
+   "name": "window_g1_rnd1004",
+   "chainparent": "",
+   "field": "rnd1004",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "team_noadj",
+   "art": "team",
+   "name": "team_noadj_g1_zero",
+   "chainparent": "",
+   "field": "zero",
+   "amp": "0"
+  },
+  {
+   "type": "child",
+   "lineage": "team_noadj",
+   "art": "team",
+   "name": "team_noadj_g1_rnd1000",
+   "chainparent": "",
+   "field": "rnd1000",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "team_noadj",
+   "art": "team",
+   "name": "team_noadj_g1_rnd1001",
+   "chainparent": "",
+   "field": "rnd1001",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "team_noadj",
+   "art": "team",
+   "name": "team_noadj_g1_rnd1002",
+   "chainparent": "",
+   "field": "rnd1002",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "team_noadj",
+   "art": "team",
+   "name": "team_noadj_g1_rnd1003",
+   "chainparent": "",
+   "field": "rnd1003",
+   "amp": "1"
+  },
+  {
+   "type": "child",
+   "lineage": "team_noadj",
+   "art": "team",
+   "name": "team_noadj_g1_rnd1004",
+   "chainparent": "",
+   "field": "rnd1004",
+   "amp": "1"
   }
  ]
 }

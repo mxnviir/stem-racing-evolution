@@ -1,7 +1,7 @@
 {
- "stage": "setup",
- "gen": 0,
- "setup_run": null,
+ "stage": "gen",
+ "gen": 1,
+ "setup_run": 46113354235,
  "lineages": {
   "team": {
    "seed": {
@@ -9,15 +9,80 @@
     "campaign": "seedevo/campaign_poc",
     "id": 0
    },
-   "status": "setup",
+   "status": "active",
    "parent": "",
    "amp": 1.0,
    "dafoam_latest": null,
    "dafoam_at": "",
    "esi_latest": null,
-   "next_seed": 1000,
-   "generations": {},
-   "base": null
+   "next_seed": 1005,
+   "generations": {
+    "1": {
+     "parent": "",
+     "amp": 1.0,
+     "children": {
+      "team_g1_rnd1000": [
+       "rnd1000",
+       1.0
+      ],
+      "team_g1_rnd1001": [
+       "rnd1001",
+       1.0
+      ],
+      "team_g1_rnd1002": [
+       "rnd1002",
+       1.0
+      ],
+      "team_g1_rnd1003": [
+       "rnd1003",
+       1.0
+      ],
+      "team_g1_rnd1004": [
+       "rnd1004",
+       1.0
+      ]
+     }
+    }
+   },
+   "base": {
+    "D20_half_N": 0.1851133550489351,
+    "converged": true,
+    "steady_pass": true,
+    "block_span_last1000_mN": 0.06457901618620099,
+    "block_means_mN": [
+     185.178,
+     185.175,
+     185.136,
+     185.12,
+     185.116,
+     185.114,
+     185.114,
+     185.113,
+     185.113,
+     185.113
+    ],
+    "run_dir_kept": "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/research/sidepod_opt/gate/refA_base",
+    "from_state": "gate/state_prod",
+    "from_time": 1000,
+    "extra_iterations": 1200,
+    "scheme_div_phi_U": "bounded Gauss upwind",
+    "n_proc": 4
+   },
+   "art": "team",
+   "guides": true,
+   "geom": {
+    "seed": {
+     "kind": "seedevo",
+     "campaign": "seedevo/campaign_poc",
+     "id": 0
+    },
+    "vertices": 33105,
+    "faces": 66210,
+    "snapped_to_y0": 5750,
+    "volume_mm3_half": 78469.1100809723,
+    "watertight": true,
+    "region_share_of_vertices": "0.2803806071590394"
+   }
   },
   "d7": {
    "seed": {
@@ -25,15 +90,80 @@
     "campaign": "seedevo/campaign_poc",
     "id": 7
    },
-   "status": "setup",
+   "status": "active",
    "parent": "",
    "amp": 1.0,
    "dafoam_latest": null,
    "dafoam_at": "",
    "esi_latest": null,
-   "next_seed": 1000,
-   "generations": {},
-   "base": null
+   "next_seed": 1005,
+   "generations": {
+    "1": {
+     "parent": "",
+     "amp": 1.0,
+     "children": {
+      "d7_g1_rnd1000": [
+       "rnd1000",
+       1.0
+      ],
+      "d7_g1_rnd1001": [
+       "rnd1001",
+       1.0
+      ],
+      "d7_g1_rnd1002": [
+       "rnd1002",
+       1.0
+      ],
+      "d7_g1_rnd1003": [
+       "rnd1003",
+       1.0
+      ],
+      "d7_g1_rnd1004": [
+       "rnd1004",
+       1.0
+      ]
+     }
+    }
+   },
+   "base": {
+    "D20_half_N": 0.18282931252650356,
+    "converged": false,
+    "steady_pass": false,
+    "block_span_last1000_mN": 0.10044558517876112,
+    "block_means_mN": [
+     182.736,
+     182.826,
+     182.831,
+     182.819,
+     182.825,
+     182.837,
+     182.832,
+     182.819,
+     182.824,
+     182.837
+    ],
+    "run_dir_kept": "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/research/sidepod_opt/gate/refA_base",
+    "from_state": "gate/state_prod",
+    "from_time": 1000,
+    "extra_iterations": 1200,
+    "scheme_div_phi_U": "bounded Gauss upwind",
+    "n_proc": 4
+   },
+   "art": "d7",
+   "guides": true,
+   "geom": {
+    "seed": {
+     "kind": "seedevo",
+     "campaign": "seedevo/campaign_poc",
+     "id": 7
+    },
+    "vertices": 35447,
+    "faces": 70894,
+    "snapped_to_y0": 5749,
+    "volume_mm3_half": 82701.51966586652,
+    "watertight": true,
+    "region_share_of_vertices": "0.3062882613479279"
+   }
   },
   "window": {
    "seed": {
@@ -41,7 +171,169 @@
     "campaign": "seedevo/campaign_poc",
     "id": 3
    },
-   "status": "setup",
+   "status": "active",
+   "parent": "",
+   "amp": 1.0,
+   "dafoam_latest": null,
+   "dafoam_at": "",
+   "esi_latest": null,
+   "next_seed": 1005,
+   "generations": {
+    "1": {
+     "parent": "",
+     "amp": 1.0,
+     "children": {
+      "window_g1_rnd1000": [
+       "rnd1000",
+       1.0
+      ],
+      "window_g1_rnd1001": [
+       "rnd1001",
+       1.0
+      ],
+      "window_g1_rnd1002": [
+       "rnd1002",
+       1.0
+      ],
+      "window_g1_rnd1003": [
+       "rnd1003",
+       1.0
+      ],
+      "window_g1_rnd1004": [
+       "rnd1004",
+       1.0
+      ]
+     }
+    }
+   },
+   "base": {
+    "D20_half_N": 0.18532504831676527,
+    "converged": true,
+    "steady_pass": true,
+    "block_span_last1000_mN": 0.004147985622722672,
+    "block_means_mN": [
+     185.326,
+     185.325,
+     185.325,
+     185.324,
+     185.323,
+     185.323,
+     185.324,
+     185.326,
+     185.327,
+     185.327
+    ],
+    "run_dir_kept": "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/research/sidepod_opt/gate/refA_base",
+    "from_state": "gate/state_prod",
+    "from_time": 1000,
+    "extra_iterations": 1200,
+    "scheme_div_phi_U": "bounded Gauss upwind",
+    "n_proc": 4
+   },
+   "art": "window",
+   "guides": true,
+   "geom": {
+    "seed": {
+     "kind": "seedevo",
+     "campaign": "seedevo/campaign_poc",
+     "id": 3
+    },
+    "vertices": 34981,
+    "faces": 69966,
+    "snapped_to_y0": 5613,
+    "volume_mm3_half": 77608.59423464096,
+    "watertight": true,
+    "region_share_of_vertices": "0.2965324033046511"
+   }
+  },
+  "team_noadj": {
+   "seed": null,
+   "base_of": "team",
+   "art": "team",
+   "guides": false,
+   "enable_if": null,
+   "status": "active",
+   "parent": "",
+   "amp": 1.0,
+   "dafoam_latest": null,
+   "dafoam_at": "",
+   "esi_latest": null,
+   "next_seed": 1005,
+   "generations": {
+    "1": {
+     "parent": "",
+     "amp": 1.0,
+     "children": {
+      "team_noadj_g1_rnd1000": [
+       "rnd1000",
+       1.0
+      ],
+      "team_noadj_g1_rnd1001": [
+       "rnd1001",
+       1.0
+      ],
+      "team_noadj_g1_rnd1002": [
+       "rnd1002",
+       1.0
+      ],
+      "team_noadj_g1_rnd1003": [
+       "rnd1003",
+       1.0
+      ],
+      "team_noadj_g1_rnd1004": [
+       "rnd1004",
+       1.0
+      ]
+     }
+    }
+   },
+   "base": {
+    "D20_half_N": 0.1851133550489351,
+    "converged": true,
+    "steady_pass": true,
+    "block_span_last1000_mN": 0.06457901618620099,
+    "block_means_mN": [
+     185.178,
+     185.175,
+     185.136,
+     185.12,
+     185.116,
+     185.114,
+     185.114,
+     185.113,
+     185.113,
+     185.113
+    ],
+    "run_dir_kept": "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/research/sidepod_opt/gate/refA_base",
+    "from_state": "gate/state_prod",
+    "from_time": 1000,
+    "extra_iterations": 1200,
+    "scheme_div_phi_U": "bounded Gauss upwind",
+    "n_proc": 4
+   },
+   "geom": {
+    "seed": {
+     "kind": "seedevo",
+     "campaign": "seedevo/campaign_poc",
+     "id": 0
+    },
+    "vertices": 33105,
+    "faces": 66210,
+    "snapped_to_y0": 5750,
+    "volume_mm3_half": 78469.1100809723,
+    "watertight": true,
+    "region_share_of_vertices": "0.2803806071590394"
+   }
+  },
+  "d7_noadj": {
+   "seed": null,
+   "base_of": "d7",
+   "art": "d7",
+   "guides": false,
+   "enable_if": {
+    "dafoam": "d7"
+   },
+   "status": "skipped_by_rule",
    "parent": "",
    "amp": 1.0,
    "dafoam_latest": null,
@@ -49,7 +341,145 @@
    "esi_latest": null,
    "next_seed": 1000,
    "generations": {},
-   "base": null
+   "base": {
+    "D20_half_N": 0.18282931252650356,
+    "converged": false,
+    "steady_pass": false,
+    "block_span_last1000_mN": 0.10044558517876112,
+    "block_means_mN": [
+     182.736,
+     182.826,
+     182.831,
+     182.819,
+     182.825,
+     182.837,
+     182.832,
+     182.819,
+     182.824,
+     182.837
+    ],
+    "run_dir_kept": "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/research/sidepod_opt/gate/refA_base",
+    "from_state": "gate/state_prod",
+    "from_time": 1000,
+    "extra_iterations": 1200,
+    "scheme_div_phi_U": "bounded Gauss upwind",
+    "n_proc": 4
+   },
+   "geom": {
+    "seed": {
+     "kind": "seedevo",
+     "campaign": "seedevo/campaign_poc",
+     "id": 7
+    },
+    "vertices": 35447,
+    "faces": 70894,
+    "snapped_to_y0": 5749,
+    "volume_mm3_half": 82701.51966586652,
+    "watertight": true,
+    "region_share_of_vertices": "0.3062882613479279"
+   }
+  },
+  "window_noadj": {
+   "seed": null,
+   "base_of": "window",
+   "art": "window",
+   "guides": false,
+   "enable_if": {
+    "dafoam": "window",
+    "no_dafoam": "d7"
+   },
+   "status": "skipped_by_rule",
+   "parent": "",
+   "amp": 1.0,
+   "dafoam_latest": null,
+   "dafoam_at": "",
+   "esi_latest": null,
+   "next_seed": 1000,
+   "generations": {},
+   "base": {
+    "D20_half_N": 0.18532504831676527,
+    "converged": true,
+    "steady_pass": true,
+    "block_span_last1000_mN": 0.004147985622722672,
+    "block_means_mN": [
+     185.326,
+     185.325,
+     185.325,
+     185.324,
+     185.323,
+     185.323,
+     185.324,
+     185.326,
+     185.327,
+     185.327
+    ],
+    "run_dir_kept": "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/research/sidepod_opt/gate/refA_base",
+    "from_state": "gate/state_prod",
+    "from_time": 1000,
+    "extra_iterations": 1200,
+    "scheme_div_phi_U": "bounded Gauss upwind",
+    "n_proc": 4
+   },
+   "geom": {
+    "seed": {
+     "kind": "seedevo",
+     "campaign": "seedevo/campaign_poc",
+     "id": 3
+    },
+    "vertices": 34981,
+    "faces": 69966,
+    "snapped_to_y0": 5613,
+    "volume_mm3_half": 77608.59423464096,
+    "watertight": true,
+    "region_share_of_vertices": "0.2965324033046511"
+   }
   }
- }
+ },
+ "log": [
+  {
+   "stage": "setup",
+   "gen": 0,
+   "run": "46113354235",
+   "lineages": {
+    "team": {
+     "base_ok": true,
+     "steady_pass": true,
+     "base_D20_mN": 185.11335504893512,
+     "dafoam": false
+    },
+    "d7": {
+     "base_ok": true,
+     "steady_pass": false,
+     "base_D20_mN": 182.82931252650354,
+     "dafoam": false
+    },
+    "window": {
+     "base_ok": true,
+     "steady_pass": true,
+     "base_D20_mN": 185.32504831676528,
+     "dafoam": false
+    },
+    "team_noadj": {
+     "base_of": "team",
+     "enabled": true,
+     "rule": {}
+    },
+    "d7_noadj": {
+     "base_of": "d7",
+     "enabled": false,
+     "rule": {
+      "dafoam": "d7"
+     }
+    },
+    "window_noadj": {
+     "base_of": "window",
+     "enabled": false,
+     "rule": {
+      "dafoam": "window",
+      "no_dafoam": "d7"
+     }
+    }
+   }
+  }
+ ]
 }
