@@ -22,8 +22,11 @@ research/sidepod_opt/dafoam/runScript.py
   values, the per-function adjoint times and "gmres": {function: {iterations, reason, residual_norm, converged,
   seconds, error}}. The primal-only path (DAF_PRIMAL_ONLY=1) writes D and L to dafoam_primal.json.
 research/sidepod_opt/dafoam/run_docker.sh
+- D4: DAFoam's mesh-quality limits (checkMeshThreshold) from env DAF_MAX_ASPECT / DAF_MAX_NONORTH / DAF_MAX_SKEW /
+  DAF_MAX_BADFACES, defaults the original 1000 / 70 / 6 / 0.
 - R1: ranks from env DAF_NP when the np argument is absent; /dev/shm size from env DAF_SHM (default 16g: 2g is
-  tight for OpenMPI's shared-memory transport at 64 ranks); DAF_FUNCS passed into the container.
+  tight for OpenMPI's shared-memory transport at 64 ranks); DAF_FUNCS, DAF_KEEP_UNCONVERGED and the D4 limits passed
+  into the container.
 """
 from __future__ import annotations
 
@@ -194,6 +197,21 @@ _MD.DAFoamSolver.solve_linear = _solve_linear
 ''',
     ),
     dict(
+        id="D4_mesh_check_env",
+        file=RS,
+        old='''    "checkMeshThreshold": {"maxAspectRatio": 1000.0, "maxNonOrth": 70.0, "maxSkewness": 6.0,
+                           "maxIncorrectlyOrientedFaces": 0},
+''',
+        new='''    # carhybrid/patch_daf.py D4: DAFoam refuses to start on a mesh past these limits ("Mesh quality error!"); the
+    # fine adjoint runs on the mesh the score was already solved on (gate F1 compares the two primals), so
+    # fine_adjoint.sh relaxes them by env (defaults = the original limits)
+    "checkMeshThreshold": {"maxAspectRatio": float(os.environ.get("DAF_MAX_ASPECT", "1000")),
+                           "maxNonOrth": float(os.environ.get("DAF_MAX_NONORTH", "70")),
+                           "maxSkewness": float(os.environ.get("DAF_MAX_SKEW", "6")),
+                           "maxIncorrectlyOrientedFaces": int(os.environ.get("DAF_MAX_BADFACES", "0"))},
+''',
+    ),
+    dict(
         id="R1_ranks_shm_env",
         file=RD,
         old='''CASE=$(realpath "$1"); NP=${2:-4}; IMAGE=${3:-${DAFOAM_IMAGE:-dafoam/opt-packages:v5.1.1}}''',
@@ -203,7 +221,7 @@ _MD.DAFoamSolver.solve_linear = _solve_linear
         id="R1b_shm_funcs",
         file=RD,
         old='''docker run --rm -u dafoamuser --shm-size=2g \\''',
-        new='''docker run --rm -u dafoamuser --shm-size=${DAF_SHM:-16g} -e DAF_FUNCS \\''',
+        new='''docker run --rm -u dafoamuser --shm-size=${DAF_SHM:-16g} -e DAF_FUNCS -e DAF_KEEP_UNCONVERGED -e DAF_MAX_ASPECT -e DAF_MAX_NONORTH -e DAF_MAX_SKEW -e DAF_MAX_BADFACES \\''',
     ),
 ]
 

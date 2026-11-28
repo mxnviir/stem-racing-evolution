@@ -14,7 +14,8 @@
 #   ADJ (adjoint checkout, default adj), EVO (evolution checkout, default evo), CAR (built car, default /tmp/car; built
 #   here if CAR/rec.json is missing), OUT (default out/$NAME), WORK (scratch, default $RUNNER_TEMP/fine_adjoint),
 #   DAF_PRIMAL_ONLY=1 (DAFoam primal only, no adjoint), DAF_FUNCS (default D,L), DAF_PRIMAL_ITERS (default 300),
-#   DAF_GMRES_TOL / DAF_GMRES_ITERS / DAF_GMRES_RESTART / DAF_PC_FILL / DAF_PC_LEVEL (adjoint settings; defaults 1e-6,
+#   DAF_MAX_SKEW / DAF_MAX_NONORTH / DAF_MAX_ASPECT (DAFoam's mesh-quality limits; relaxed to 1000 / 89 / 1e6 here: the
+#   mesh is the one the score solved on), DAF_GMRES_TOL / DAF_GMRES_ITERS / DAF_GMRES_RESTART / DAF_PC_FILL / DAF_PC_LEVEL (adjoint settings; defaults 1e-6,
 #   6000, 200, 0, 1: coarse 105 k-cell solves needed 1,290 to > 2,000 iterations, seedhybrid run 46137619748).
 # Outputs in OUT: result.json (score), steady.json (F2), dafoam_sens.npz/.json (or dafoam_primal.json), dafoam.log
 #   (DAFoam's output, condensed), resources.json (cells, ranks, peak memory, wall times), grad.json, fine_adjoint.json
@@ -118,6 +119,7 @@ if [ -z "${STOP:-}" ]; then
   env DAF_NP="$NP" DAF_FUNCS="${DAF_FUNCS:-D,L}" DAF_ADJ="${DAF_ADJ:-Krylov}" DAF_PC_FILL="${DAF_PC_FILL:-0}" \
       DAF_PC_LEVEL="${DAF_PC_LEVEL:-1}" DAF_GMRES_ITERS="${DAF_GMRES_ITERS:-6000}" DAF_GMRES_RESTART="${DAF_GMRES_RESTART:-200}" \
       DAF_GMRES_TOL="${DAF_GMRES_TOL:-1e-6}" DAF_PRIMAL_ONLY="${DAF_PRIMAL_ONLY:-}" \
+      DAF_MAX_SKEW="${DAF_MAX_SKEW:-1000}" DAF_MAX_NONORTH="${DAF_MAX_NONORTH:-89}" DAF_MAX_ASPECT="${DAF_MAX_ASPECT:-1e6}" \
       "$ADJ/research/sidepod_opt/dafoam/run_docker.sh" "$WORK/daf" "$NP" "$IMAGE" > "$WORK/dafoam.out" 2>&1
   DRC=$?
   say "DAFoam exit code $DRC"
@@ -125,10 +127,10 @@ if [ -z "${STOP:-}" ]; then
   docker run --rm -u root -v "$WORK/daf:/c" --entrypoint chmod "$IMAGE" -R a+rwX /c 2>/dev/null || true
   F="$WORK/dafoam.out"
   { echo "=== head"; head -40 "$F"
-    echo "=== key lines"; grep -nE "DAFOAM|Killed|killed|Error|ERROR|rror:|nCells|Global Adjoint States|AllNonZeros|Ncolors|Calculating dRdW Coloring\.\.\. Completed|Main iteration|Completed\*\*|PetscConvergedReason|Residual tolerance|signal|Maximum resident|Total Residual Norm2|ExecutionTime = " "$F" | awk 'NR<=4000'
+    echo "=== key lines"; grep -nE "DAFOAM|Killed|killed|Error|ERROR|rror:|nCells|[Ss]kewness|[Nn]on-orth|[Aa]spect|ncorrectly|Mesh OK|Failed|Global Adjoint States|AllNonZeros|Ncolors|Calculating dRdW Coloring\.\.\. Completed|Main iteration|Completed\*\*|PetscConvergedReason|Residual tolerance|signal|Maximum resident|Total Residual Norm2|ExecutionTime = " "$F" | awk 'NR<=4000'
     echo "=== tail"; tail -150 "$F"; } > "$OUT/dafoam.log"
   echo "=== DAFoam key lines"
-  grep -E "DAFOAM|Killed|killed|FATAL|Error|Global Adjoint States|Ncolors|Coloring\.\.\. Completed|Completed\*\*|PetscConvergedReason|Total Residual Norm2" "$F" | tail -40
+  grep -E "DAFOAM|Killed|killed|FATAL|Error|[Ss]kewness|[Nn]on-orth|[Aa]spect|ncorrectly|Mesh OK|Failed .* mesh|Global Adjoint States|Ncolors|Coloring\.\.\. Completed|Completed\*\*|PetscConvergedReason|Total Residual Norm2" "$F" | tail -40
   echo "=== DAFoam GMRES (every 500th line)"; grep -E "Main iteration" "$F" | awk 'NR%5==1' | tail -40
   echo "=== DAFoam tail"; tail -40 "$F"
   cp "$WORK/daf/dafoam_sens.npz" "$WORK/daf/dafoam_sens.json" "$WORK/daf/dafoam_primal.json" "$OUT/" 2>/dev/null
