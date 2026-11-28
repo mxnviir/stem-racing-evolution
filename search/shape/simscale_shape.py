@@ -85,8 +85,7 @@ class ShapeCampaign(SL.Campaign):
         v = np.asarray(v, float)
         n = self.fr.n_genes(*self.coarse)
         ff = self.fr.from_unit(self.seed, v[:n], self.amp, *self.coarse)
-        base = SL.LG.decode(self.base)
-        sh = SL.LG.shape_from_unit(v[n:], z_fw=base["fwing"]["z_mm"], rw_x_le=base["rwing"]["x_le_after_ref_b_mm"])
+        sh = SL.LG.shape_from_unit(v[n:], stage1=self.base)      # the layout search's wing numbers kept
         return {"x": self.base.tolist(), "v": v.tolist(), "freeform": ff.as_dict(),
                 "support": sh["support"], "fwing": sh["fwing"], "rwing": sh["rwing"]}
 
@@ -176,7 +175,7 @@ def fit_seed(car_dir: Path, genes):
     x_tip = d["x_front"] - 16.0 - d["nose"]["length_mm"]
     x_rear = d["x_front"] + d["W"] + d["rear"]
     ref_a = d["x_front"] - 16.0
-    fw = SL.LG.shape_from_unit(np.zeros(len(SL.LG.SHAPE_GENES)))["fwing"]
+    fw = SL.LG.shape_from_unit(np.zeros(len(SL.LG.SHAPE_GENES)), stage1=genes)["fwing"]
     x_le = ref_a - fw["te_gap_mm"] - fw["chord_mm"]
     ff = fr.fit([body], x_tip, x_rear, *FIT_GRID)
     return fr.seed_nose(ff, body, ref_a, max(x_le - NOSE_LEAD_MM, x_tip)).as_dict()

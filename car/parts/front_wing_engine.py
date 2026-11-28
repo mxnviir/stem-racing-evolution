@@ -243,13 +243,11 @@ def _build_once(d: FrontWingDesign, nose_half_m, x_front_mm, wheel, body_half_m=
         half = se._box(-1e3, 1e3, 0.0, 1e3, -1e3, 1e3)
 
         wb = wing.bounds
-        # the wing's own span beyond its joint: a strut must not run back into it (on the inside of a bend
-        # fore or aft its section's ends swing outboard; gallery struts_v7 #1 ate 1.5 mm of T8.6.1's segment)
-        span_box = se._box(wb[0, 0] - 1.0, wb[1, 0] + 1.0, y0 + 0.35, tip + 1.0, wb[0, 2] - 0.5, wb[1, 2] + 0.5)
 
         def accept(M):
-            if (M ^ span_box).volume() > 1e-3:
-                return False
+            # (owner 2026-11-28: no "strut must not run back into its wing's span" check on the FRONT wing; it
+            # blocked every strut on split wings set high or on narrow noses. The referee still measures T8.6.1,
+            # each element's span from what cuts it, on every built car, so a strut that shortens one is refused.)
             t = wl.to_trimesh(M ^ half)
             b = t.bounds
             return (b[1, 1] <= SUPPORT_BAND_MM - MARGIN_MM and b[1, 2] <= 25.0 - MARGIN_MM

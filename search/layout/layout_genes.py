@@ -59,7 +59,7 @@ def layout_legal(W, rear, halo_rear) -> bool:
     lo, hi = halo_rear_range(W, rear)
     rlo, rhi = rear_range(W)
     return (BY["W"]["lo"] <= W <= BY["W"]["hi"] and rlo <= rear <= rhi + 1e-9
-            and lo < halo_rear <= hi and 16.0 + W + rear <= BLOCK_MM + 1e-9)
+            and lo < halo_rear <= hi + 1e-9 and 16.0 + W + rear <= BLOCK_MM + 1e-9)
 
 
 def legal_layouts(step=1.0):
@@ -147,21 +147,51 @@ def decode(x) -> dict:
     nose = dict(length_mm=nose_len, k=float(v["nose_k"]), p=float(v["nose_p"]), tip_z_mm=float(v["nose_tip_z"]),
                 blend_after_ref_a_mm=float(v["nose_blend"]), root_scale=float(v["nose_root_scale"]),
                 wall_mm=float(v["nose_wall"]))
+    # the wings' rule limits on their placement (owner 2026-11-28: as far up, down, forward, back, in and out as the
+    # rules let them): T8.2, the front wing within 40 mm ahead of Ref A; T9.4.2, the rear wing within 40 mm behind Ref B
+    v["fw_te_gap"] = min(float(v["fw_te_gap"]), FRONT_REACH_MM - float(v["fw_chord"]) - RULE_MARGIN_MM)
+    v["rw_x_le"] = min(float(v["rw_x_le"]), REAR_REACH_MM - float(v["rw_chord"]) - RULE_MARGIN_MM)
     fwing = front_wing_design(v)
-    rwing = dict(chord_mm=v["rw_chord"], t_frac=v["rw_t_frac"], camber=v["rw_camber"], aoa_deg=v["rw_aoa"],
-                 half_span_mm=v["rw_half_span"], x_le_after_ref_b_mm=v["rw_x_le"],
-                 clear_air_margin_mm=v["rw_clear_air_margin"], pylon_t_mm=v["rw_pylon_t"],
-                 pylon_chord_mm=v["rw_pylon_chord"])
-    rwing = {k: float(val) for k, val in rwing.items()}
+    rwing = rear_wing_design(v)              # the searches' rear wing (rear_wing_engine): height, span, chord, place
     cargo_x0 = x_front + float(v["cargo_x"]) * (W - CARGO_LEN_MM)
     # a preference: Part 1 puts the cargo at the legal position nearest it (unified_phi, "prefer")
     cargo = {"x_start_m": cargo_x0 / 1e3, "z_base_m": CARGO_Z_BASE_MM / 1e3, "flip": bool(float(v["cargo_flip"]) >= 0.5),
              "prefer": True}
     tethers = (float(v["tether_front"]), float(v["tether_rear"]))
     support = support_design(v)
-    return dict(W=W, rear=rear, halo_rear=halo_rear, x_front=x_front, d_halo=round(d_halo, 2),
-                s_x0u=s_x0u, s_x1u=s_x1u, body=body, nose=nose, fwing=fwing, rwing=rwing, cargo=cargo,
-                tethers=tethers, support=support, skin_mm=float(v["skin_mm"]), legal_layout=layout_legal(W, rear, halo_rear))
+    out = dict(W=W, rear=rear, halo_rear=halo_rear, x_front=x_front, d_halo=round(d_halo, 2),
+               s_x0u=s_x0u, s_x1u=s_x1u, body=body, nose=nose, fwing=fwing, rwing=rwing, cargo=cargo,
+               tethers=tethers, support=support, skin_mm=float(v["skin_mm"]), legal_layout=layout_legal(W, rear, halo_rear))
+    ff = organic_freeform(out)
+    if ff is not None:
+        out["freeform"] = ff
+    return out
+
+
+FRONT_REACH_MM = 40.0          # T8.2: nothing more than this ahead of Ref A
+REAR_REACH_MM = 40.0           # T9.4.2: the rear wing within this behind Ref B
+RULE_MARGIN_MM = 0.3
+NOSE_LEAD_MM = 2.0             # the organic nose ends this far ahead of the front wing's leading edge
+ORGANIC_SEED = HERE / "organic_seed.json"
+_SEED = None
+
+
+def organic_freeform(d) -> dict | None:
+    """No cone (owner 2026-11-28): the car's body and nose as free-form surfaces (car/body/freeform.py): the team
+    body's fitted surfaces (organic_seed.json) stretched from the nose tip to THIS car's rear face, and a nose
+    grown from the body's own Ref A section to just ahead of THIS car's front wing (freeform.seed_nose)."""
+    global _SEED
+    if not ORGANIC_SEED.exists():
+        return None
+    if _SEED is None:
+        _SEED = json.loads(ORGANIC_SEED.read_text())
+    import freeform as fr
+    ref_a = d["x_front"] - 16.0
+    x_tip = ref_a - d["nose"]["length_mm"]
+    ff = fr.Freeform.from_dict(dict(_SEED["freeform"], x_tip_mm=x_tip, x_rear_mm=d["x_front"] + d["W"] + d["rear"]))
+    x_le = ref_a - d["fwing"]["te_gap_mm"] - d["fwing"]["chord_mm"]
+    ff = fr.seed_nose_from_section(ff, _SEED["section"], ref_a, max(x_le - NOSE_LEAD_MM, x_tip))
+    return ff.as_dict()
 
 
 def support_design(v=None) -> dict:
@@ -212,7 +242,7 @@ def rear_wing_design(v=None) -> dict:
 N_RW_STRUTS = 2
 
 
-def shape_from_unit(u, z_fw=None, rw_x_le=None) -> dict:
+def shape_from_unit(u, z_fw=None, rw_x_le=None, stage1=None) -> dict:
     """Stage 2: the shape genes (SHAPE_GENES, in order) from CMA's numbers: 0 is the catalogue's value,
     -1 its lo, +1 its hi (clipped), linear on each side. Returns {"support": ..., "fwing": ..., "rwing": ...};
     z_fw and rw_x_le keep stage 1's front wing height and rear wing position."""
@@ -223,6 +253,12 @@ def shape_from_unit(u, z_fw=None, rw_x_le=None) -> dict:
         v["fw_z"] = z_fw
     if rw_x_le is not None:
         v["rw_x_le"] = rw_x_le
+    if stage1 is not None:                    # the layout search's genes (layout x vector): their decoded values win
+        dd = decode(stage1)
+        fw, rw = dd["fwing"], dd["rwing"]
+        v.update(fw_pieces=1.0 if fw["pieces"] == 2 else 0.0, fw_chord=fw["chord_mm"], fw_te_gap=fw["te_gap_mm"],
+                 fw_z=fw["z_mm"], fw_tip_y=fw["tip_y_mm"], fw_root_y=fw["root_y_mm"], rw_chord=rw["chord_mm"],
+                 rw_half_span=rw["half_span_mm"], rw_x_le=rw["x_le_mm"], rw_lift=rw["lift_mm"])
     return {"support": support_design(v), "fwing": front_wing_design(v), "rwing": rear_wing_design(v)}
 
 

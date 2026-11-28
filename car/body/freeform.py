@@ -157,26 +157,41 @@ def seed_nose(ff: Freeform, body_mm, ref_a, x_nose_tip, p=2.0) -> Freeform:
     through it. Ahead of x_nose_tip the fields are empty (top = bottom, no width) but still free: the search
     can grow the nose there. body_mm: the milled body (mm, right half or both); only control points ahead
     of Ref A change."""
+    return seed_nose_from_section(ff, ref_a_section(body_mm, ref_a), ref_a, x_nose_tip, p)
+
+
+def ref_a_section(body_mm, ref_a) -> dict:
+    """The body's cross-section just behind Ref A (mm): top and bottom heights over |y|, half-width over z.
+    Measured once on a body and stored, so a nose can be grown for any front wing without the mesh."""
     import trimesh
     m = trimesh.util.concatenate(body_mm) if isinstance(body_mm, (list, tuple)) else body_mm
-    T, B, S = (g.copy() for g in ff.grids())
-    xs = ff.x_tip_mm + np.linspace(0.0, 1.0, ff.nu) * (ff.x_rear_mm - ff.x_tip_mm)
-    vs = np.linspace(0.0, 1.0, ff.nv) * Y_MAX_MM
-    ws = np.linspace(0.0, 1.0, ff.nw) * Z_MAX_MM
     xa = ref_a + 1.0                                                   # the section, just behind Ref A
     yy = np.arange(0.05, Y_MAX_MM, 0.25)
     O = np.c_[np.full(len(yy), xa), yy, np.full(len(yy), 200.0)]
     loc, ri, _ = m.ray.intersects_location(O, np.tile([0, 0, -1.0], (len(O), 1)), multiple_hits=True)
     hit = np.unique(ri)
     if len(hit) < 3:
-        return ff
+        return {}
     ty = np.array([loc[ri == i, 2].max() for i in hit]); by = np.array([loc[ri == i, 2].min() for i in hit])
-    yh = yy[hit]
     zz = np.arange(0.05, Z_MAX_MM, 0.25)
     O = np.c_[np.full(len(zz), xa), np.full(len(zz), 200.0), zz]
     loc, ri, _ = m.ray.intersects_location(O, np.tile([0, -1.0, 0], (len(O), 1)), multiple_hits=True)
     hz = np.unique(ri)
-    sz = np.array([np.abs(loc[ri == i, 1]).max() for i in hz]); zh = zz[hz]
+    sz = np.array([np.abs(loc[ri == i, 1]).max() for i in hz])
+    return {"yh": yy[hit].tolist(), "ty": ty.tolist(), "by": by.tolist(), "zh": zz[hz].tolist(), "sz": sz.tolist()}
+
+
+def seed_nose_from_section(ff: Freeform, sec: dict, ref_a, x_nose_tip, p=2.0) -> Freeform:
+    """seed_nose from a stored ref_a_section(): the section carried forward from Ref A and rounded off to
+    nothing at x_nose_tip (superellipse in x, exponent p). Only control points ahead of Ref A change."""
+    if not sec:
+        return ff
+    T, B, S = (g.copy() for g in ff.grids())
+    xs = ff.x_tip_mm + np.linspace(0.0, 1.0, ff.nu) * (ff.x_rear_mm - ff.x_tip_mm)
+    vs = np.linspace(0.0, 1.0, ff.nv) * Y_MAX_MM
+    ws = np.linspace(0.0, 1.0, ff.nw) * Z_MAX_MM
+    yh, ty, by = (np.asarray(sec[k], float) for k in ("yh", "ty", "by"))
+    zh, sz = np.asarray(sec["zh"], float), np.asarray(sec["sz"], float)
     zc = 0.5 * (ty[0] + by[0])                                         # the section's centre height on y = 0
     L = max(ref_a - x_nose_tip, 1.0)
     for i, x in enumerate(xs):

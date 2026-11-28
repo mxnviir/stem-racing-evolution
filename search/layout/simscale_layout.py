@@ -251,6 +251,9 @@ def prune(folder):
         print("prune", folder.name, repr(e)[:200], flush=True)
 
 
+SWITCHES = ("cargo_flip", "fw_pieces")   # genes that are a choice (below 0.5 / above), not a dial
+
+
 def race_model(d):
     """objective.RaceModel for this car's own layout. RaceModel works in the team STEP's mirrored
     frame (x decreasing to the rear); x -> -x maps the car frame (x from the nose tip) onto it."""
@@ -386,8 +389,9 @@ class Campaign:
         if best_x is not None:                                   # the neighbourhood of the best car
             near = np.clip(np.asarray(best_x)[None] + 0.08 * rng.standard_normal((4000, LG.DIM)), 0, 1)
             X = np.vstack([X, near])
-        if "cargo_flip" in LG.NAMES:                             # a switch, not a dial
-            k = LG.NAMES.index("cargo_flip"); X[:, k] = (X[:, k] >= 0.5).astype(float)
+        for name in SWITCHES:                                    # switches, not dials
+            if name in LG.NAMES:
+                k = LG.NAMES.index(name); X[:, k] = (X[:, k] >= 0.5).astype(float)
         return X
 
     def ask(self, n):
@@ -400,8 +404,9 @@ class Campaign:
         if len(y) < sg["n_initial"]:
             S = qmc.Sobol(LG.DIM, seed=sg.get("seed", 1)).random(64)[self.st["sobol_used"]:self.st["sobol_used"] + n]
             self.st["sobol_used"] += n
-            if "cargo_flip" in LG.NAMES:
-                k = LG.NAMES.index("cargo_flip"); S[:, k] = (S[:, k] >= 0.5).astype(float)
+            for name in SWITCHES:
+                if name in LG.NAMES:
+                    k = LG.NAMES.index(name); S[:, k] = (S[:, k] >= 0.5).astype(float)
             return [x for x in S], {"mode": "sobol"}
         from sklearn.gaussian_process import GaussianProcessRegressor
         from sklearn.gaussian_process.kernels import ConstantKernel, Matern, WhiteKernel
