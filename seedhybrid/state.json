@@ -1,6 +1,6 @@
 {
- "stage": "redaf",
- "gen": 0,
+ "stage": "gen",
+ "gen": 1,
  "setup_run": 46113354235,
  "lineages": {
   "team": {
@@ -12,11 +12,38 @@
    "status": "active",
    "parent": "",
    "amp": 1.0,
-   "dafoam_latest": null,
+   "dafoam_latest": "seedhybrid_lineages/team/dafoam_g0.npz",
    "dafoam_at": "",
    "esi_latest": null,
-   "next_seed": 1000,
-   "generations": {},
+   "next_seed": 1003,
+   "generations": {
+    "1": {
+     "parent": "",
+     "amp": 1.0,
+     "children": {
+      "team_g1_daf": [
+       "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz",
+       1.0
+      ],
+      "team_g1_dafh": [
+       "dafnpz:seedhybrid_lineages/team/dafoam_g0.npz",
+       0.5
+      ],
+      "team_g1_rnd1000": [
+       "rnd1000",
+       1.0
+      ],
+      "team_g1_rnd1001": [
+       "rnd1001",
+       1.0
+      ],
+      "team_g1_rnd1002": [
+       "rnd1002",
+       1.0
+      ]
+     }
+    }
+   },
    "base": {
     "D20_half_N": 0.1851133550489351,
     "converged": true,
@@ -66,11 +93,38 @@
    "status": "active",
    "parent": "",
    "amp": 1.0,
-   "dafoam_latest": null,
+   "dafoam_latest": "seedhybrid_lineages/d7/dafoam_g0.npz",
    "dafoam_at": "",
    "esi_latest": null,
-   "next_seed": 1000,
-   "generations": {},
+   "next_seed": 1003,
+   "generations": {
+    "1": {
+     "parent": "",
+     "amp": 1.0,
+     "children": {
+      "d7_g1_daf": [
+       "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz",
+       1.0
+      ],
+      "d7_g1_dafh": [
+       "dafnpz:seedhybrid_lineages/d7/dafoam_g0.npz",
+       0.5
+      ],
+      "d7_g1_rnd1000": [
+       "rnd1000",
+       1.0
+      ],
+      "d7_g1_rnd1001": [
+       "rnd1001",
+       1.0
+      ],
+      "d7_g1_rnd1002": [
+       "rnd1002",
+       1.0
+      ]
+     }
+    }
+   },
    "base": {
     "D20_half_N": 0.18282931252650356,
     "converged": false,
@@ -123,8 +177,35 @@
    "dafoam_latest": "seedhybrid_lineages/window/dafoam_g0.npz",
    "dafoam_at": "",
    "esi_latest": null,
-   "next_seed": 1000,
-   "generations": {},
+   "next_seed": 1003,
+   "generations": {
+    "1": {
+     "parent": "",
+     "amp": 1.0,
+     "children": {
+      "window_g1_daf": [
+       "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz",
+       1.0
+      ],
+      "window_g1_dafh": [
+       "dafnpz:seedhybrid_lineages/window/dafoam_g0.npz",
+       0.5
+      ],
+      "window_g1_rnd1000": [
+       "rnd1000",
+       1.0
+      ],
+      "window_g1_rnd1001": [
+       "rnd1001",
+       1.0
+      ],
+      "window_g1_rnd1002": [
+       "rnd1002",
+       1.0
+      ]
+     }
+    }
+   },
    "base": {
     "D20_half_N": 0.18532504831676527,
     "converged": true,
@@ -171,14 +252,41 @@
    "art": "team",
    "guides": false,
    "enable_if": null,
-   "status": "pending",
+   "status": "active",
    "parent": "",
    "amp": 1.0,
    "dafoam_latest": null,
    "dafoam_at": "",
    "esi_latest": null,
-   "next_seed": 1000,
-   "generations": {},
+   "next_seed": 1005,
+   "generations": {
+    "1": {
+     "parent": "",
+     "amp": 1.0,
+     "children": {
+      "team_noadj_g1_rnd1000": [
+       "rnd1000",
+       1.0
+      ],
+      "team_noadj_g1_rnd1001": [
+       "rnd1001",
+       1.0
+      ],
+      "team_noadj_g1_rnd1002": [
+       "rnd1002",
+       1.0
+      ],
+      "team_noadj_g1_rnd1003": [
+       "rnd1003",
+       1.0
+      ],
+      "team_noadj_g1_rnd1004": [
+       "rnd1004",
+       1.0
+      ]
+     }
+    }
+   },
    "base": {
     "D20_half_N": 0.1851133550489351,
     "converged": true,
@@ -225,14 +333,41 @@
    "enable_if": {
     "dafoam": "d7"
    },
-   "status": "pending",
+   "status": "active",
    "parent": "",
    "amp": 1.0,
    "dafoam_latest": null,
    "dafoam_at": "",
    "esi_latest": null,
-   "next_seed": 1000,
-   "generations": {},
+   "next_seed": 1005,
+   "generations": {
+    "1": {
+     "parent": "",
+     "amp": 1.0,
+     "children": {
+      "d7_noadj_g1_rnd1000": [
+       "rnd1000",
+       1.0
+      ],
+      "d7_noadj_g1_rnd1001": [
+       "rnd1001",
+       1.0
+      ],
+      "d7_noadj_g1_rnd1002": [
+       "rnd1002",
+       1.0
+      ],
+      "d7_noadj_g1_rnd1003": [
+       "rnd1003",
+       1.0
+      ],
+      "d7_noadj_g1_rnd1004": [
+       "rnd1004",
+       1.0
+      ]
+     }
+    }
+   },
    "base": {
     "D20_half_N": 0.18282931252650356,
     "converged": false,
@@ -280,7 +415,7 @@
     "dafoam": "window",
     "no_dafoam": "d7"
    },
-   "status": "pending",
+   "status": "skipped_by_rule",
    "parent": "",
    "amp": 1.0,
    "dafoam_latest": null,
@@ -392,9 +527,46 @@
     "team",
     "d7"
    ]
+  },
+  {
+   "stage": "redaf",
+   "gen": 0,
+   "run": "46147679334",
+   "lineages": {
+    "team": {
+     "dafoam": true
+    },
+    "d7": {
+     "dafoam": true
+    },
+    "window": {
+     "dafoam": false
+    },
+    "team_noadj": {
+     "base_of": "team",
+     "enabled": true,
+     "rule": {}
+    },
+    "d7_noadj": {
+     "base_of": "d7",
+     "enabled": true,
+     "rule": {
+      "dafoam": "d7"
+     }
+    },
+    "window_noadj": {
+     "base_of": "window",
+     "enabled": false,
+     "rule": {
+      "dafoam": "window",
+      "no_dafoam": "d7"
+     }
+    }
+   }
   }
  ],
  "redaf_runs": [
-  46137619748
+  46137619748,
+  46147679334
  ]
 }

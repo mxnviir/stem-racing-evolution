@@ -2,18 +2,18 @@
 
 Written by `analyze.py` after every stage. Marks: [PROTOCOL.md](PROTOCOL.md). **Inside-loop numbers are the steady model on each lineage's morphed base mesh: the loop's yardstick, not a claim** (claims: E3-E6, after the confirm stage).
 
-State: stage `redaf`, generation 0, setup run 46113354235.
+State: stage `gen`, generation 1, setup run 46113354235.
 
 ## E0. Setup
 
 | lineage | arm | status | base drag (steady, mN) | steady_pass | DAFoam at seed |
 |---|---|---|---|---|---|
-| team | guided (base: team) | active | 185.11 | True | no gradient |
-| d7 | guided (base: d7) | active | 182.83 | False | no gradient |
+| team | guided (base: team) | active | 185.11 | True | converged |
+| d7 | guided (base: d7) | active | 182.83 | False | converged |
 | window | guided (base: window) | active | 185.33 | True | converged |
-| team_noadj | no adjoint (base: team) | pending | 185.11 | True | - |
-| d7_noadj | no adjoint (base: d7) | pending | 182.83 | False | - |
-| window_noadj | no adjoint (base: window) | pending | 185.33 | True | - |
+| team_noadj | no adjoint (base: team) | active | 185.11 | True | - |
+| d7_noadj | no adjoint (base: d7) | active | 182.83 | False | - |
+| window_noadj | no adjoint (base: window) | skipped_by_rule | 185.33 | True | - |
 
 ## Generations (inside-loop yardstick)
 
@@ -33,14 +33,13 @@ State: stage `redaf`, generation 0, setup run 46113354235.
 
 - **team** (guided) vs **team_noadj** (no adjoint), cumulative accepted change after each generation: 
 - **d7** (guided) vs **d7_noadj** (no adjoint), cumulative accepted change after each generation: 
-- **window** (guided) vs **window_noadj** (no adjoint), cumulative accepted change after each generation: 
 
 ## E7. Cost so far (CFD jobs)
 
 | lineage | children solved | DAFoam gradients |
 |---|---|---|
-| team | 0 | 0 |
-| d7 | 0 | 0 |
+| team | 0 | 1 |
+| d7 | 0 | 1 |
 | window | 0 | 1 |
 | team_noadj | 0 | 0 |
 | d7_noadj | 0 | 0 |
