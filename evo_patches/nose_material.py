@@ -887,8 +887,15 @@ def apply(evo):
         p = evo / f
         assert p.exists(), f"nose_material: {p} not found (is {evo} an evolution checkout?)"
         s = texts.get(f, p.read_text())
+        # applied already: its text, or (refined since by a later module, e.g. legality_fixes L6) the first line that is
+        # this patch's own (not in the anchor)
+        others = "\n".join(n2 for f2, o2, n2 in PATCHES if n2 is not new)
+        marker = next((l for l in new.splitlines() if len(l.strip()) > 20 and l not in old and l not in others
+                       ), None)
         if s.count(new) == 1:
             out.append((f, "already applied"))
+        elif marker and s.count(old) <= 1 and marker in s and marker not in old:
+            out.append((f, "already applied (refined by a later patch)"))
         else:
             n = s.count(old)
             assert n == 1, f"nose_material: anchor found {n} times in {f} (builder changed?):\n{old[:200]}"

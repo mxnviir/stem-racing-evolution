@@ -2,6 +2,7 @@
 
     python carhybrid/make_car.py <evolution checkout> <layout: "team" | genes json | Lxxxx (search/layout/results)>
                                  <stage-2 numbers u: "zero" | json list> <out folder> [--grid gu,gv,gw,gb]
+                                 [--wing '{"rw_rise": 6, "rw_camber": -0.03, "rwsup_root": 0.9, ...}']
 
 Writes <out>/evo/ (the evolution car folder: summary.json, layout_car.json, body_half.stl, parts/, body_full.stl,
 wheels), <out>/rec.json (the build record: genes, decoded layout incl. the free-form seed, legal, mass, cfd report) and
@@ -11,6 +12,9 @@ freeform.from_unit(seed, u, AMP_MM, *grid)); the seed is the stage-1 car's own o
 grid: [--grid gu,gv,gw,gb] (carhybrid/grad.py's), else from the length of u: 45 = stage 2's COARSE (5,2,3,4), the
 seed's own grid's count (team car: 720 = 24,9,12,9, carhybrid/FINE_ADJOINT.md) = that grid; any other length is
 refused (exit 2: u is never truncated, so a fine-grid u can not silently build a coarse car).
+--wing: the rear wing's shape and strut numbers by their layout_params.json names (rw_*: chord, t, half_span, x_le,
+lift and evo_patches/rear_wing_shape.py's camber, camber_pos, rise, rise_p, sweep, sweep_p, tip_chord_ratio,
+tip_t_ratio; rwsup_*: the strut's 13 numbers), over the layout's own (rec.json records them as "wing").
 """
 import json, subprocess, sys
 from pathlib import Path
@@ -45,7 +49,30 @@ def grid_of(fr, SS, seed, n_u, grid=None):
     raise SystemExit(f"u has {n_u} numbers: neither stage 2's {fr.n_genes(*SS.COARSE)} nor the seed grid's; pass --grid")
 
 
-def main(evo, layout, u_s, out, grid=None):
+RW_KEYS = {"rw_chord": "chord_mm", "rw_t": "t_mm", "rw_half_span": "half_span_mm", "rw_x_le": "x_le_mm",
+           "rw_lift": "lift_mm", "rw_camber": "camber", "rw_camber_pos": "camber_pos", "rw_rise": "rise_mm",
+           "rw_rise_p": "rise_p", "rw_sweep": "sweep_mm", "rw_sweep_p": "sweep_p",
+           "rw_tip_chord_ratio": "tip_chord_ratio", "rw_tip_t_ratio": "tip_t_ratio"}
+SUP_KEYS = {"out": "aim_out_deg", "fwd": "aim_fwd_deg", "leave": "leave", "arrive": "arrive", "chord": "chord_mm",
+            "thick": "thick_mm", "flare": "flare", "round": "round", "mid_x": "mid_x", "mid_y": "mid_y",
+            "mid_z": "mid_z", "swell": "swell", "root": "root"}
+
+
+def rear_wing_of(d, over):
+    """The layout's rear wing (decoded) with the --wing numbers over it."""
+    rw = json.loads(json.dumps(d["rwing"]))
+    sup = rw.setdefault("support", {})
+    for k, v in (over or {}).items():
+        if k in RW_KEYS:
+            rw[RW_KEYS[k]] = float(v)
+        elif k.startswith("rwsup_") and k[6:] in SUP_KEYS:
+            sup[SUP_KEYS[k[6:]]] = float(v)
+        else:
+            raise SystemExit(f"--wing: unknown number {k!r} (rw_* or rwsup_*: {sorted(RW_KEYS) + ['rwsup_' + q for q in SUP_KEYS]})")
+    return rw
+
+
+def main(evo, layout, u_s, out, grid=None, wing=None):
     evo, out = Path(evo).resolve(), Path(out).resolve()
     sys.path.insert(0, str(evo)); import repo_paths; repo_paths.add()
     import layout_car as LC, layout_genes as LG, freeform as fr, simscale_shape as SS
@@ -61,7 +88,9 @@ def main(evo, layout, u_s, out, grid=None):
             return 2
         freeform = fr.from_unit(seed, u, SS.AMP_MM, *g).as_dict()
     car = out / "evo"
-    rec = LC.build(x, car, freeform=freeform)
+    over = json.loads(wing) if wing else None
+    rec = LC.build(x, car, freeform=freeform, rwing=rear_wing_of(d, over) if over else None)
+    rec["wing"] = over
     rec["u"] = None if u_s == "zero" else json.loads(u_s)
     rec["grid"] = None if g is None else [v for v in g]
     rec["layout_name"] = layout if not layout.strip().startswith("[") else "genes"
@@ -80,4 +109,5 @@ def main(evo, layout, u_s, out, grid=None):
 
 if __name__ == "__main__":
     a = sys.argv[1:]
-    sys.exit(main(*a[:4], grid=a[a.index("--grid") + 1] if "--grid" in a else None))
+    sys.exit(main(*a[:4], grid=a[a.index("--grid") + 1] if "--grid" in a else None,
+                  wing=a[a.index("--wing") + 1] if "--wing" in a else None))

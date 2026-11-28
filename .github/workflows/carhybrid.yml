@@ -107,12 +107,12 @@ jobs:
           case "${{ matrix.case.type }}" in dafoam|fine_adjoint) for i in 1 2 3; do docker pull -q dafoam/opt-packages:v5.1.1 && break; sleep 30; done;; esac
       - name: build the car (evolution builder) and adapt it for OpenFOAM
         timeout-minutes: 90
-        env: { LAYOUT: "${{ matrix.case.layout }}", U: "${{ matrix.case.u || 'zero' }}" }
+        env: { LAYOUT: "${{ matrix.case.layout }}", U: "${{ matrix.case.u || 'zero' }}", WING: "${{ matrix.case.wing || '' }}" }
         run: |
           mkdir -p out/${{ matrix.case.name }}
           rm -rf /tmp/car                                     # a self-hosted machine keeps /tmp between jobs
           set +e
-          python -W ignore carhybrid/make_car.py evo "$LAYOUT" "$U" /tmp/car ${{ matrix.case.grid && format('--grid {0}', matrix.case.grid) || '' }} > out/${{ matrix.case.name }}/make_car.log 2>&1
+          python -W ignore carhybrid/make_car.py evo "$LAYOUT" "$U" /tmp/car ${{ matrix.case.grid && format('--grid {0}', matrix.case.grid) || '' }} ${WING:+--wing "$WING"} > out/${{ matrix.case.name }}/make_car.log 2>&1
           RC=$?
           set -e
           tail -c 2500 out/${{ matrix.case.name }}/make_car.log

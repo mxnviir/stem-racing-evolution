@@ -248,6 +248,11 @@ def apply(evo) -> str:
         if e["new"] in t:
             done.append(f"{e['id']}: already applied")
             continue
+        # applied, then refined by a later module (rear_wing_shape rewrites L1a's last two lines): its marker is there
+        marker = next((l.strip() for l in e["new"].splitlines() if "evo_patches" in l), None)
+        if e["old"] not in t and marker and marker in t:
+            done.append(f"{e['id']}: already applied (refined by a later patch)")
+            continue
         assert t.count(e["old"]) == 1, f"legality_fixes {e['id']}: anchor not found once in {e['file']}"
         p.write_text(t.replace(e["old"], e["new"], 1))
         done.append(f"{e['id']}: applied")
