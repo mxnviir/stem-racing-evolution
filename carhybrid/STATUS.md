@@ -1,6 +1,6 @@
 # Status of the work on branch claude/wizardly-brahmagupta-1edalc (2026-11-28)
 
-One page per piece is linked; this page says what exists, what it showed, and what is still open.
+**The method in one page: [METHOD.md](METHOD.md).** One page per piece is linked; this page says what exists, what it showed, and what is still open.
 Repositories:
 - `mxnviir/stem-racing-evolution`, this branch: everything below.
 - `mxnviir/stem-racing-adjoint`: the CFD and DAFoam code, pinned at `9ab9092`, patched at run time; nothing is
