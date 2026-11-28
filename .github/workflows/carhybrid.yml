@@ -118,6 +118,7 @@ jobs:
           tail -c 2500 out/${{ matrix.case.name }}/make_car.log
           cp /tmp/car/rec.json /tmp/car/cfd/adapt.json out/${{ matrix.case.name }}/ 2>/dev/null || true
           cp /tmp/car/evo/summary.json /tmp/car/evo/run_car.log /tmp/car/evo/report.md out/${{ matrix.case.name }}/ 2>/dev/null || true
+          cp /tmp/car/evo/parts/assembly.json out/${{ matrix.case.name }}/assembly.json 2>/dev/null || true   # the part engines' own info (roots tried, why a support was not placed)
           echo "=== verdict"; python3 -c "import json; r=json.load(open('/tmp/car/rec.json')); print(json.dumps({k: r.get(k) for k in ('legal','failed','why','mass','build_s')}, default=float)[:1500])" || true
           # renders and the shape audit of every car built (owner 2026-11-28: renders of all; no extreme squareness or
           # hard-coded shapes)

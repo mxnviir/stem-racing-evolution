@@ -304,7 +304,12 @@ def build(evo, layout="team", grid=None, spacing_mm=1.0) -> Constraints:
 
 # ------------------------------------------------------------------ projection
 def project(C: Constraints, v, rho=1.0, iters=4000, tol=1e-7):
-    """argmin ||u - v|| s.t. A u <= b: OSQP (a QP solver, polished to the active set) when installed, else ADMM."""
+    """argmin ||u - v|| s.t. A u <= b: HiGHS' QP solver (active set, exact; highspy) when installed, else OSQP, else
+    ADMM (which does not converge on the 720-number set: CONSTRAINTS.md)."""
+    try:
+        return _project_highs(C, v)
+    except ImportError:
+        pass
     try:
         import osqp
         import scipy.sparse as sp
@@ -320,6 +325,37 @@ def project(C: Constraints, v, rho=1.0, iters=4000, tol=1e-7):
     except ImportError:
         pass
     return _project_admm(C, v, rho, iters, tol)
+
+
+def _project_highs(C: Constraints, v):
+    import highspy
+    import scipy.sparse as sp
+    v = np.asarray(v, float)
+    n, m = C.n, len(C.b)
+    inf = highspy.kHighsInf
+    A = sp.csc_matrix(C.A)
+    model = highspy.HighsModel()
+    lp = model.lp_
+    lp.num_col_, lp.num_row_ = n, m
+    lp.col_cost_ = -v
+    lp.col_lower_, lp.col_upper_ = np.full(n, -inf), np.full(n, inf)
+    lp.row_lower_, lp.row_upper_ = np.full(m, -inf), np.asarray(C.b, float)
+    lp.a_matrix_.format_ = highspy.MatrixFormat.kColwise
+    lp.a_matrix_.start_, lp.a_matrix_.index_, lp.a_matrix_.value_ = A.indptr, A.indices, A.data
+    H = model.hessian_                                    # 1/2 u'u (lower triangle of I)
+    H.dim_, H.format_ = n, highspy.HessianFormat.kTriangular
+    H.start_, H.index_, H.value_ = np.arange(n + 1), np.arange(n), np.ones(n)
+    h = highspy.Highs()
+    h.setOptionValue("output_flag", False)
+    h.setOptionValue("time_limit", 1800.0)
+    h.passModel(model)
+    h.run()
+    status = h.modelStatusToString(h.getModelStatus())
+    u = np.asarray(h.getSolution().col_value, float)
+    if len(u) != n or status != "Optimal":
+        raise RuntimeError(f"HiGHS QP: {status}")
+    return u, {"solver": "highs-qp", "status": status, "iterations": int(h.getInfo().qp_iteration_count),
+               "max_violation_mm": float(max(0.0, -C.slack(u).min())), "moved": float(np.linalg.norm(u - v))}
 
 
 def _project_admm(C: Constraints, v, rho=1.0, iters=4000, tol=1e-7):
@@ -433,8 +469,14 @@ def main(argv):
     print(json.dumps(C.info, indent=1))
     u0 = np.zeros(C.n)
     print("seed (u = 0) violations:", json.dumps(C.summary(u0), indent=1))
-    print("builder check at u = 0:", check(C, evo, u0))
+    print("builder check at u = 0:", check(C, evo, u0), flush=True)
+    t0 = time.time()
+    C, rep = split_sharp(C)                              # the reachable rules (hard); the sharp ones stay with the masks
+    print(f"split ({time.time() - t0:.0f} s): {C.info['constrained_rows']} rows reachable, {C.info['sharp_rows']} sharp:",
+          json.dumps(rep, indent=1), flush=True)
+    t0 = time.time()
     p0, inf0 = project(C, u0)
+    inf0["s"] = round(time.time() - t0, 1)
     print("projected seed:", inf0, "violations", C.summary(p0))
     print("builder check at the projected seed:", check(C, evo, p0))
     rng = np.random.default_rng(1)
@@ -443,7 +485,7 @@ def main(argv):
         p, inf = project(C, v)
         print(f"random {k}: violations before {len(C.violated(v))} rows; projected {inf}; builder check", check(C, evo, p))
     if opt("--out"):
-        np.savez(opt("--out"), A=C.A, b=C.b, info=json.dumps(C.info))
+        np.savez(opt("--out"), A=C.A, b=C.b, info=json.dumps(C.info), u_seed_projected=p0)
     return 0
 
 
