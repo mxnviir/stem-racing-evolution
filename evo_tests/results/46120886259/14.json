@@ -1,0 +1,539 @@
+{
+ "dir": "car/build/tests",
+ "shard": 0,
+ "tests": [
+  {
+   "id": "car.build.tests.test_ballast_rules::test_no_ballast_no_check",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.build.tests.test_ballast_rules::test_ballast_in_an_open_container_passes",
+   "status": "passed",
+   "s": 0.016
+  },
+  {
+   "id": "car.build.tests.test_ballast_rules::test_container_not_cut_fails",
+   "status": "passed",
+   "s": 0.003
+  },
+  {
+   "id": "car.build.tests.test_ballast_rules::test_more_lead_than_the_container_holds_fails",
+   "status": "passed",
+   "s": 0.025
+  },
+  {
+   "id": "car.build.tests.test_build_car_mass::test_smooth_parts_converge_and_judge_the_last_build",
+   "status": "passed",
+   "s": 0.016
+  },
+  {
+   "id": "car.build.tests.test_build_car_mass::test_a_jump_across_the_target_is_refused",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.build.tests.test_build_car_mass::test_mass_refusal[0.049-False-False]",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.build.tests.test_build_car_mass::test_mass_refusal[0.051-False-True]",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.build.tests.test_build_car_mass::test_mass_refusal[-0.06-False-True]",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.build.tests.test_build_car_mass::test_mass_refusal[2.0-True-False]",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.build.tests.test_independence::test_the_referee_imports_nothing_from_part_1",
+   "status": "passed",
+   "s": 0.02
+  },
+  {
+   "id": "car.build.tests.test_independence::test_the_referees_rule_geometry_matches_part_1s",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.build.tests.test_independence::test_the_referees_zones_match_part_1s_on_a_car",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.build.tests.test_legality_visibility::test_a_clear_car_passes_every_sight_line",
+   "status": "passed",
+   "s": 0.621
+  },
+  {
+   "id": "car.build.tests.test_legality_visibility::test_decal_and_team_number_need_room",
+   "status": "passed",
+   "s": 0.542
+  },
+  {
+   "id": "car.build.tests.test_legality_visibility::test_a_part_within_5_mm_of_the_front_wing_fails_clear_air",
+   "status": "passed",
+   "s": 0.563
+  },
+  {
+   "id": "car.build.tests.test_legality_visibility::test_each_sight_line_catches_what_blocks_it",
+   "status": "passed",
+   "s": 2.25
+  },
+  {
+   "id": "car.build.tests.test_legality_visibility::test_a_hub_behind_the_tread_does_not_hide_the_wheel",
+   "status": "passed",
+   "s": 0.959
+  },
+  {
+   "id": "car.build.tests.test_legality_visibility::test_batched_contains_and_gap_match_the_plain_answers",
+   "status": "passed",
+   "s": 0.018
+  },
+  {
+   "id": "car.build.tests.test_legality_visibility::test_the_chamber_wall_is_measured_by_its_volume",
+   "status": "passed",
+   "s": 0.016
+  },
+  {
+   "id": "car.build.tests.test_min_wall_chunks::test_batches_give_the_same_answer_as_one_cast",
+   "status": "passed",
+   "s": 0.206
+  },
+  {
+   "id": "car.build.tests.test_min_wall_chunks::test_batched_cast_equals_trimesh_per_ray",
+   "status": "passed",
+   "s": 0.024
+  },
+  {
+   "id": "car.build.tests.test_min_wall_chunks::test_known_wall",
+   "status": "passed",
+   "s": 0.032
+  },
+  {
+   "id": "car.build.tests.test_printed_min_wall::test_measures_a_plate_and_ignores_its_edges",
+   "status": "passed",
+   "s": 0.044
+  },
+  {
+   "id": "car.build.tests.test_printed_min_wall::test_just_inside_and_just_outside_the_print_minimum",
+   "status": "passed",
+   "s": 0.088
+  },
+  {
+   "id": "car.build.tests.test_printed_min_wall::test_a_thin_spot_in_a_thick_part_is_found",
+   "status": "passed",
+   "s": 0.221
+  },
+  {
+   "id": "car.build.tests.test_printed_min_wall::test_machined_wall_just_inside_and_just_outside",
+   "status": "passed",
+   "s": 0.086
+  },
+  {
+   "id": "car.build.tests.test_printed_min_wall::test_a_feathered_wedge_fails_the_gate",
+   "status": "passed",
+   "s": 0.215
+  },
+  {
+   "id": "car.build.tests.test_printed_min_wall::test_a_thin_fin_fails_and_a_square_corner_passes",
+   "status": "passed",
+   "s": 0.434
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_the_base_car_passes_every_check",
+   "status": "passed",
+   "s": 12.623
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T3.4_width_max]",
+   "status": "passed",
+   "s": 26.448
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T3.4_width_min]",
+   "status": "passed",
+   "s": 24.857
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T3.5_height]",
+   "status": "passed",
+   "s": 23.476
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T3.7_clearance]",
+   "status": "passed",
+   "s": 23.235
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T4.4.1_halo_unchanged]",
+   "status": "passed",
+   "s": 24.294
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T5.1_diameter_max]",
+   "status": "passed",
+   "s": 22.959
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T5.1_diameter_min]",
+   "status": "passed",
+   "s": 22.292
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T5.2_height_max]",
+   "status": "passed",
+   "s": 21.937
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T5.2_height_min]",
+   "status": "passed",
+   "s": 25.093
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T5.3_depth_max]",
+   "status": "passed",
+   "s": 18.484
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T5.3_depth_min]",
+   "status": "passed",
+   "s": 18.182
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T5.4_angle]",
+   "status": "passed",
+   "s": 15.129
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T5.5_wall]",
+   "status": "passed",
+   "s": 26.145
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T5.6_cartridge_seen_all_round]",
+   "status": "passed",
+   "s": 25.048
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T6.1_front_guide_position]",
+   "status": "passed",
+   "s": 25.733
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T6.1_rear_guide_position]",
+   "status": "passed",
+   "s": 22.939
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T6.2_front_hole_max]",
+   "status": "passed",
+   "s": 26.084
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T6.2_front_hole_min]",
+   "status": "passed",
+   "s": 28.163
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T7.12.1_front_support_in_cylinder]",
+   "status": "passed",
+   "s": 25.476
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T7.13_front_claw_clearance]",
+   "status": "passed",
+   "s": 22.22
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T7.13_rear_claw_clearance]",
+   "status": "passed",
+   "s": 22.742
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T7.2_front_gap]",
+   "status": "passed",
+   "s": 23.86
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T7.2_rear_gap]",
+   "status": "passed",
+   "s": 24.103
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T7.3_W_max]",
+   "status": "passed",
+   "s": 24.99
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T7.3_W_min]",
+   "status": "passed",
+   "s": 27.373
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T7.4_front_contact_width]",
+   "status": "passed",
+   "s": 27.673
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T7.4_rear_contact_width]",
+   "status": "passed",
+   "s": 27.196
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T7.5_front_diameter_max]",
+   "status": "passed",
+   "s": 28.557
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T7.5_front_diameter_min]",
+   "status": "passed",
+   "s": 30.494
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T7.5_rear_diameter_max]",
+   "status": "passed",
+   "s": 29.856
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T7.5_rear_diameter_min]",
+   "status": "passed",
+   "s": 28.81
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T7.6_front_on_track]",
+   "status": "passed",
+   "s": 29.507
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T8.2_nose_overhang]",
+   "status": "passed",
+   "s": 31.37
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T8.5.1_nose_half_width]",
+   "status": "passed",
+   "s": 31.826
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T8.5.1_nose_z]",
+   "status": "passed",
+   "s": 30.159
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T8.5.2_front_wing_ahead_of_ref_A]",
+   "status": "passed",
+   "s": 31.843
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T8.5.2_front_wing_height_outboard]",
+   "status": "passed",
+   "s": 30.434
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T8.5.3_endplate0_height]",
+   "status": "passed",
+   "s": 29.858
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T8.5.3_endplate0_outside_span]",
+   "status": "passed",
+   "s": 29.66
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T8.5.3_endplate0_width]",
+   "status": "passed",
+   "s": 28.452
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T8.6.1_front_span]",
+   "status": "passed",
+   "s": 28.008
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T8.6.2_front_chord_max]",
+   "status": "passed",
+   "s": 29.558
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T8.6.2_front_chord_min]",
+   "status": "passed",
+   "s": 26.774
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T8.6.2_front_vanes_overlap]",
+   "status": "passed",
+   "s": 28.177
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T8.6.3_front_thickness_max]",
+   "status": "passed",
+   "s": 24.51
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T8.6.3_front_thickness_min]",
+   "status": "passed",
+   "s": 25.896
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T9.4.1_rear_wing_behind_ref_B]",
+   "status": "passed",
+   "s": 27.393
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T9.4.2_rear_overhang]",
+   "status": "passed",
+   "s": 30.273
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T9.5.1_rear_span]",
+   "status": "passed",
+   "s": 33.397
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T9.5.2_rear_chord_max]",
+   "status": "passed",
+   "s": 31.983
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T9.5.2_rear_chord_min]",
+   "status": "passed",
+   "s": 26.606
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T9.5.3_rear_thickness_max]",
+   "status": "passed",
+   "s": 23.859
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T9.5.3_rear_thickness_min]",
+   "status": "passed",
+   "s": 23.179
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[T9.5.4_rear_height_deviation]",
+   "status": "passed",
+   "s": 26.76
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[attached_rwing]",
+   "status": "passed",
+   "s": 29.274
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[block_height]",
+   "status": "passed",
+   "s": 31.294
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_edge[block_width]",
+   "status": "passed",
+   "s": 32.432
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_the_team_wheels_meet_the_wheel_rules",
+   "status": "passed",
+   "s": 0.058
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_guides_on_the_wrong_side_or_too_many[xs0-T6.1_front_guide_position]",
+   "status": "passed",
+   "s": 31.564
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_guides_on_the_wrong_side_or_too_many[xs1-T6.1_rear_guide_position]",
+   "status": "passed",
+   "s": 32.042
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_guides_on_the_wrong_side_or_too_many[xs2-T6.1_two_guides]",
+   "status": "passed",
+   "s": 32.543
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_a_groove_in_the_bore_is_not_a_wider_bore_but_is_reported",
+   "status": "passed",
+   "s": 14.895
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_a_body_without_a_chamber_fails",
+   "status": "passed",
+   "s": 0.816
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_only_the_listed_parts",
+   "status": "passed",
+   "s": 15.527
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_nothing_may_sit_in_the_chamber",
+   "status": "passed",
+   "s": 47.99
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_one_piece_of_foam",
+   "status": "passed",
+   "s": 15.265
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_block_length",
+   "status": "passed",
+   "s": 28.368
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_mass_edges[T3.6_mass-competition_mass_g-48.2-47.8]",
+   "status": "passed",
+   "s": 27.966
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_mass_edges[T3.6_mass-competition_mass_g-48.0-47.9]",
+   "status": "passed",
+   "s": 28.384
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_mass_edges[T1.22_ballast_capacity-ballast_g-4.8-5.2]",
+   "status": "passed",
+   "s": 24.672
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_sight_and_air_edges[T7.11_front_wheel_seen_from_front]",
+   "status": "passed",
+   "s": 1.592
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_sight_and_air_edges[T8.7_front_wing_clear_air_all_parts]",
+   "status": "passed",
+   "s": 1.601
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_sight_and_air_edges[T9.6_rear_wing_clear_air_all_parts]",
+   "status": "passed",
+   "s": 1.618
+  },
+  {
+   "id": "car.build.tests.test_rules_edges::test_a_car_without_its_halo_fails",
+   "status": "passed",
+   "s": 11.767
+  },
+  {
+   "id": "car.build.tests.test_wing_joint::test_buried_pylon_joint_spans_its_width",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.build.tests.test_wing_joint::test_support_off_the_wing_falls_back_to_its_bounds",
+   "status": "passed",
+   "s": 0.001
+  }
+ ],
+ "counts": {
+  "passed": 106
+ }
+}

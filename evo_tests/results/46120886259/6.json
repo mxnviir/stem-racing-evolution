@@ -1,0 +1,19 @@
+{
+ "dir": "car/parts/tests",
+ "shard": 0,
+ "tests": [
+  {
+   "id": "car.parts.tests.test_min_wall::test_naca_trailing_edge_is_as_thick_as_asked",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.parts.tests.test_min_wall::test_every_printed_minimum_follows_the_one_value",
+   "status": "passed",
+   "s": 0.0
+  }
+ ],
+ "counts": {
+  "passed": 2
+ }
+}

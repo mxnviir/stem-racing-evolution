@@ -1,0 +1,34 @@
+{
+ "dir": "car/parts/tests",
+ "shard": 4,
+ "tests": [
+  {
+   "id": "car.parts.tests.test_front_span_cut::test_cut_at_the_nose_edge",
+   "status": "passed",
+   "s": 0.004
+  },
+  {
+   "id": "car.parts.tests.test_front_span_cut::test_no_cut_when_clear",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.parts.tests.test_front_span_cut::test_gate_fails_short_segment_and_passes_wide_one",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.parts.tests.test_slot_corner::test_ellipse_corner_is_b2_over_a",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.parts.tests.test_slot_corner::test_car_44027_beam_fails_then_grown_beam_passes",
+   "status": "passed",
+   "s": 0.001
+  }
+ ],
+ "counts": {
+  "passed": 5
+ }
+}

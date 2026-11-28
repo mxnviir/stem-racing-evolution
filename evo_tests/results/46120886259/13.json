@@ -1,0 +1,44 @@
+{
+ "dir": "car/parts/tests",
+ "shard": 7,
+ "tests": [
+  {
+   "id": "car.parts.tests.test_meshes::test_remesh_gives_even_triangles_on_the_same_closed_solid",
+   "status": "passed",
+   "s": 0.31
+  },
+  {
+   "id": "car.parts.tests.test_meshes::test_solid_nose_weighs_its_volume",
+   "status": "passed",
+   "s": 0.004
+  },
+  {
+   "id": "car.parts.tests.test_meshes::test_a_solid_touching_itself_along_a_line_is_written_closed",
+   "status": "passed",
+   "s": 0.032
+  },
+  {
+   "id": "car.parts.tests.test_meshes::test_a_sealed_void_is_not_a_part",
+   "status": "passed",
+   "s": 0.003
+  },
+  {
+   "id": "car.parts.tests.test_meshes::test_the_remesh_leaves_no_edge_over_the_limit",
+   "status": "passed",
+   "s": 0.012
+  },
+  {
+   "id": "car.parts.tests.test_meshes::test_a_sealed_void_is_filled_into_one_solid",
+   "status": "passed",
+   "s": 0.005
+  },
+  {
+   "id": "car.parts.tests.test_meshes::test_the_remesh_never_leaves_more_slivers_than_a_clean_input",
+   "status": "passed",
+   "s": 1.622
+  }
+ ],
+ "counts": {
+  "passed": 7
+ }
+}

@@ -1,0 +1,244 @@
+{
+ "dir": "car/body/tests",
+ "shard": 0,
+ "tests": [
+  {
+   "id": "car.body.tests.test_geometry_contract::test_co2_mass_matches_part2_constant",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_wheel_constants_match_locked_race_objective",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_nose_density_is_1000",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_nose_density_is_6x_sidepod",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_all_machined_densities_present",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_get_density_unknown_raises",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_mm_to_m_round_trip",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_gcm3_to_kgm3",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_grid_cells_minimum_one",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_W_bounds",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_validate_W_valid",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_validate_W_invalid",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_validate_d_halo_valid",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_validate_d_halo_invalid",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_d_halo_forward_limit_puts_pocket_front_on_the_front_axle",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_d_halo_rear_limit_honours_the_canister_when_supplied",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_calibrate_d_halo_max_scales_with_W",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_halo_z_min",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_lifecycle_states_count",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_lifecycle_states_exact_names",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_tool_directions_all_components",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_tool_directions_unit_vectors",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_phi_snapshot_keys",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_grid_spacing_consistency",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_min_radius_consistency",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_geometry_contract::test_machining_is_top_bottom_and_sides_only",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_model_block::test_chamber_is_legal_and_the_block_clears_the_track",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_model_block::test_envelope_is_the_block",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_model_block::test_cartridge_shell_plus_gas_is_the_official_full_weight",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_model_block::test_a_built_body_keeps_the_slot_and_stays_in_the_block",
+   "status": "passed",
+   "s": 124.137
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_all_four_components_are_labelled",
+   "status": "passed",
+   "s": 0.02
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_zones_are_disjoint_and_cover_only_the_envelope",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_y_axis_has_a_cell_exactly_on_the_centreline",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_masks_and_labels_are_exactly_symmetric",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_enforce_symmetry_gives_every_component_com_y_zero",
+   "status": "passed",
+   "s": 0.024
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_extraction_yields_one_connected_watertight_body",
+   "status": "passed",
+   "s": 0.161
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_cartridge_bore_is_carved_and_open_at_the_rear",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_virtual_cargo_is_forced_solid_when_requested",
+   "status": "passed",
+   "s": 0.026
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_machined_length_excludes_the_printed_nose",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_no_attachment_strips_are_needed",
+   "status": "passed",
+   "s": 0.003
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_label_aware_extraction_runs_all_six_stages",
+   "status": "passed",
+   "s": 1.41
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_face_labels_cover_every_face",
+   "status": "passed",
+   "s": 0.124
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_invalid_outer_scalars_raise",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_unreachable_void_is_filled_back_in",
+   "status": "passed",
+   "s": 0.005
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_open_pockets_are_left_alone",
+   "status": "passed",
+   "s": 0.003
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_drop_thin_strips_removes_sub_cell_strips_only",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_unified_phi::test_fill_fraction_weighs_a_curved_surface_right",
+   "status": "passed",
+   "s": 0.026
+  }
+ ],
+ "counts": {
+  "passed": 47
+ }
+}

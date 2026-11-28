@@ -1,0 +1,24 @@
+{
+ "dir": "cfd",
+ "shard": 0,
+ "tests": [
+  {
+   "id": "cfd.test_simscale::test_air_volume_of_a_toy_car",
+   "status": "passed",
+   "s": 4.801
+  },
+  {
+   "id": "cfd.test_simscale::test_diverged_forces_are_not_scored",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "cfd.test_simscale::test_a_refused_key_is_retired_and_its_cases_move",
+   "status": "passed",
+   "s": 0.002
+  }
+ ],
+ "counts": {
+  "passed": 3
+ }
+}

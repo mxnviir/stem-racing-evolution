@@ -1,0 +1,19 @@
+{
+ "dir": "search/sidepod",
+ "shard": 0,
+ "tests": [
+  {
+   "id": "search.sidepod.test_methods::test_cma_batches_pickles_and_illegal",
+   "status": "passed",
+   "s": 1.739
+  },
+  {
+   "id": "search.sidepod.test_methods::test_saved_sidepod_states_load",
+   "status": "passed",
+   "s": 0.003
+  }
+ ],
+ "counts": {
+  "passed": 2
+ }
+}

@@ -1,0 +1,239 @@
+{
+ "dir": "car/body/tests",
+ "shard": 2,
+ "tests": [
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_sidepod_length_increases_with_W",
+   "status": "passed",
+   "s": 7.329
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_sidepod_length_positive_at_W_min",
+   "status": "passed",
+   "s": 0.169
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_nose_length_matches_x_front",
+   "status": "passed",
+   "s": 0.167
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_nose_origin_at_zero",
+   "status": "passed",
+   "s": 0.169
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_nose_width_matches_T8_5_1_not_general_body_width",
+   "status": "passed",
+   "s": 0.168
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_W_out_of_range_raises",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_d_halo_out_of_range_raises",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_x_front_out_of_range_raises",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_x_front_above_t8_2_nose_overhang_raises",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_all_shapes_are_positive_ints",
+   "status": "passed",
+   "s": 0.167
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_rearpod_origin_x_clears_rear_wheel",
+   "status": "passed",
+   "s": 0.168
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_main_body_origin_x_equals_ref_plane_A",
+   "status": "passed",
+   "s": 0.167
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_sidepod_is_right_half_only",
+   "status": "passed",
+   "s": 0.167
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_bounding_volumes_stores_x_front",
+   "status": "passed",
+   "s": 0.166
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_ref_plane_properties",
+   "status": "passed",
+   "s": 0.168
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_polygon_point_in_polygon",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_bounding_region_box_mode_all_valid",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_bounding_region_polygon_mode",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_bounding_volumes::test_bounding_region_voxel_mode",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_halo_visibility::test_top_view_is_completely_unobstructed",
+   "status": "passed",
+   "s": 7.973
+  },
+  {
+   "id": "car.body.tests.test_halo_visibility::test_front_and_side_are_unobstructed_above_the_fillet",
+   "status": "passed",
+   "s": 5.589
+  },
+  {
+   "id": "car.body.tests.test_halo_visibility::test_the_fillet_exemption_is_actually_used",
+   "status": "passed",
+   "s": 0.007
+  },
+  {
+   "id": "car.body.tests.test_halo_visibility::test_the_constraint_binds_during_the_descent_not_after",
+   "status": "passed",
+   "s": 0.006
+  },
+  {
+   "id": "car.body.tests.test_halo_visibility::test_the_halo_lofts_to_the_canister",
+   "status": "passed",
+   "s": 0.006
+  },
+  {
+   "id": "car.body.tests.test_halo_visibility::test_the_loft_ceiling_and_deck_agree",
+   "status": "passed",
+   "s": 0.006
+  },
+  {
+   "id": "car.body.tests.test_phi_grid::test_init_sphere_produces_negative_inside",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_phi_grid::test_init_sphere_produces_positive_outside",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_phi_grid::test_init_slab",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_phi_grid::test_init_random_has_noise",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_phi_grid::test_hard_constraints_enforced_after_init",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_phi_grid::test_build_hard_masks_basic",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_phi_grid::test_build_hard_masks_overlap_resolved",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_phi_grid::test_save_and_load_roundtrip",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_phi_grid::test_load_wrong_shape_raises",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_phi_grid::test_grid_dtype_is_float32",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_phi_grid::test_post_init_shape_mismatch_raises",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_virtual_cargo::test_placement_never_shares_volume_with_the_halo_pocket",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_virtual_cargo::test_cargo_sits_directly_under_the_halo",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_virtual_cargo::test_placement_within_axle_corridor",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_virtual_cargo::test_placement_defaults_to_corridor_centre_when_no_conflict",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_virtual_cargo::test_placement_no_longer_shifts_for_a_centred_halo",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_virtual_cargo::test_placement_still_raises_when_the_corridor_itself_is_too_short",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_virtual_cargo::test_solid_mask_wide_end_is_wider_than_narrow_end",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_virtual_cargo::test_solid_mask_respects_height",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_virtual_cargo::test_is_valid_filters_placements_the_builder_would_reject",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_virtual_cargo::test_regs_dimensions_unchanged",
+   "status": "passed",
+   "s": 0.0
+  }
+ ],
+ "counts": {
+  "passed": 46
+ }
+}

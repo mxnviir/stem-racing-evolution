@@ -1,0 +1,104 @@
+{
+ "dir": "car/parts/tests",
+ "shard": 2,
+ "tests": [
+  {
+   "id": "car.parts.tests.test_claw_band::test_tall_pod_plate_clears_claw_band",
+   "status": "passed",
+   "s": 0.264
+  },
+  {
+   "id": "car.parts.tests.test_claw_band::test_neck_section_modulus_of_a_rectangle_is_bh2_over_6",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.parts.tests.test_claw_band::test_bare_beam_at_axle_level_builds_without_a_web",
+   "status": "passed",
+   "s": 0.083
+  },
+  {
+   "id": "car.parts.tests.test_claw_band::test_web_rises_from_the_axle_to_the_plate",
+   "status": "passed",
+   "s": 0.087
+  },
+  {
+   "id": "car.parts.tests.test_rear_wing_engine::test_every_gate_passes[the middle of every range, over the pods]",
+   "status": "passed",
+   "s": 20.619
+  },
+  {
+   "id": "car.parts.tests.test_rear_wing_engine::test_every_gate_passes[leaning out onto the pods, long sweeping curves]",
+   "status": "passed",
+   "s": 0.373
+  },
+  {
+   "id": "car.parts.tests.test_rear_wing_engine::test_every_gate_passes[nothing under the tips: curving in to the spine]",
+   "status": "passed",
+   "s": 0.421
+  },
+  {
+   "id": "car.parts.tests.test_rear_wing_engine::test_every_gate_passes[a wide chord, a thick wing, lifted, raked struts]",
+   "status": "passed",
+   "s": 0.409
+  },
+  {
+   "id": "car.parts.tests.test_rear_wing_engine::test_the_struts_leave_the_wing_through_its_sides[the middle of every range, over the pods]",
+   "status": "passed",
+   "s": 0.098
+  },
+  {
+   "id": "car.parts.tests.test_rear_wing_engine::test_the_struts_leave_the_wing_through_its_sides[leaning out onto the pods, long sweeping curves]",
+   "status": "passed",
+   "s": 0.089
+  },
+  {
+   "id": "car.parts.tests.test_rear_wing_engine::test_the_struts_leave_the_wing_through_its_sides[nothing under the tips: curving in to the spine]",
+   "status": "passed",
+   "s": 0.097
+  },
+  {
+   "id": "car.parts.tests.test_rear_wing_engine::test_the_struts_leave_the_wing_through_its_sides[a wide chord, a thick wing, lifted, raked struts]",
+   "status": "passed",
+   "s": 0.096
+  },
+  {
+   "id": "car.parts.tests.test_rear_wing_engine::test_the_abs_holds",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.parts.tests.test_rear_wing_engine::test_the_wing_is_straight",
+   "status": "passed",
+   "s": 0.004
+  },
+  {
+   "id": "car.parts.tests.test_rear_wing_engine::test_struts_land_where_they_head",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.parts.tests.test_rear_wing_engine::test_a_support_meets_the_body_flush_not_inside_it",
+   "status": "passed",
+   "s": 0.245
+  },
+  {
+   "id": "car.parts.tests.test_rear_wing_engine::test_limits_are_repaired_into_t9",
+   "status": "passed",
+   "s": 11.976
+  },
+  {
+   "id": "car.parts.tests.test_rear_wing_engine::test_the_free_mid_point_and_swell_reach_the_strut",
+   "status": "passed",
+   "s": 7.092
+  },
+  {
+   "id": "car.parts.tests.test_rear_wing_engine::test_any_path_makes_one_closed_solid",
+   "status": "passed",
+   "s": 3.474
+  }
+ ],
+ "counts": {
+  "passed": 19
+ }
+}

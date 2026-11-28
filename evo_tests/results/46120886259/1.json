@@ -1,0 +1,238 @@
+{
+ "dir": "car/body/tests",
+ "shard": 1,
+ "tests": [
+  {
+   "id": "car.body.tests.test_audit_fixes::test_B1_reinit_no_nan_30_cubed",
+   "status": "passed",
+   "s": 0.114
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_B1_reinit_gradient_near_one",
+   "status": "passed",
+   "s": 0.106
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_B1_reinit_hard_constraints_hold",
+   "status": "passed",
+   "s": 0.036
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_B1_hj_update_float64_computation",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_B2_geometry_contract_import_silent",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_B3_mesh_quality_checks_triangle_angles",
+   "status": "passed",
+   "s": 0.562
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_D1_small_grid_extraction_succeeds",
+   "status": "passed",
+   "s": 5.121
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_D1_attachment_face_open_boundary_accepted",
+   "status": "passed",
+   "s": 0.022
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_D2_radius_estimator_returns_array",
+   "status": "passed",
+   "s": 2.235
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_D3_accessibility_uses_find_inaccessible_faces",
+   "status": "passed",
+   "s": 0.008
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_D4_velocity_extension_propagates_from_source",
+   "status": "passed",
+   "s": 0.003
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_D4_velocity_extension_no_division_errors",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_D6_adjoint_sensitivity_updates_phi",
+   "status": "passed",
+   "s": 0.006
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_D6_adjoint_none_mesh_raises_not_silently_skips",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_D7_requirements_txt_exists",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_wall_thickness_rejects_thin_slab_accepts_thick_slab",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_wall_thickness_skipped_for_milled_components",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_wall_thickness_repair_loop_fixes_localized_thin_spot",
+   "status": "passed",
+   "s": 0.054
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_D9_component_mass_com_import_source",
+   "status": "passed",
+   "s": 0.003
+  },
+  {
+   "id": "car.body.tests.test_audit_fixes::test_E1_no_hardcoded_absolute_path",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_halo_pocket::test_pocket_floor_is_fixed_at_24mm",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_halo_pocket::test_pocket_depth_matches_ball_nose_cut",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_halo_pocket::test_pocket_x_position_shifts_with_d_halo",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_halo_pocket::test_pocket_length_matches_regs_appendix",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_halo_pocket::test_pocket_width_symmetric_about_centerline",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_halo_pocket::test_forbidden_mask_marks_pocket_cells",
+   "status": "passed",
+   "s": 6.453
+  },
+  {
+   "id": "car.body.tests.test_halo_pocket::test_forbidden_mask_clear_outside_pocket_z",
+   "status": "passed",
+   "s": 0.223
+  },
+  {
+   "id": "car.body.tests.test_halo_pocket::test_floor_layer_keeps_the_z24_cells_solid_over_the_ballast_slot_too",
+   "status": "passed",
+   "s": 0.006
+  },
+  {
+   "id": "car.body.tests.test_halo_pocket::test_exact_capsule_matches_the_ballast_volume_and_the_grid_slot_stays_inside_it",
+   "status": "passed",
+   "s": 0.01
+  },
+  {
+   "id": "car.body.tests.test_halo_pocket::test_machining_leaves_the_pocket_floor_flat",
+   "status": "passed",
+   "s": 142.653
+  },
+  {
+   "id": "car.body.tests.test_halo_pocket::test_d_halo_changes_bounding_volumes_end_to_end",
+   "status": "passed",
+   "s": 0.37
+  },
+  {
+   "id": "car.body.tests.test_param_body::test_tunnel_off_by_default_and_old_records_load",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_param_body::test_tunnel_only_removes_material_under_the_floor_between_its_ends",
+   "status": "passed",
+   "s": 0.036
+  },
+  {
+   "id": "car.body.tests.test_param_body::test_tunnel_bounds_respect_the_cutter",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_param_body::test_a_tunnel_keeps_its_height_at_any_skin",
+   "status": "passed",
+   "s": 0.006
+  },
+  {
+   "id": "car.body.tests.test_param_body::test_close_pinches_fills_an_edge_only_contact",
+   "status": "passed",
+   "s": 0.001
+  },
+  {
+   "id": "car.body.tests.test_v2_upgrades::test_ballast_capsule_and_regimes",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_v2_upgrades::test_block_envelope",
+   "status": "passed",
+   "s": 0.0
+  },
+  {
+   "id": "car.body.tests.test_v2_upgrades::test_t55_wall_is_at_least_3mm_all_round",
+   "status": "passed",
+   "s": 0.083
+  },
+  {
+   "id": "car.body.tests.test_v2_upgrades::test_wheels_are_placed_in_car_coordinates",
+   "status": "passed",
+   "s": 0.251
+  },
+  {
+   "id": "car.body.tests.test_v2_upgrades::test_vectorised_splat_matches_a_loop",
+   "status": "passed",
+   "s": 0.002
+  },
+  {
+   "id": "car.body.tests.test_v2_upgrades::test_hj_substeps_never_split_the_body",
+   "status": "passed",
+   "s": 137.008
+  },
+  {
+   "id": "car.body.tests.test_v2_upgrades::test_param_body_is_one_legal_piece",
+   "status": "passed",
+   "s": 260.432
+  },
+  {
+   "id": "car.body.tests.test_v2_upgrades::test_body_mass_is_the_mass_of_the_mesh_that_gets_milled[1.0]",
+   "status": "passed",
+   "s": 146.598
+  },
+  {
+   "id": "car.body.tests.test_v2_upgrades::test_body_mass_is_the_mass_of_the_mesh_that_gets_milled[0.5]",
+   "status": "failure",
+   "s": 192.294
+  }
+ ],
+ "details": {
+  "car.body.tests.test_v2_upgrades::test_body_mass_is_the_mass_of_the_mesh_that_gets_milled[0.5]": "AssertionError: (np.float64(143.1194490561733), np.float64(144.51223352504462))\nassert (np.float64(1.3927844688713265) * 0.163) < 0.1\n +  where np.float64(1.3927844688713265) = abs((np.float64(143.1194490561733) - np.float64(144.51223352504462)))"
+ },
+ "counts": {
+  "passed": 44,
+  "failure": 1
+ }
+}
