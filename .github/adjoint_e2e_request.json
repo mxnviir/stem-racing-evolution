@@ -1,1 +1,1 @@
-{"go": "e2e-2", "plan": "search/adjoint/E2E_TEST.md", "note": "relaunch with the masked link (e2e-1 cancelled during its image build, before any result)"}
+{"go": "e2e-3", "plan": "search/adjoint/E2E_TEST.md", "note": "e2e-2 stopped at the DAFoam step on a missing import (no result); relaunch"}
