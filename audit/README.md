@@ -53,3 +53,14 @@ Results land in `audit/results/b1/<case>/result.json` (plus force histories), co
   locally; L0 team_rm frame 1 ran: 183.06 mN, 1.20 M cells). Relaunched as batch b1r2 with frames 0-1 retried plus frame 2
   for both designs as a backup. If a frame-0 case fails again, L0 uses frames 1-2 (frames are interchangeable repeat
   meshes; the mark itself is unchanged).
+
+## Batch b2: does the original hybrid's gain survive legalisation? (added 2026-11-28 07:10 UTC, before its result)
+
+`legal:hybrid_final`: `hybrid/final_design/car_half.stl` put through the legal builder (`seedhybrid/legalise.py`:
+3-axis 6.35 mm ball-end mill, 3 mm walls, one piece, cargo, clearance, outside-region reset to the team CAD). Local
+build: accepted; the rules changed 1382 mm3 inside the region and reset 456 mm3 outside it; pod 67.8 cm3.
+Scored on frames 0-3 as every audit case. Reference: the team pod's legal rebuild (seed evolution's `original`,
+174.75 mN mean over frames 0-3, same protocol), paired by frame.
+- **Mark T5:** the legal hybrid keeps >= 70 % of the hybrid's fresh-mesh gain against the team pod surface it started
+  from (b1 T1: -10.39 mN), i.e. legal hybrid minus the CAD team pod (b1, 181.95) <= -7.27 mN; and separately reported
+  against the legal team pod (174.75): a legal design better than the legal team pod by >= 3 SE.

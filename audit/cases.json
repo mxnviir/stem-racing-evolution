@@ -1,5 +1,5 @@
 {
- "launch": "b1r2",
+ "launch": "b2",
  "batches": {
   "b1": [
    {
@@ -187,6 +187,32 @@
     "design": "hybrid_final",
     "k": 2,
     "bg_div": 9.524
+   }
+  ],
+  "b2": [
+   {
+    "name": "t5_legal_hybrid_final_k0",
+    "design": "legal:hybrid_final",
+    "k": 0,
+    "bg_div": 12
+   },
+   {
+    "name": "t5_legal_hybrid_final_k1",
+    "design": "legal:hybrid_final",
+    "k": 1,
+    "bg_div": 12
+   },
+   {
+    "name": "t5_legal_hybrid_final_k2",
+    "design": "legal:hybrid_final",
+    "k": 2,
+    "bg_div": 12
+   },
+   {
+    "name": "t5_legal_hybrid_final_k3",
+    "design": "legal:hybrid_final",
+    "k": 3,
+    "bg_div": 12
    }
   ]
  }
