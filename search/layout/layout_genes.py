@@ -210,7 +210,8 @@ def _strut(v, prefix):
                 chord_mm=float(v[f"{prefix}_chord"]), thick_mm=float(v[f"{prefix}_thick"]),
                 flare=float(v[f"{prefix}_flare"]), round=float(v[f"{prefix}_round"]),
                 mid_x=float(v[f"{prefix}_mid_x"]), mid_y=float(v[f"{prefix}_mid_y"]), mid_z=float(v[f"{prefix}_mid_z"]),
-                swell=float(v[f"{prefix}_swell"]), **({"root": float(v[f"{prefix}_root"])} if f"{prefix}_root" in v else {}))
+                swell=float(v[f"{prefix}_swell"]),
+                **{k: float(v[f"{prefix}_{k}"]) for k in ("root", "n") if f"{prefix}_{k}" in v})
 
 
 def _supports(v, prefix, n):

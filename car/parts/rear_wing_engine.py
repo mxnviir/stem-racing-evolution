@@ -34,6 +34,8 @@ HALF_WIDTH_MAX_MM = 42.5        # T3.4: 85 mm
 CENTRE_CLEAR_MM = 2.5           # team (user 2026-11-23): nothing on the centre line -- a support's inner face this far off it
 ROOT_MIN = 0.15                # a pylon no nearer the centre line than this share of the half span
 ROOT_FALLBACK = (1.0, 0.8, 0.6, 0.4)   # where else a support is tried when the asked one cannot be built
+SIZE_FALLBACK = (1.0, 0.7, 0.5, 0.35)  # a support's asked size, then slimmer (toward a plain strut) if it cannot fit
+N_SUPPORTS_MAX = 3
 STRUT_ROOM_MM = 4.0             # the half span leaves its side struts this much of T3.4's 42.5 mm
 ZONE_MARGIN_MM = 0.6            # the wing this far clear of T7.9's zones (its struts' first section is 0.1 mm bigger)
 FOOT_REACH_MM = 60.0            # a support reaches no further than this to the body
@@ -58,6 +60,7 @@ class Support:
     swell: float = 1.0          # its section half way, times its own          # 2 an ellipse, higher squarer
     root: float = 1.0           # where it leaves the wing, share of the half span: 1 through the tip's face, below 1 a
                                 # pylon out of the wing's underside at that share (owner 2026-11-28: not only struts)
+    n: float = 1.0              # supports per side (rounded, 1-3): the first at root, the others spread inboard
 
 
 @dataclass
@@ -220,11 +223,14 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
     span_box = se._box(wb[0, 0] - 1.0, wb[1, 0] + 1.0, -1.0, hs - 0.35, wb[0, 2] - 0.5, wb[1, 2] + 0.5)
     g = dataclasses.asdict(sp)
     root0 = float(np.clip(g.pop("root", 1.0), ROOT_MIN, 1.0))
+    n_sup = int(np.clip(round(float(g.pop("n", 1.0))), 1, N_SUPPORTS_MAX))
+    joints = []                                           # (y_lo, y_hi) of the supports already placed
 
-    def attempt(root):
+    def attempt(root, g):
         """One support leaving at `root` (share of the half span): (manifold or None, info, joint y)."""
         if root >= 1.0 - 1e-6:                            # through the tip's aerofoil face, out and down (as before)
             Pw = Pw_all[Pw_all[:, 1] < hs - cc.CLEAR_AIR - 0.5]
+            w = 0.0
             fxz, fpt, n_out, fv, around, y_j = face_xz, np.array([x_le + 0.5 * chord, hs, z]), np.array([0.0, 1.0, 0.0]), None, True, hs
             check_span = True
         else:                                             # a pylon: its footprint under the wing at y_s, straight down
@@ -235,6 +241,8 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
             fpt, n_out, fv, around, y_j = np.array([x_le + 0.5 * chord, y_s, z]), np.array([0.0, 0.0, -1.0]), np.array([0.0, 1.0, 0.0]), False, y_s
             Pw = Pw_all[np.abs(Pw_all[:, 1] - y_s) > 0.5 * w + cc.CLEAR_AIR + 0.5]
             check_span = False
+        for lo_, hi_ in joints:                           # the other supports' joints: their own fillets
+            Pw = Pw[(Pw[:, 1] < lo_ - cc.CLEAR_AIR - 0.5) | (Pw[:, 1] > hi_ + cc.CLEAR_AIR + 0.5)]
 
         def accept(M):
             if check_span and (M ^ span_box).volume() > 1e-3:   # a tip strut: not back into the wing's own span
@@ -251,16 +259,28 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
                     and b[1, 2] <= cc.REAR_Z_MAX - MARGIN_MM and _clear(t, wheel_rear, W_mm, x_front_mm))
         M, sinfo = ws.design(fxz, fpt, n_out, ws.whole(body), np.array([0.0, 0.0, -1.0]), g,
                              reach_mm=FOOT_REACH_MM, accept=accept, wall_mm=cc.BUILD_WALL_MM, go_around=around, face_v=fv)
-        return M, sinfo, y_j
+        return M, sinfo, (y_j - 0.5 * w, y_j + 0.5 * w) if w else (hs - 0.3, hs)
 
-    sup, placed, tried = None, [], []
-    for root in [root0] + [r for r in ROOT_FALLBACK if abs(r - root0) > 1e-6]:
-        M, sinfo, y_j = attempt(root)
-        tried.append(round(root, 2))
-        if M is not None:
-            sup = wl.to_trimesh(trimmed(M))
-            placed = [dict(y_mm=round(y_j, 2), width_mm=0.0, plate_mm=cc.BUILD_WALL_MM, root=round(root, 2), **sinfo)]
+    # the asked supports (the first at root0, the others spread inboard of it), then the fallbacks; each at its
+    # asked size, then smaller (a pod too fat for its place is slimmed toward a strut rather than dropped)
+    asked = list(np.linspace(root0, max(ROOT_MIN, root0 - 0.3 * (n_sup - 1)), n_sup)) if n_sup > 1 else [root0]
+    order = asked + [r for r in ROOT_FALLBACK if all(abs(r - a) > 1e-6 for a in asked)]
+    parts, placed, tried, sinfo = [], [], [], {}
+    for root in order:
+        if len(placed) >= n_sup:
             break
+        for scale in SIZE_FALLBACK:
+            gg = dict(g, chord_mm=g["chord_mm"] * scale, thick_mm=g["thick_mm"] * scale,
+                      flare=1.0 + (g["flare"] - 1.0) * scale, swell=1.0 + (g["swell"] - 1.0) * scale)
+            M, sinfo, (j0, j1) = attempt(root, gg)
+            tried.append((round(root, 2), scale))
+            if M is not None:
+                parts.append(wl.to_trimesh(trimmed(M)))
+                joints.append((j0, j1))
+                placed.append(dict(y_mm=round(0.5 * (j0 + j1), 2), width_mm=0.0, plate_mm=cc.BUILD_WALL_MM, root=round(root, 2),
+                                   size_scale=scale, **sinfo))
+                break
+    sup = trimesh.util.concatenate(parts) if parts else None
     info["roots_tried"] = tried
     if not placed:
         info["supports_not_placed"] = sinfo
