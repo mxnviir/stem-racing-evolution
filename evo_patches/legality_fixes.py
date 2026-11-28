@@ -20,6 +20,7 @@ from __future__ import annotations
 from pathlib import Path
 
 RW = "car/parts/rear_wing_engine.py"
+LG = "car/build/legality.py"
 RC = "car/build/run_car.py"
 SE = "car/parts/support_engine.py"
 FW = "car/parts/front_wing_engine.py"
@@ -220,6 +221,19 @@ def build(sd: SupportDesign, body_half_m, axles, out_dir=None, keep_out_mm=None)
 
 
 def _build_at(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of=(), forward_parts=()):
+''',
+    ),
+    dict(
+        id="L6_nose_joint_sliver_face",
+        file=LG,
+        old='''    inside = contains_xy(face, Yg, Zg)
+    y, z = Yg[inside], Zg[inside]
+''',
+        new='''    inside = contains_xy(face, Yg, Zg)
+    if not inside.any():                                  # evo_patches L6: a sliver thinner than the grid
+        r["nose_joint_bond_stress"] = _entry(-1.0, f"no usable glued face (a sliver of {face.area:.3f} mm2)")
+        return r
+    y, z = Yg[inside], Zg[inside]
 ''',
     ),
 ]
