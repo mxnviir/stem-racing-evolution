@@ -121,6 +121,7 @@ def _superellipse_phi(y, z, b, zc, h, p):
 
 
 FOAM_NOSE_OVERHANG_MM = 39.7   # T8.2's 40 mm less a margin: how far a foam nose may run ahead of Ref A
+BLOCK_LENGTH_MM, BLOCK_MARGIN_MM = 223.0, 0.5   # T1.14: the foam (nose included) is milled from the 223 mm block
 
 
 def phi_mm(bp: BodyParams, X, Y, Z, x_ref_a: float, x_rear: float, skin_mm: float = 0.0):
@@ -322,7 +323,8 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
     x_rear_mm = base.landmarks["rear_face_m"] * 1e3
     x_front_cut = x_ref_a                         # where the milled body starts: Ref A, or a foam nose's front limit
     if freeform is not None and getattr(freeform, "nose_foam", False):
-        x_front_cut = x_ref_a - FOAM_NOSE_OVERHANG_MM
+        # no further forward than T8.2 allows, nor than the 223 mm block reaches from the rear face (T1.14)
+        x_front_cut = max(x_ref_a - FOAM_NOSE_OVERHANG_MM, x_rear_mm - BLOCK_LENGTH_MM + BLOCK_MARGIN_MM)
     if field_mm is not None:
         if np.shape(field_mm) != X.shape:
             raise ValueError(f"field_mm has shape {np.shape(field_mm)}, this car's grid is {X.shape}")
