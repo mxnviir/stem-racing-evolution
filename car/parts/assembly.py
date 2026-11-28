@@ -153,6 +153,19 @@ def fixed_hardware_kwargs(W_mm, x_front_mm, d_halo_mm, parts_mass: dict,
     }
 
 
+def _printed_minus_body(part_m, body_m):
+    """A printed part (right half, metres) less what lies inside the foam body: it ends on the body's surface instead
+    of running on through the foam to the centre plane, where it was cut open (a foam nose's wing mount)."""
+    import manifold3d as mf
+    import support_engine as se
+    import wing_loft as wl
+    p = part_m.copy(); p.apply_scale(1e3); b = body_m.copy(); b.apply_scale(1e3)
+    pcs = sorted((se._to_manifold(p) - se._to_manifold(b)).decompose(), key=lambda q: -q.volume())
+    t = wl.to_trimesh(mf.Manifold.batch_boolean([q for q in pcs if q.volume() > 1e-3 * pcs[0].volume()], mf.OpType.Add)) if pcs else p
+    t.apply_scale(1e-3)
+    return t
+
+
 def _union_closed(parts_m):
     """Union of closed parts (metres) as ONE closed solid: in mm through manifold3d and support_engine's
     cleanup (Boolean seams leave zero-area flaps; a plain trimesh union of the nose and its pylons came out
@@ -339,9 +352,10 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
         gates.update({f"P4.{k}" if not k.startswith("P4.") else k: v for k, v in res["gates"].items()})
         info["front_wing_engine"] = {k: v for k, v in res["info"].items()}
         if res["pylons"] is not None and foam_nose:          # the printed wing mount on the foam nose
-            _export_half(res["pylons"], out / "nose.stl")
+            mount = _printed_minus_body(res["pylons"], body)   # ends on the foam's surface: one closed solid a side
+            _export_half(mount, out / "nose.stl")
             surfaces.append({"name": "nose", "stl": str(out / "nose.stl"), "rotating": None})
-            parts_mass["nose"] = _full_mass_com([res["pylons"]], cc.DENSITY_G_CM3[PART_MATERIAL])
+            parts_mass["nose"] = _full_mass_com([mount], cc.DENSITY_G_CM3[PART_MATERIAL])
         elif res["pylons"] is not None:
             nose_with = _union_closed([nm["nose"], res["pylons"]])
             _export_half(nose_with, out / "nose.stl")
