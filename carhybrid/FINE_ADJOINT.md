@@ -30,18 +30,22 @@ target: the adjoint must be on the mesh the score uses. F0 below measures the la
 
 ## Where things run
 
-- `bigmem`: the AWS machine, registered as a self-hosted GitHub Actions runner (labels `self-hosted`, `bigmem`). Runs
-  only `fine_adjoint` jobs: build -> production mesh and solve (the score, frame k) -> DAFoam from that converged state
-  (same mesh, schemes, BCs; `dafoam/make_case.py`) -> gradient mapped to the free-form numbers. One job at a time.
-- GitHub-hosted runners (free, up to ~20 at once): every build, every score, the line-search candidates.
-- Setup of the machine: `carhybrid/aws/README.md`.
+- **AWS EC2, driven by the AWS CLI** (`carhybrid/aws/`, README there): `launch.sh <batch>` ships this repository at
+  HEAD plus the pinned builder and adjoint code to S3, starts one instance (default r7i.16xlarge, 64 vCPU, 512 GiB),
+  which installs exactly what the GitHub workflow installs, runs the batch's `fine_adjoint` cases one at a time with
+  `carhybrid/fine_adjoint.sh` (build -> production mesh and solve, the score, frame k -> DAFoam from that converged
+  state: same mesh, schemes, BCs -> gradient mapped to the free-form numbers), copies each case's results to S3 as it
+  ends and terminates itself. `status.sh` / `fetch.sh` read and fetch; results are committed by hand from `fetch.sh`'s
+  folder (`carhybrid/results/<batch>/`).
+- GitHub-hosted runners (free, up to ~20 at once): every build, every score, the line-search candidates, and
+  `fine_adjoint` only as a plumbing test on a coarse bg_div (16 GB).
 
 ## Interfaces (fixed so the workflow and the loop agree)
 
 Request case (carhybrid/request.json):
 `{"name", "type": "fine_adjoint", "layout", "u" (json list or "zero"), "k" (frame), "bg_div" (12.889 = production for
-the whole car), "grid" ("5,2,3,4" default | "24,9,12,9" = the seed's own grid), "np" (MPI ranks, default all cores),
-"runner" ("bigmem" default | "hosted" for a plumbing test on a coarse bg_div)}`
+the whole car), "grid" ("5,2,3,4" default | "24,9,12,9" = the seed's own grid), "np" (MPI ranks, default all cores)}`;
+on GitHub a `fine_adjoint` case is a plumbing test (coarse bg_div), on AWS (`aws/launch.sh <batch>`) the real thing
 
 Outputs in `out/<name>/` (committed by collect to `carhybrid/results/<batch>/<name>/`):
 - `result.json`: the audit-protocol score of this frame (drag_mN, lift_mN, block SE, cells, y+), as for `score` cases;
@@ -66,13 +70,18 @@ A gate missed stops the line it gates and is reported; nothing downstream runs o
 ## The loop (P2F; carhybrid/loop.py)
 
 Per iteration i, at the current numbers u_i:
-1. `grad` stage: one `fine_adjoint` job on bigmem at u_i (frame k_i = i mod 4) -> g_i (race time per unit u).
+1. `grad` stage: one `fine_adjoint` job on AWS (`aws/launch.sh`) at u_i (frame k_i = i mod 4) -> g_i (race time per unit u).
 2. `line` stage (hosted runners): candidates u_i + a * d_i for a in {0.5, 1, 2} x the trust radius, d_i the projected
    descent direction (unit box), plus u_i itself, each built and scored on two frames. A candidate the builder or the
    referee rejects counts as failed.
 3. Accept the best legal candidate if its paired race-time change is <= -3 SE and <= -0.1 ms; the trust radius grows x1.5
    when the largest step wins and halves when nothing is accepted. Stop at radius < 0.02 or 20 iterations.
 The no-adjoint control arm (same budget, random unit directions in place of d_i) runs alongside for the claim.
+
+Running it with AWS: the `grad` stage's batch (`loop_adjoint_<i>_grad`, production bg_div) is skipped by the GitHub
+workflow and launched by hand: `aws/launch.sh loop_adjoint_<i>_grad`, `aws/fetch.sh <run_id>`, then
+`python carhybrid/loop.py advance carhybrid/results/loop_adjoint_<i>_grad <run_id> --evo <builder checkout>`, commit
+and push (the `line` stage it writes runs on hosted runners, and their collect hook advances the loop as before).
 
 ### Decisions (carhybrid/loop.py; the text above does not fix these)
 

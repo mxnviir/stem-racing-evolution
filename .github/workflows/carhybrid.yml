@@ -6,9 +6,9 @@ run-name: "Whole-car hybrid: ${{ github.event.inputs.batch || 'request file' }}"
 # audit protocol ("score") or computes its coarse DAFoam gradient and maps it to stage 2's free-form numbers
 # ("dafoam"). Launch: commit carhybrid/request.json on this branch.
 # "fine_adjoint" (carhybrid/FINE_ADJOINT.md, job body carhybrid/fine_adjoint.sh): the score of frame k with its state
-# kept, then DAFoam on that same production mesh; runs on the self-hosted AWS runner (labels self-hosted, bigmem;
-# carhybrid/aws/README.md) unless the case says "runner": "hosted". Batches named loop*: collect runs
-# carhybrid/loop.py advance and dispatches the batch it writes.
+# kept, then DAFoam on that same mesh. Here only as plumbing tests on a coarse bg_div (a hosted runner has 16 GB); the
+# production-mesh runs go to a 512 GB EC2 instance through the AWS CLI (carhybrid/aws/launch.sh, README there), which
+# runs the same script. Batches named loop*: collect runs carhybrid/loop.py advance and dispatches the batch it writes.
 on:
   push:
     branches: [claude/wizardly-brahmagupta-1edalc]
@@ -56,6 +56,10 @@ jobs:
                   skip = prev.returncode == 0 and json.loads(prev.stdout).get("launch") == r["launch"]
               except ValueError:
                   skip = False
+          # a batch of production-mesh fine_adjoint cases runs on AWS (carhybrid/aws/launch.sh), never here
+          cs = r["batches"][b]
+          if cs and all(c.get("type") == "fine_adjoint" and float(c.get("bg_div") or r["bg_div"]) > 6 for c in cs):
+              skip = True
           print("skip=" + ("true" if skip else "false"))
           print("cases=" + json.dumps(r["batches"][b] if not skip else [{"name": "none", "type": "none"}])); print("batch=" + b)
           print("domain=" + json.dumps(r["domain_m"])); print("bgdiv=" + str(r["bg_div"]))
@@ -65,10 +69,9 @@ jobs:
     name: "${{ matrix.case.name }}"
     needs: init
     if: ${{ !cancelled() && needs.init.result == 'success' && needs.init.outputs.skip != 'true' }}
-    # fine_adjoint -> the self-hosted big-memory machine unless the case asks for a hosted runner (plumbing tests)
-    runs-on: ${{ (matrix.case.type == 'fine_adjoint' && matrix.case.runner != 'hosted') && fromJSON('["self-hosted", "bigmem"]') || 'ubuntu-24.04' }}
-    # hosted jobs stop at 6 h; self-hosted ones may run long (kept under the job token's 24 h)
-    timeout-minutes: ${{ (matrix.case.type == 'fine_adjoint' && matrix.case.runner != 'hosted') && 1400 || 355 }}
+    # every case on a hosted runner (production-mesh fine_adjoint cases run on AWS: carhybrid/aws/launch.sh)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
     strategy:
       fail-fast: false
       max-parallel: 20
@@ -93,7 +96,6 @@ jobs:
       - name: OpenFOAM v2412 + python deps
         timeout-minutes: 30
         run: |
-          # the self-hosted machine has OpenFOAM and the system libraries already (carhybrid/aws/setup_runner.sh)
           if [ "$RUNNER_ENVIRONMENT" = "github-hosted" ] || [ ! -f /usr/lib/openfoam/openfoam2412/etc/bashrc ]; then
             (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
             for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
@@ -157,7 +159,7 @@ jobs:
           cat $O/grad.json | head -c 1500 || true
       - name: fine adjoint (production-mesh score with its state kept -> DAFoam D and L on that state -> gradient)
         if: matrix.case.type == 'fine_adjoint'
-        timeout-minutes: ${{ matrix.case.runner == 'hosted' && 320 || 1300 }}
+        timeout-minutes: 320
         env:
           NAME: "${{ matrix.case.name }}"
           LAYOUT: "${{ matrix.case.layout }}"
@@ -177,6 +179,10 @@ jobs:
           DAF_PC_FILL: "${{ matrix.case.pc_fill || 0 }}"
           DAF_PC_LEVEL: "${{ matrix.case.pc_level || 1 }}"
         run: |
+          # a hosted runner has 16 GB: only plumbing tests on a coarse mesh here; production meshes run on AWS
+          if python3 -c "import sys; sys.exit(0 if float('$BG_DIV') > 6 else 1)"; then
+            echo "bg_div $BG_DIV is a production-size mesh: run this case on AWS (bash carhybrid/aws/launch.sh <batch>)"; exit 1
+          fi
           source /usr/lib/openfoam/openfoam2412/etc/bashrc || true
           [ -z "$NP" ] && unset NP                             # default: every core of the machine
           bash carhybrid/fine_adjoint.sh

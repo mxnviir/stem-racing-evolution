@@ -1,103 +1,137 @@
-# The big-memory AWS machine: a self-hosted runner for the fine adjoint
+# Fine-mesh DAFoam on AWS, driven by the AWS CLI
 
-carhybrid/FINE_ADJOINT.md runs DAFoam on the production mesh (2.1 M cells, ~150 kB per cell for the Krylov adjoint,
-so ~315 GB). No GitHub-hosted runner has that memory, so one AWS machine is registered as a **self-hosted runner** of
-this repository with the labels `self-hosted` and `bigmem`. The workflow (`.github/workflows/carhybrid.yml`) sends
-every `fine_adjoint` case there (unless the case says `"runner": "hosted"`); everything else stays on hosted runners.
+carhybrid/FINE_ADJOINT.md runs DAFoam on the production mesh (2.1 M cells; ~150 kB per cell for the Krylov adjoint,
+so ~315 GB plus the GMRES basis). No GitHub-hosted runner has that memory, so those cases run on an EC2 instance that
+you start from your computer with the AWS CLI. The instance runs the same job script as the GitHub workflow
+(`carhybrid/fine_adjoint.sh`), on the same pinned code, and terminates itself when the batch is done.
 
-> **Security: use a self-hosted runner only while this repository is private.** On a public repository anyone can
-> open a pull request whose workflow runs arbitrary code on the machine (and the runner user has sudo and Docker).
-> If the repository is ever made public, remove the runner first (Settings -> Actions -> Runners -> Remove).
-
-## 1. The instance
-
-| | choice | why |
-|---|---|---|
-| type | **r7i.16xlarge** (64 vCPU, 512 GiB) or the same class: r6i.16xlarge, r7a.16xlarge (AMD), r6a.16xlarge | memory: 2.1 M cells x 150 kB = 315 GB plus OS and the primal; 64 ranks for DAFoam |
-| price | **check the current price** in the EC2 console for your region (on-demand and spot); at the time of writing an r7i.16xlarge was a few USD per hour on demand. Spot is cheaper but can be reclaimed mid-job (the job then fails and must be re-run) | |
-| OS | **Ubuntu Server 24.04 LTS** (x86_64), the Canonical AMI | the workflow and the OpenFOAM packages are for noble |
-| disk | **500 GB gp3** root volume (3000 IOPS / 125 MB/s are enough) | Docker image (~10 GB), OpenFOAM, python deps, the 2.1 M-cell state and DAFoam case (ASCII fields, processor dirs: tens of GB), headroom |
-| network | a security group with **no inbound rules** except SSH from your own IP (the runner only makes outbound HTTPS to GitHub) | |
-| shutdown behaviour | **Stop** (the default for EBS-backed instances) | the idle timer powers the machine off; Stop keeps the disk |
-
-Budget for the 2.1 M-cell adjoint (extrapolated from the coarse 105 k-cell runs; F0 replaces these with measurements):
-- adjoint states ~10 per cell (coarse: 1.04 M states for 105 k cells) -> ~21 M;
-- Jacobian colouring + preconditioner: ~150 kB/cell -> ~315 GB;
-- GMRES Krylov basis: (restart + 1) x states x 8 B = ~34 GB at restart 200 (the default), ~51 GB at 300; it is part
-  of the measured peak, and `resources.json` prints its estimate (`estimate_GB_krylov_basis`);
-- time: coarse GMRES ran 0.77 s per iteration on 4 ranks; at 20x the states on 64 ranks expect ~1 s per iteration,
-  so 6000 iterations (the default cap; coarse solves needed 1,300 to more than 2,000) x 2 functions ~3.5 h, plus the
-  colouring (40 min on 4 ranks at 105 k cells) and the 2 h score: the job allows 1400 minutes.
-
-Memory headroom: gate F0 measures the real law first (team car, three mesh sizes, batch `f0`); the line it fits
-must extrapolate to < 450 GB at 2.1 M cells before anything relies on the production-mesh adjoint.
-
-## 2. Setup (once)
-
-```bash
-# on your computer
-scp -i key.pem carhybrid/aws/setup_runner.sh ubuntu@<instance>:~
-scp -i key.pem <adjoint repo>/.github/scripts/install_openfoam.sh ubuntu@<instance>:~    # optional, see below
-ssh -i key.pem ubuntu@<instance>
-
-# on the instance: paste the registration token when asked (repo Settings -> Actions -> Runners ->
-# New self-hosted runner -> Linux; the token in the "./config.sh --token ..." line, valid for one hour)
-sudo bash setup_runner.sh ~/install_openfoam.sh
+```
+your computer                         S3 bucket                      EC2 instance (fresh, one per batch)
+launch.sh <batch>  -- code.tgz, -->   runs/<run_id>/code.tgz   -->   user data: aws-cli, fetch code, start
+                      manifest.json   runs/<run_id>/manifest.json    instance_run.sh:
+                                                                       setup (as the workflow: Python 3.11 + pinned
+                                                                       deps, OpenFOAM v2412, DAFoam image, patches)
+                                                                       for each case: fine_adjoint.sh
+status.sh          <-- every minute   runs/<run_id>/status.json  <--   status, log, running case's log
+                                      runs/<run_id>/instance.log
+fetch.sh           <-- per case       runs/<run_id>/out/<case>/  <--   results the moment a case ends
+                                      runs/<run_id>/DONE         <--   end; then shutdown = terminate
 ```
 
-`setup_runner.sh` (idempotent; re-run it after a failure):
-1. installs git, Python 3, the system libraries the car builder needs, Docker (the runner user `ubuntu` joins the
-   `docker` group and gets passwordless sudo: the workflow's setup step may call `sudo apt-get`);
-2. pulls the DAFoam image `dafoam/opt-packages:v5.1.1`;
-3. installs OpenFOAM v2412 with the adjoint repo's `.github/scripts/install_openfoam.sh` (checksummed packages);
-   without that file the first job installs it (the workflow runs the same script whenever OpenFOAM is missing);
-4. downloads the GitHub Actions runner, registers it with `--labels bigmem` (GitHub adds `self-hosted`, `Linux`,
-   `X64`) and installs it as a systemd service (`~ubuntu/actions-runner/svc.sh status`);
-5. installs a timer that **powers the machine off after 60 idle minutes** (no `Runner.Worker` process;
-   `IDLE_MIN=0` disables it, `IDLE_MIN=30` shortens it).
+## 1. Once: AWS setup
 
-The token is never written to the repository or to disk by the script; it is used once by `config.sh`. Python
-itself comes from `actions/setup-python` in each job (it caches 3.11 in the runner's tool folder).
+Requirements on your computer: AWS CLI v2 configured with an account that can create S3 buckets, IAM roles and EC2
+instances; git; python3; a clone of this repository on branch `claude/wizardly-brahmagupta-1edalc` and a clone of
+`mxnviir/stem-racing-adjoint` next to it (`../stem-racing-adjoint`, or set `ADJ_REPO`).
 
-## 3. Running and stopping
+```bash
+REGION=us-east-1 BUCKET=<a globally unique bucket name> bash carhybrid/aws/aws_setup.sh
+```
 
-- **Start** the instance (EC2 console, or `aws ec2 start-instances --instance-ids <id>`) before dispatching a batch
-  with `fine_adjoint` cases; the runner service starts with it and picks up queued jobs (a queued job waits up to
-  24 h for a runner).
-- Jobs run **one at a time** on this machine (one runner). A batch with several `fine_adjoint` cases runs them in
-  sequence; the hosted cases of the same batch run in parallel as usual.
-- **Stop** it when idle: the timer does it after `IDLE_MIN`; or by hand (`aws ec2 stop-instances --instance-ids <id>`).
-  A stopped instance costs only its disk (500 GB gp3: check the per-GB-month price).
-- Logs: the job log on GitHub (everything the job prints); on the machine `journalctl -u actions.runner.*`.
-- Long jobs: the workflow allows `fine_adjoint` 1400 minutes on self-hosted (the job token lasts 24 h).
+It creates (idempotent):
+- the S3 bucket (public access blocked, encrypted);
+- an IAM role and instance profile `carhybrid-dafoam`. Its only data permission is read and write on that one
+  bucket. With the default `SSM=1` it also gets Session Manager, so you can open a shell on a running instance with
+  `aws ssm start-session --target <instance id>` and no SSH;
+- a security group `carhybrid-dafoam` with **no inbound rules**. The instance only makes outbound connections: apt,
+  PyPI, Docker Hub, SourceForge for OpenFOAM, S3.
 
-## 4. Verify
+It writes the names to `~/.config/carhybrid/aws.env`. No keys or secrets are stored anywhere: the instance gets its
+permissions from the role.
 
-1. Settings -> Actions -> Runners shows `bigmem-1` **Idle** with labels `self-hosted, Linux, X64, bigmem`.
-2. A tiny test job. Add this as `.github/workflows/bigmem_check.yml` on the branch (or paste it into any branch),
-   run it from the Actions tab, then delete it:
+**Quota:** a new account's limit for on-demand R instances is often below 64 vCPU. Check Service Quotas -> EC2 ->
+"Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances". The r7i.16xlarge needs 64 vCPU, and the smoke
+test's r7i.4xlarge needs 16. Request an increase before the first launch if needed.
 
-   ```yaml
-   name: bigmem check
-   on: workflow_dispatch
-   jobs:
-     check:
-       runs-on: [self-hosted, bigmem]
-       timeout-minutes: 15
-       steps:
-         - run: |
-             nproc; free -g; df -h /
-             test -f /usr/lib/openfoam/openfoam2412/etc/bashrc && echo "OpenFOAM ok" || echo "OpenFOAM missing (first job installs it)"
-             docker run --rm dafoam/opt-packages:v5.1.1 bash -c '. /home/dafoamuser/dafoam/loadDAFoam.sh >/dev/null && python -c "import dafoam; print(\"DAFoam ok\")"'
-   ```
-3. Then the real thing, cheapest first: batch `f0` (the F0 memory ladder: team car, frame 0, bg_div 8.12 / 10.23 /
-   12.889) with `gh workflow run carhybrid.yml --ref claude/wizardly-brahmagupta-1edalc -f batch=f0`. Each job prints
-   cells, ranks, peak memory and wall times, and writes them to `resources.json`.
+## 2. The tests, in order
 
-## 5. What the fine_adjoint job does on this machine
+Each step is one command. Wait for its result, and launch the next only if its gates pass. The batches are defined in
+`carhybrid/request.json`.
 
-`carhybrid/fine_adjoint.sh`: build the car -> the audit-protocol score of frame k (`audit/run_case.py`, 4 ranks as
-every hosted score; `"score_np"` in the case overrides) with the converged state kept -> steadiness (gate F2) ->
-`dafoam/make_case.py` on that state -> DAFoam D and L with all cores (`"np"` overrides), memory sampled every 10 s
--> `carhybrid/grad.py`. Outputs: `carhybrid/results/<batch>/<case>/` (result, steady, dafoam_sens, resources, grad,
-fine_adjoint.json with the gates F1-F3).
+| # | command | instance | what it proves | about |
+|---|---|---|---|---|
+| 1 | `bash carhybrid/aws/launch.sh aws_smoke` | r7i.4xlarge (16 vCPU, 128 GiB) | the whole chain on AWS on the 129 k-cell mesh of the hosted plumbing test (team car, bg_div 4.5): setup, score with kept state, DAFoam D and L, gates F1-F3, gradient map, S3 hand-back | 2-4 h |
+| 2 | `bash carhybrid/aws/launch.sh f0` | r7i.16xlarge (64 vCPU, 512 GiB) | **F0** memory law: team car at bg_div 8.12 / 10.23 / 12.889 (~0.74 / 1.24 / 2.12 M cells), peak memory of each; **F1-F3** at each size; the 12.889 case is the first production-mesh gradient (frame 0) | 15-30 h |
+| 3 | `bash carhybrid/aws/launch.sh p1f` | r7i.16xlarge | **P1F** gradients: frames 1-3 of the team car on the production mesh (frame 0 is in f0) | 15-25 h |
+
+Prices change, and the times above are estimates from the coarse runs, which F0 replaces with measurements. For
+on-demand prices in your region, see the EC2 pricing page. In us-east-1 at the time of writing, an r7i.16xlarge was
+roughly 4 USD per hour and an r7i.4xlarge roughly 1 USD per hour. `SPOT=1` is usually much cheaper, but AWS can
+reclaim the machine mid-case. Finished cases are already in S3, and the interrupted one must be re-run.
+
+After step 2, check F0: the three peaks should fit a line in cells, and the line must give less than 450 GB at
+2.1 M cells (`fetch.sh` prints cells and peak GB per case). If the 12.889 case already finished, it measured the
+production peak directly.
+
+## 3. Watching, fetching, stopping
+
+```bash
+bash carhybrid/aws/status.sh                 # the latest run: instance state, status.json, the running case's log tail
+bash carhybrid/aws/status.sh <run_id>
+TAIL=200 bash carhybrid/aws/status.sh <run_id>
+```
+
+```bash
+bash carhybrid/aws/fetch.sh <run_id>         # results into carhybrid/results/<batch>/ (+ _aws/<run_id>/ logs)
+git add carhybrid/results/<batch> && git commit -m "carhybrid <batch>: results (AWS run <run_id>)" && git push
+```
+
+```bash
+aws ec2 terminate-instances --instance-ids <id>    # stop at once (launch.sh prints the id; status.sh shows it)
+```
+
+You can run `fetch.sh` while a batch is still running: it fetches the cases that have finished.
+
+Safety stops, so the instance cannot run on unnoticed:
+- the instance **terminates itself** when the batch ends (`--instance-initiated-shutdown-behavior terminate`;
+  shutdown at the end of `instance_run.sh`);
+- a **hard stop** after `MAX_HOURS` (scheduled with `shutdown` in the user data at boot; default per batch:
+  aws_smoke 6 h, f0 36 h, p1f 36 h; override with `MAX_HOURS=`);
+- a case that fails, or misses gate F1 or F3, **stops the batch** (nothing downstream runs on a failed gate;
+  `STOP_ON_FAIL=0` runs every case anyway);
+- a setup step that fails (Python, OpenFOAM, the DAFoam image) ends the run with its reason in `status.json` and
+  terminates the instance.
+
+Termination deletes the instance's disk. Everything worth keeping is in S3 already.
+
+## 4. What is run, exactly
+
+- **Code:** this repository at `HEAD`. `launch.sh` warns that uncommitted changes are not shipped, so commit first.
+  The builder (`EVO_SHA`) and the adjoint code (`ADJ_SHA`) are the commits pinned in
+  `.github/workflows/carhybrid.yml`, so the instance runs what the workflow would. `carhybrid/results` and
+  `audit/results` are left out of the archive.
+- **Setup:** the same as the workflow's case job: Python 3.11 (uv's standalone build, standing in for
+  actions/setup-python) with the workflow's pinned `PY_DEPS`; OpenFOAM v2412 from the adjoint repo's checksummed
+  `install_openfoam.sh`; `dafoam/opt-packages:v5.1.1`; `seedhybrid/patch_adj.py`, `evo_patches/apply.py`, and
+  `carhybrid/patch_daf.py` (applied by `fine_adjoint.sh`).
+- **Each case:** `carhybrid/fine_adjoint.sh` with the same environment the workflow's fine_adjoint step sets, built
+  from the case's fields:
+
+  | field | default |
+  |---|---|
+  | k | 0 |
+  | bg_div | request.json bg_div |
+  | grid | |
+  | np | all cores |
+  | score_np | 4, the audit protocol |
+  | funcs | D,L |
+  | gmres_iters | 6000 |
+  | gmres_restart | 200 |
+  | gmres_tol | 1e-6 |
+  | pc_fill | 0 |
+  | pc_level | 1 |
+  | primal_only | |
+  | daf_primal_iters | 300 |
+
+- **Results:** per case, the files the workflow's collect step keeps: json, logs, npz, md, png. `dafoam_sens.npz` is
+  surface sensitivities only. The meshes and fields stay on the instance and are deleted with it.
+
+## 5. Budget for the 2.1 M-cell adjoint (from the coarse 105 k-cell runs; F0 replaces these with measurements)
+
+- adjoint states: ~10 per cell (coarse: 1.04 M states for 105 k cells), so ~21 M;
+- Jacobian colouring + preconditioner: ~150 kB per cell, so ~315 GB;
+- GMRES Krylov basis: (restart + 1) x states x 8 B = ~34 GB at restart 200 (the default) and ~51 GB at 300. It is
+  part of the measured peak, and `resources.json` prints its estimate (`estimate_GB_krylov_basis`);
+- time: coarse GMRES ran 0.77 s per iteration on 4 ranks. At 20 x the states on 64 ranks, expect ~1 s per iteration.
+  Coarse solves needed 1,300 to more than 2,000 iterations; the cap is 6,000. Two functions then take up to ~3.5 h,
+  plus the colouring and the ~2 h score.

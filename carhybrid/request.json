@@ -1078,6 +1078,43 @@
     "layout": "team",
     "u": "[-0.1888, -0.4085, -0.1183, 0.513, 0.4549, 0.3413, 0.5466, -0.0158, 0.8022, 0.5466, -0.7433, 0.5077, -0.09, -0.9164, -0.3312, -0.0965, 0.615, 0.0335, -0.4237, -0.1563, 0.0516, -0.3941, -0.2755, -0.0163, 0.8365, -0.6262, -0.1058, 0.2881, -0.2416, -0.2058, 1.1154, -0.5353, 0.3558, -0.0404, -0.5705, -0.142, -0.3245, 0.0337, -0.4907, 0.4473, -0.5567, 0.2629, 0.1779, -0.2149, 0.3046]"
    }
+  ],
+  "aws_smoke": [
+   {
+    "name": "aws_smoke_team_bg4.5_k0",
+    "type": "fine_adjoint",
+    "layout": "team",
+    "u": "zero",
+    "k": 0,
+    "bg_div": 4.5,
+    "np": 16
+   }
+  ],
+  "p1f": [
+   {
+    "name": "p1f_team_k1",
+    "type": "fine_adjoint",
+    "layout": "team",
+    "u": "zero",
+    "k": 1,
+    "bg_div": 12.889
+   },
+   {
+    "name": "p1f_team_k2",
+    "type": "fine_adjoint",
+    "layout": "team",
+    "u": "zero",
+    "k": 2,
+    "bg_div": 12.889
+   },
+   {
+    "name": "p1f_team_k3",
+    "type": "fine_adjoint",
+    "layout": "team",
+    "u": "zero",
+    "k": 3,
+    "bg_div": 12.889
+   }
   ]
  },
  "_sweep1_note": "readiness sweep, build only (no CFD): 24 scrambled-Sobol layouts over the 12 stage-1 genes (seed 20261128) and 8 stage-2 perturbations of the team layout (45 free-form numbers ~ N(0, 0.5), clipped +-2, as CMA's sigma 0.5)",
@@ -1087,6 +1124,11 @@
  "_sweep3_note": "sweep2's 32 cars rebuilt with soft cap v2 (the halo's visibility region compressed, not truncated) and the multi-material nose (evo_patches/nose_material.py); renders and shape audits.",
  "_p1r_note": "P1's three cases whose legal cars were lost to the adapter (half car not watertight after trimesh's vertex merge; carhybrid/adapt.py now keeps manifold's topology); same u, frames and names, results in results/p1r.",
  "_f0_hosted_note": "carhybrid/FINE_ADJOINT.md plumbing test on a hosted runner (4 cores, 16 GB + 13 GB swap): the team car, frame 0, bg_div 4.5 (~0.13 M cells: cells ~ bg_div^2.4 from 2.12 M at 12.889; bg_div 4.0 gave 96 k cells locally, but on the hosted runner its mesh crashed decomposePar with SIGFPE, the known failure of the layer stack on coarse walls), small enough for DAFoam's Krylov adjoint at ~150 kB/cell. The wall-resolved layers form only partly on these ~2 mm walls (locally at 4.0: mean 1.5 of 15 layers on the body). A plumbing test only: not the production mesh; gates F1-F3 are read, not judged, on it.",
- "_f0_note": "Gate F0, the adjoint memory law, on the bigmem runner: the team car, frame 0, bg_div 8.12 / 10.23 / 12.889 (~0.74 / 1.24 / 2.12 M cells, cells ~ bg_div^2.4); peak whole-machine memory per job in resources.json; passes if the three fit a line in cells and the line gives < 450 GB at 2.1 M.",
- "_sweep4_note": "sweep3's 32 layouts rebuilt with the nose block-front fix (e96a58a) and soft_cap v2.1; same names, results in results/sweep4"
+ "_f0_note": "Gate F0, the adjoint memory law, on the AWS instance (carhybrid/aws/launch.sh f0): the team car, frame 0, bg_div 8.12 / 10.23 / 12.889 (~0.74 / 1.24 / 2.12 M cells, cells ~ bg_div^2.4); peak whole-machine memory per job in resources.json; passes if the three fit a line in cells and the line gives < 450 GB at 2.1 M.",
+ "_sweep4_note": "sweep3's 32 layouts rebuilt with the nose block-front fix (e96a58a) and soft_cap v2.1; same names, results in results/sweep4",
+ "_aws_smoke_note": "First AWS run (carhybrid/aws/launch.sh aws_smoke, r7i.4xlarge 16 vCPU / 128 GiB): the whole fine_adjoint chain on the 129 k-cell mesh the hosted plumbing test uses (bg_div 4.5, team car, frame 0): proves the instance setup, the score with its state kept, DAFoam D and L on that state, gates F1-F3, the gradient map and the S3 hand-back before 512 GB is paid for.",
+ "_aws_smoke_aws_max_hours": 6,
+ "_p1f_note": "Gate P1F's gradients (carhybrid/FINE_ADJOINT.md): the production-mesh DAFoam gradient of the team car on frames 1-3 (frame 0 is f0_team_bg12.889_k0). Run only after f0 passes F0-F3. The line candidates along their mean are ordinary 'score' cases (hosted runners).",
+ "_p1f_aws_max_hours": 36,
+ "_f0_aws_max_hours": 36
 }
