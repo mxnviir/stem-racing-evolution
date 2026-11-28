@@ -1,0 +1,23 @@
+{
+ "full_volume_mm3": 166760.21862454608,
+ "half_volume_mm3": 83002.01996161713,
+ "half_watertight": true,
+ "pieces": 1,
+ "half_mesh": "manifold topology",
+ "half_ratio": 0.49773273653768013,
+ "wheelF_moved_down_mm": -1.1920928979190781e-08,
+ "wheelR_moved_down_mm": -1.1920928979190781e-08,
+ "bounds_m": [
+  [
+   0.012877551078796387,
+   0.0,
+   -0.00030000001192092895
+  ],
+  [
+   0.24113240051269533,
+   0.0365,
+   0.062301311492919925
+  ]
+ ],
+ "ok": true
+}

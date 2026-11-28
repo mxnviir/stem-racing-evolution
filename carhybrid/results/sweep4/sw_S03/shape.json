@@ -1,0 +1,551 @@
+{
+ "stations": 38,
+ "rectangularity_median": 0.7095099883608911,
+ "rectangularity_max": 0.83203461759691,
+ "rectangularity_by_x": [
+  [
+   44.4,
+   0.664
+  ],
+  [
+   49.4,
+   0.723
+  ],
+  [
+   54.4,
+   0.7
+  ],
+  [
+   59.4,
+   0.677
+  ],
+  [
+   64.4,
+   0.716
+  ],
+  [
+   69.4,
+   0.777
+  ],
+  [
+   74.4,
+   0.81
+  ],
+  [
+   79.4,
+   0.802
+  ],
+  [
+   84.4,
+   0.788
+  ],
+  [
+   89.4,
+   0.665
+  ],
+  [
+   94.4,
+   0.649
+  ],
+  [
+   99.4,
+   0.703
+  ],
+  [
+   104.4,
+   0.747
+  ],
+  [
+   109.4,
+   0.814
+  ],
+  [
+   114.4,
+   0.783
+  ],
+  [
+   119.4,
+   0.78
+  ],
+  [
+   124.4,
+   0.734
+  ],
+  [
+   129.4,
+   0.731
+  ],
+  [
+   134.4,
+   0.699
+  ],
+  [
+   139.4,
+   0.634
+  ],
+  [
+   144.4,
+   0.618
+  ],
+  [
+   149.4,
+   0.608
+  ],
+  [
+   154.4,
+   0.6
+  ],
+  [
+   159.4,
+   0.609
+  ],
+  [
+   164.4,
+   0.641
+  ],
+  [
+   169.4,
+   0.693
+  ],
+  [
+   174.4,
+   0.805
+  ],
+  [
+   179.4,
+   0.832
+  ],
+  [
+   184.4,
+   0.823
+  ],
+  [
+   189.4,
+   0.789
+  ],
+  [
+   194.4,
+   0.802
+  ],
+  [
+   199.4,
+   0.807
+  ],
+  [
+   204.4,
+   0.813
+  ],
+  [
+   209.4,
+   0.56
+  ],
+  [
+   214.4,
+   0.551
+  ],
+  [
+   219.4,
+   0.522
+  ],
+  [
+   224.4,
+   0.511
+  ],
+  [
+   229.4,
+   0.514
+  ]
+ ],
+ "box_sections": [],
+ "flat_patches": [
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 0.0,
+   "area_mm2": 4767.5,
+   "label": "centre plane (closing face)",
+   "bbox_mm": [
+    [
+     39.0,
+     0.0,
+     8.1
+    ],
+    [
+     256.2,
+     0.0,
+     50.4
+    ]
+   ]
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 36.75,
+   "area_mm2": 145.3,
+   "label": "nose glued face at x_cut (foam meets print; covered by the print)",
+   "bbox_mm": [
+    [
+     36.8,
+     0.1,
+     3.9
+    ],
+    [
+     36.8,
+     9.6,
+     17.6
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 17.65,
+   "area_mm2": 109.7,
+   "label": "ballast container floor (App. ix, internal)",
+   "bbox_mm": [
+    [
+     91.3,
+     2.1,
+     17.6
+    ],
+    [
+     104.6,
+     6.3,
+     17.6
+    ]
+   ]
+  },
+  {
+   "axis": "x",
+   "normal_sign": 1,
+   "at_mm": 207.05,
+   "area_mm2": 101.3,
+   "label": "cartridge chamber end (52 mm bore, internal)",
+   "bbox_mm": [
+    [
+     207.0,
+     0.0,
+     25.0
+    ],
+    [
+     207.0,
+     5.3,
+     37.0
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 24.0,
+   "area_mm2": 100.3,
+   "label": "halo pocket floor",
+   "bbox_mm": [
+    [
+     65.1,
+     0.8,
+     24.0
+    ],
+    [
+     109.0,
+     26.9,
+     24.0
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.1,
+   "area_mm2": 100.2,
+   "label": "halo rim, body flush with the seat (T4.4.2, owner 2026-11-23)",
+   "bbox_mm": [
+    [
+     103.4,
+     0.0,
+     27.1
+    ],
+    [
+     112.8,
+     24.6,
+     27.1
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 9.75,
+   "area_mm2": 95.7,
+   "label": "UNEXPLAINED",
+   "bbox_mm": [
+    [
+     104.4,
+     16.3,
+     9.7
+    ],
+    [
+     130.7,
+     22.7,
+     9.8
+    ]
+   ]
+  },
+  {
+   "axis": "y",
+   "normal_sign": 1,
+   "at_mm": 14.2,
+   "area_mm2": 94.9,
+   "label": "UNEXPLAINED",
+   "bbox_mm": [
+    [
+     50.7,
+     14.2,
+     13.4
+    ],
+    [
+     202.6,
+     14.2,
+     29.6
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 8.0,
+   "area_mm2": 72.6,
+   "label": "official block underside slot (6 x 6 mm, kept unmachined)",
+   "bbox_mm": [
+    [
+     44.8,
+     2.4,
+     8.0
+    ],
+    [
+     189.9,
+     2.8,
+     8.0
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 9.7,
+   "area_mm2": 66.4,
+   "label": "UNEXPLAINED",
+   "bbox_mm": [
+    [
+     105.3,
+     15.3,
+     9.7
+    ],
+    [
+     130.3,
+     19.3,
+     9.7
+    ]
+   ]
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 4.0,
+   "area_mm2": 61.2,
+   "label": "wheel zone face (T7.9 clearance round a wheel)",
+   "bbox_mm": [
+    [
+     36.9,
+     4.0,
+     6.3
+    ],
+    [
+     88.0,
+     4.0,
+     21.7
+    ]
+   ]
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 3.0,
+   "area_mm2": 59.7,
+   "label": "official block underside slot (6 x 6 mm, kept unmachined)",
+   "bbox_mm": [
+    [
+     44.8,
+     3.0,
+     7.4
+    ],
+    [
+     190.0,
+     3.0,
+     8.0
+    ]
+   ]
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 6.35,
+   "area_mm2": 50.3,
+   "label": "ballast container side wall (App. ix, internal)",
+   "bbox_mm": [
+    [
+     92.7,
+     6.3,
+     19.7
+    ],
+    [
+     100.5,
+     6.4,
+     21.9
+    ]
+   ]
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 112.8,
+   "area_mm2": 50.0,
+   "label": "halo rear face seat (body backs the halo, team rule)",
+   "bbox_mm": [
+    [
+     112.8,
+     0.0,
+     28.1
+    ],
+    [
+     112.8,
+     12.7,
+     33.3
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 23.75,
+   "area_mm2": 49.5,
+   "label": "UNEXPLAINED",
+   "bbox_mm": [
+    [
+     69.7,
+     0.3,
+     23.7
+    ],
+    [
+     89.4,
+     5.6,
+     23.8
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.15,
+   "area_mm2": 47.3,
+   "label": "sidepod-top cap 27.175 mm (hard-coded in freeform.field)",
+   "bbox_mm": [
+    [
+     112.8,
+     20.7,
+     27.1
+    ],
+    [
+     130.6,
+     23.7,
+     27.2
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 34.35,
+   "area_mm2": 46.5,
+   "label": "halo-canister loft deck (required body behind the halo)",
+   "bbox_mm": [
+    [
+     114.2,
+     0.0,
+     34.3
+    ],
+    [
+     123.0,
+     10.7,
+     34.4
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 9.8,
+   "area_mm2": 46.0,
+   "label": "UNEXPLAINED",
+   "bbox_mm": [
+    [
+     104.4,
+     18.3,
+     9.8
+    ],
+    [
+     130.7,
+     23.6,
+     9.8
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.2,
+   "area_mm2": 34.4,
+   "label": "sidepod-top cap 27.175 mm (hard-coded in freeform.field)",
+   "bbox_mm": [
+    [
+     113.3,
+     19.3,
+     27.2
+    ],
+    [
+     130.6,
+     21.7,
+     27.2
+    ]
+   ]
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 112.75,
+   "area_mm2": 33.5,
+   "label": "halo rear face seat (body backs the halo, team rule)",
+   "bbox_mm": [
+    [
+     112.8,
+     0.0,
+     27.1
+    ],
+    [
+     112.8,
+     16.4,
+     29.7
+    ]
+   ]
+  }
+ ],
+ "unexplained_flat_mm2": 352.5,
+ "cap_area_mm2": 81.7,
+ "halo_rim_area_mm2": 100.2,
+ "crease_length_mm": 954.5,
+ "body_area_mm2": 19493.3,
+ "flags": [
+  "unexplained flat patches 352.5 mm2",
+  "hard-coded sidepod-top cap 81.7 mm2"
+ ]
+}
