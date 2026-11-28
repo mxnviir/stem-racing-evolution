@@ -5,6 +5,10 @@ run-name: "Whole-car hybrid: ${{ github.event.inputs.batch || 'request file' }}"
 # claude/loving-keller-q72mvv at EVO_SHA, read only), adapts it to an OpenFOAM half car, and either scores it on the
 # audit protocol ("score") or computes its coarse DAFoam gradient and maps it to stage 2's free-form numbers
 # ("dafoam"). Launch: commit carhybrid/request.json on this branch.
+# "fine_adjoint" (carhybrid/FINE_ADJOINT.md, job body carhybrid/fine_adjoint.sh): the score of frame k with its state
+# kept, then DAFoam on that same production mesh; runs on the self-hosted AWS runner (labels self-hosted, bigmem;
+# carhybrid/aws/README.md) unless the case says "runner": "hosted". Batches named loop*: collect runs
+# carhybrid/loop.py advance and dispatches the batch it writes.
 on:
   push:
     branches: [claude/wizardly-brahmagupta-1edalc]
@@ -48,8 +52,11 @@ jobs:
   case:
     name: "${{ matrix.case.name }}"
     needs: init
-    runs-on: ubuntu-24.04
-    timeout-minutes: 355
+    if: ${{ !cancelled() && needs.init.result == 'success' }}
+    # fine_adjoint -> the self-hosted big-memory machine unless the case asks for a hosted runner (plumbing tests)
+    runs-on: ${{ (matrix.case.type == 'fine_adjoint' && matrix.case.runner != 'hosted') && fromJSON('["self-hosted", "bigmem"]') || 'ubuntu-24.04' }}
+    # hosted jobs stop at 6 h; self-hosted ones may run long (kept under the job token's 24 h)
+    timeout-minutes: ${{ (matrix.case.type == 'fine_adjoint' && matrix.case.runner != 'hosted') && 1400 || 355 }}
     strategy:
       fail-fast: false
       max-parallel: 20
@@ -57,6 +64,7 @@ jobs:
         case: ${{ fromJSON(needs.init.outputs.cases) }}
     steps:
       - name: room (free disk, 10 GB swap)
+        if: runner.environment == 'github-hosted'
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
           sudo fallocate -l 10G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2
@@ -68,22 +76,27 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.11" }
       - uses: actions/cache@v4
+        if: runner.environment == 'github-hosted'
         with: { path: ~/ofdebs, key: openfoam2412-260127-noble-debs }
       - name: OpenFOAM v2412 + python deps
         timeout-minutes: 30
         run: |
-          (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
-          for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
-          bash adj/.github/scripts/install_openfoam.sh
+          # the self-hosted machine has OpenFOAM and the system libraries already (carhybrid/aws/setup_runner.sh)
+          if [ "$RUNNER_ENVIRONMENT" = "github-hosted" ] || [ ! -f /usr/lib/openfoam/openfoam2412/etc/bashrc ]; then
+            (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
+            for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
+            bash adj/.github/scripts/install_openfoam.sh
+          fi
           pip install $PY_DEPS
           python seedhybrid/patch_adj.py adj
           python evo_patches/apply.py evo                     # this branch's fixes to the pinned builder (evo_patches/README.md)
-          if [ "${{ matrix.case.type }}" = "dafoam" ]; then for i in 1 2 3; do docker pull dafoam/opt-packages:v5.1.1 && break; sleep 30; done; fi
+          case "${{ matrix.case.type }}" in dafoam|fine_adjoint) for i in 1 2 3; do docker pull -q dafoam/opt-packages:v5.1.1 && break; sleep 30; done;; esac
       - name: build the car (evolution builder) and adapt it for OpenFOAM
         timeout-minutes: 90
         env: { LAYOUT: "${{ matrix.case.layout }}", U: "${{ matrix.case.u || 'zero' }}" }
         run: |
           mkdir -p out/${{ matrix.case.name }}
+          rm -rf /tmp/car                                     # a self-hosted machine keeps /tmp between jobs
           set +e
           python -W ignore carhybrid/make_car.py evo "$LAYOUT" "$U" /tmp/car > out/${{ matrix.case.name }}/make_car.log 2>&1
           RC=$?
@@ -130,14 +143,39 @@ jobs:
           cd $GITHUB_WORKSPACE
           python -W ignore carhybrid/grad.py evo /tmp/car/rec.json $O/dafoam_sens.npz "$U" $O/grad.json --body /tmp/car/evo ${{ matrix.case.d20 && format('--d20 {0}', matrix.case.d20) || '' }} || echo "grad mapping failed"
           cat $O/grad.json | head -c 1500 || true
+      - name: fine adjoint (production-mesh score with its state kept -> DAFoam D and L on that state -> gradient)
+        if: matrix.case.type == 'fine_adjoint'
+        timeout-minutes: ${{ matrix.case.runner == 'hosted' && 320 || 1300 }}
+        env:
+          NAME: "${{ matrix.case.name }}"
+          LAYOUT: "${{ matrix.case.layout }}"
+          U: "${{ matrix.case.u || 'zero' }}"
+          K: "${{ matrix.case.k || 0 }}"
+          BG_DIV: "${{ matrix.case.bg_div || needs.init.outputs.bgdiv }}"
+          GRID: "${{ matrix.case.grid || '' }}"
+          NP: "${{ matrix.case.np || '' }}"
+          SCORE_NP: "${{ matrix.case.score_np || 4 }}"
+          GATE_DOMAIN_JSON: "${{ needs.init.outputs.domain }}"
+          DAF_PRIMAL_ONLY: "${{ matrix.case.primal_only && '1' || '' }}"
+          DAF_FUNCS: "${{ matrix.case.funcs || 'D,L' }}"
+          DAF_PRIMAL_ITERS: "${{ matrix.case.daf_primal_iters || 300 }}"
+          DAF_GMRES_TOL: "${{ matrix.case.gmres_tol || '1e-6' }}"
+          DAF_GMRES_ITERS: "${{ matrix.case.gmres_iters || 2000 }}"
+          DAF_PC_FILL: "${{ matrix.case.pc_fill || 0 }}"
+          DAF_PC_LEVEL: "${{ matrix.case.pc_level || 1 }}"
+        run: |
+          source /usr/lib/openfoam/openfoam2412/etc/bashrc || true
+          [ -z "$NP" ] && unset NP                             # default: every core of the machine
+          bash carhybrid/fine_adjoint.sh
       - uses: actions/upload-artifact@v4
         if: always()
         with: { name: "out-${{ matrix.case.name }}", path: out/, retention-days: 60 }
 
   collect:
     needs: [init, case]
-    if: always() && needs.init.result == 'success'
+    if: ${{ !cancelled() && needs.init.result == 'success' }}       # a cancelled run commits and dispatches nothing
     runs-on: ubuntu-24.04
+    permissions: { contents: write, actions: write }        # actions: the loop hook dispatches the next batch
     steps:
       - uses: actions/checkout@v4
         with: { ref: "${{ github.ref_name }}", fetch-depth: 0 }
@@ -149,8 +187,32 @@ jobs:
           mkdir -p $R
           for d in /tmp/res/*/; do n=$(basename $d); mkdir -p $R/$n
             find $d -maxdepth 1 \( -name "*.json" -o -name "*.log" -o -name "*.out" -o -name "*.npz" -o -name "*.md" -o -name "*.png" \) -size -5M -exec cp {} $R/$n/ \;
+            find $d -maxdepth 1 -name "dafoam_sens.npz" -size -90M -exec cp {} $R/$n/ \;   # fine-mesh sensitivities are larger
           done
           git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add carhybrid/results
-          git commit -m "carhybrid ${{ needs.init.outputs.batch }}: results (run ${{ github.run_id }})" || exit 0
+          git commit -m "carhybrid ${{ needs.init.outputs.batch }}: results (run ${{ github.run_id }})" || true
           for i in 1 2 3 4 5; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((i*10)); done
+      - uses: actions/setup-python@v5
+        if: startsWith(needs.init.outputs.batch, 'loop')
+        with: { python-version: "3.11" }
+      - name: loop hook (carhybrid/loop.py advance; dispatch the batch it writes)
+        if: startsWith(needs.init.outputs.batch, 'loop')
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          pip install -q numpy scipy
+          R=carhybrid/results/${{ needs.init.outputs.batch }}
+          set +e
+          python carhybrid/loop.py advance $R ${{ github.run_id }}
+          RC=$?
+          set -e
+          if [ $RC -ne 0 ]; then echo "loop.py advance exit $RC: no further batch"; exit 0; fi
+          NEXT=$(python3 -c "import json; print(json.load(open('carhybrid/request.json'))['launch'])")
+          python3 -c "import json, sys; r = json.load(open('carhybrid/request.json')); sys.exit(0 if sys.argv[1] in r['batches'] else 1)" "$NEXT" \
+            || { echo "loop.py wrote launch=$NEXT but no such batch"; exit 1; }
+          git add carhybrid
+          git commit -m "carhybrid loop: advance after ${{ needs.init.outputs.batch }} (run ${{ github.run_id }}), next $NEXT" || true
+          for i in 1 2 3 4 5; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && PUSHED=1 && break; sleep $((i*10)); done
+          [ "${PUSHED:-}" = 1 ] || { echo "push failed: not dispatching $NEXT"; exit 1; }
+          gh workflow run carhybrid.yml --repo ${{ github.repository }} --ref ${{ github.ref_name }} -f batch="$NEXT"
+          echo "dispatched batch $NEXT"

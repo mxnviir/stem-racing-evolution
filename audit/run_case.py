@@ -4,7 +4,11 @@ cold start, 1000 iterations, score = mean of iterations 200-1000 (four 200-itera
 
     python audit/run_case.py <adjoint repo checkout> <case json> <out dir>
 
-case: {"name", "design": team_rm | hybrid_final | seedevo:<id>, "k", "bg_div" (12 = the scoring mesh), "turb"}
+case: {"name", "design": team_rm | hybrid_final | seedevo:<id>, "k", "bg_div" (12 = the scoring mesh), "turb",
+       "np" (MPI ranks, default 4 = the protocol), "keep_state" (optional path: the final converged state is copied there instead of deleted: constant/polyMesh,
+       constant/*Properties, system, the last time folder's U p k omega nut phi; the base of a DAFoam case)}
+The result also carries the steadiness of the last 500 iterations (five 100-iteration block means and their span,
+drag and lift, half car; mark A1 / gate F2 of carhybrid/FINE_ADJOINT.md).
 - team_rm:       the team pod surface the hybrid loop morphed from (gate/original_rm, rebuilt from gate_results/adjoint_*.npy)
 - hybrid_final:  hybrid/final_design/car_half.stl (team_rm + the six accepted chained moves)
 - seedevo:<id>:  a design of seedevo/campaign_poc, rebuilt from its stored field by seedevo.campaign build
@@ -33,6 +37,34 @@ def forces(path):
 def score(Fx_mN):
     b = np.asarray(Fx_mN)[-800:].reshape(4, 200).mean(1)
     return float(b.mean()), float(b.std(ddof=1) / 2), [float(x) for x in b]
+
+
+def steadiness(F_mN, n=500, block=100):
+    """Block means of the last n iterations (n / block blocks) and their span (max - min), mN."""
+    b = np.asarray(F_mN)[-n:].reshape(n // block, block).mean(1)
+    return {"iterations": n, "block": block, "block_means_mN": [float(x) for x in b], "span_mN": float(b.max() - b.min())}
+
+
+def keep_state(st, dst):
+    """The final converged state of the run folder st -> dst (moved, st is deleted right after)."""
+    dst = Path(dst).resolve()
+    if dst.exists():
+        shutil.rmtree(dst)
+    (dst / "constant").mkdir(parents=True)
+    times = [p for p in st.iterdir() if p.is_dir() and re.fullmatch(r"\d+(\.\d+)?", p.name) and float(p.name) > 0]
+    if not times:
+        raise RuntimeError(f"no time folder in {st}")
+    last = max(times, key=lambda p: float(p.name))
+    shutil.move(str(st / "constant" / "polyMesh"), str(dst / "constant" / "polyMesh"))
+    for f in (st / "constant").glob("*Properties"):
+        shutil.copy(f, dst / "constant" / f.name)
+    shutil.move(str(st / "system"), str(dst / "system"))
+    (dst / last.name).mkdir()
+    for f in ("U", "p", "k", "omega", "nut", "phi"):
+        for g in (last / f, last / (f + ".gz")):
+            if g.exists():
+                shutil.move(str(g), str(dst / last.name / g.name))
+    return {"path": str(dst), "time": last.name, "fields": sorted(p.name for p in (dst / last.name).iterdir())}
 
 
 def main(adj, case, out):
@@ -97,7 +129,7 @@ def main(adj, case, out):
                PRODCHECK_RESULTS=str(out), PRODCHECK_KEEP=str(out / "state"), PRODCHECK_ITERS="1000",
                PRODCHECK_TIMEOUT=str(c.get("timeout_s", 19000)), P2_BG_DIV=f"{bg:g}", PRODCHECK_TURB=turb)
     t = time.time()
-    r = subprocess.run([py, "-W", "ignore", "-u", "prodcheck.py", str(folder), c["name"], "4", "cold"], cwd=sp, env=env,
+    r = subprocess.run([py, "-W", "ignore", "-u", "prodcheck.py", str(folder), c["name"], str(int(c.get("np", 4))), "cold"], cwd=sp, env=env,
                        capture_output=True, text=True)
     rec["wall_s"] = round(time.time() - t, 1)
     (out / "prodcheck.log").write_text(r.stdout[-20000:] + r.stderr[-20000:])
@@ -122,12 +154,20 @@ def main(adj, case, out):
     m, se, blocks = score(F[:, 1] * 1e3)                       # total Fx (half car, N -> mN), as campaign_case
     rec.update(drag_mN=m, drag_block_se_mN=se, drag_blocks_mN=blocks,
                lift_mN=float(F[-800:, 3].mean() * 1e3) if F.shape[1] > 3 else None, converged=True)
+    rec["steady_drag"] = steadiness(F[:, 1] * 1e3)
+    if F.shape[1] > 3:
+        rec["steady_lift"] = steadiness(F[:, 3] * 1e3)
     for name in ("forces_car",):                               # the body alone (wheels = total - body)
         fc = sorted((st / "postProcessing" / name).glob("*/force.dat"))
         if fc:
             Fc = forces(fc[-1])
             rec["body_drag_mN"] = float(Fc[-800:, 1].mean() * 1e3)
             rec["wheels_drag_mN"] = m - rec["body_drag_mN"]
+    if c.get("keep_state"):
+        try:
+            rec["kept_state"] = keep_state(st, c["keep_state"])
+        except Exception as e:                                 # the score stands; the consumer sees the missing state
+            rec["kept_state"] = {"error": repr(e)[:400]}
     shutil.rmtree(st, ignore_errors=True)
     (out / "result.json").write_text(json.dumps(rec, indent=1))
     print(json.dumps({k: rec.get(k) for k in ("case", "drag_mN", "drag_block_se_mN", "cells", "y_plus_max", "wall_s")}))
