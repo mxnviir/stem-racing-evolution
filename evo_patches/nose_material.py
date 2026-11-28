@@ -505,6 +505,25 @@ def apply_build_rules(geom: "UnifiedGeometry") -> None:
      """    import unified_phi as _up                    # (evo_patches/nose_material.py: T851_CAP_AFT_MM)
     return np.minimum(ref_A_mm + getattr(_up, "T851_CAP_AFT_MM", 1.0) - X, np.maximum(aY - 14.5, Z - 24.5))
 """),
+    # ---------------------------------------------------------------- the milling: no relief of T8.5.1's corner
+    ("car/body/machining.py",
+     """    Hm = H & ~drilled & ~border & ~pocket
+""",
+     """    Hm = H & ~drilled & ~border & ~pocket
+    if (getattr(geom, "landmarks", None) or {}).get("nose_split"):
+        # evo_patches/nose_material.py: T8.5.1's ceilings over the nose (the envelope's 25 / 15 mm, the body's cap
+        # 0.5 inside) end at Ref A in a square corner no ball fits. Relieved "for every body" (below), that corner
+        # cut a ball-sized dip into the top of whatever body stands there: the 2-3 mm lip under the old printed nose,
+        # and the same dip in a foam nose. The drawn nose stands clear of the ceilings, so they stay air (S2 &= ~H)
+        # but are not relieved; a body that did reach one is cut flat to it.
+        _r = geom.region
+        _xs = (_r.origin_m[0] + np.arange(_r.shape[0]) * up.GRID_SPACING_M) * 1e3
+        _ys = (_r.origin_m[1] + np.arange(_r.shape[1]) * up.GRID_SPACING_M) * 1e3
+        _zs = (_r.origin_m[2] + np.arange(_r.shape[2]) * up.GRID_SPACING_M) * 1e3
+        _xa = geom.landmarks["ref_plane_A_m"] * 1e3
+        Hm &= ~((_xs <= _xa + d_mm + 1e-6)[:, None, None]
+                & ((np.abs(_ys) > 14.0)[None, :, None] | (_zs > 24.0)[None, None, :]))
+"""),
     # ---------------------------------------------------------------- the body's mass: not the printed part
     ("car/body/unified_phi.py",
      """    fill = fill_fraction(geom.phi.grid, dx)
