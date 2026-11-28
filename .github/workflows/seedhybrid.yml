@@ -79,7 +79,7 @@ jobs:
   case:
     name: "${{ matrix.case.name }}"
     needs: [init, geom]
-    if: always() && needs.init.result == 'success' && needs.init.outputs.stage != 'stopped' && needs.geom.result != 'failure'
+    if: ${{ !cancelled() && needs.init.result == 'success' && needs.init.outputs.stage != 'stopped' && needs.geom.result != 'failure' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 355
     strategy:
@@ -223,7 +223,7 @@ jobs:
 
   collect:
     needs: [init, case]
-    if: always() && needs.init.result == 'success' && needs.init.outputs.stage != 'stopped'
+    if: ${{ !cancelled() && needs.init.result == 'success' && needs.init.outputs.stage != 'stopped' }}
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
