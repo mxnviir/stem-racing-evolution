@@ -1,0 +1,13 @@
+{
+ "D20_half_N": 0.26858104351310785,
+ "wall_s": 1301.2,
+ "converged": true,
+ "residual_p": 2.3193005710009044e-05,
+ "force_osc": 0.0001992205745060277,
+ "force_drift": 2.0968448363747553e-07,
+ "run_dir": "",
+ "force_mean_stderr": 1.1426578575957223e-06,
+ "run_dir_kept": "gate/refA_hyb",
+ "folder": "/tmp/car/cfd",
+ "iters": 5000
+}
