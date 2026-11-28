@@ -1,0 +1,39 @@
+{
+ "note": "carhybrid/DESIGN.md phase P0: the team layout built by the pinned evolution builder, adapted to OpenFOAM, scored on the audit protocol (frames 0-1), and its coarse DAFoam gradient mapped to stage 2's 45 free-form numbers.",
+ "domain_m": [
+  [
+   -0.005,
+   0.0,
+   0.0
+  ],
+  [
+   0.285,
+   0.045,
+   0.066
+  ]
+ ],
+ "bg_div": 12.889,
+ "_domain_note": "the trial car's frame (-0.005..0.265 m) is too short for whole cars (team layout: x 16.5..270.2 mm); background cell kept at the audited 22.5 mm: 12 x 0.290/0.270",
+ "launch": "p0",
+ "batches": {
+  "p0": [
+   {
+    "name": "p0_team_score_k0",
+    "type": "score",
+    "layout": "team",
+    "k": 0
+   },
+   {
+    "name": "p0_team_score_k1",
+    "type": "score",
+    "layout": "team",
+    "k": 1
+   },
+   {
+    "name": "p0_team_dafoam",
+    "type": "dafoam",
+    "layout": "team"
+   }
+  ]
+ }
+}
