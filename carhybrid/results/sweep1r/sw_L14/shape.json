@@ -1,0 +1,244 @@
+{
+ "stations": 32,
+ "rectangularity_median": 0.758797612085691,
+ "rectangularity_max": 0.868720519648986,
+ "rectangularity_by_x": [
+  [
+   44.4,
+   0.757
+  ],
+  [
+   49.4,
+   0.759
+  ],
+  [
+   54.4,
+   0.769
+  ],
+  [
+   59.4,
+   0.774
+  ],
+  [
+   64.4,
+   0.764
+  ],
+  [
+   69.4,
+   0.759
+  ],
+  [
+   74.4,
+   0.77
+  ],
+  [
+   79.4,
+   0.749
+  ],
+  [
+   84.4,
+   0.835
+  ],
+  [
+   89.4,
+   0.754
+  ],
+  [
+   94.4,
+   0.763
+  ],
+  [
+   99.4,
+   0.813
+  ],
+  [
+   104.4,
+   0.811
+  ],
+  [
+   109.4,
+   0.748
+  ],
+  [
+   114.4,
+   0.741
+  ],
+  [
+   119.4,
+   0.74
+  ],
+  [
+   124.4,
+   0.764
+  ],
+  [
+   129.4,
+   0.767
+  ],
+  [
+   134.4,
+   0.635
+  ],
+  [
+   139.4,
+   0.641
+  ],
+  [
+   144.4,
+   0.669
+  ],
+  [
+   149.4,
+   0.724
+  ],
+  [
+   154.4,
+   0.81
+  ],
+  [
+   159.4,
+   0.869
+  ],
+  [
+   164.4,
+   0.854
+  ],
+  [
+   169.4,
+   0.854
+  ],
+  [
+   174.4,
+   0.829
+  ],
+  [
+   179.4,
+   0.569
+  ],
+  [
+   184.4,
+   0.569
+  ],
+  [
+   189.4,
+   0.555
+  ],
+  [
+   194.4,
+   0.546
+  ],
+  [
+   199.4,
+   0.513
+  ]
+ ],
+ "box_sections": [],
+ "flat_patches": [
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 0.0,
+   "area_mm2": 3413.5,
+   "label": "centre plane (closing face)"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.1,
+   "area_mm2": 341.3,
+   "label": "sidepod-top cap 27.175 mm (hard-coded in freeform.field)"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 24.0,
+   "area_mm2": 237.3,
+   "label": "halo pocket floor"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 17.65,
+   "area_mm2": 109.7,
+   "label": "ballast container floor (App. ix, internal)"
+  },
+  {
+   "axis": "x",
+   "normal_sign": 1,
+   "at_mm": 176.85,
+   "area_mm2": 80.5,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 131.75,
+   "area_mm2": 64.3,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 6.35,
+   "area_mm2": 50.3,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 3.0,
+   "area_mm2": 48.4,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 39.35,
+   "area_mm2": 46.1,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 8.0,
+   "area_mm2": 45.6,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 9.8,
+   "area_mm2": 42.1,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 26.3,
+   "area_mm2": 29.7,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 8.2,
+   "area_mm2": 25.4,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 131.8,
+   "area_mm2": 21.1,
+   "label": "UNEXPLAINED"
+  }
+ ],
+ "unexplained_flat_mm2": 453.5,
+ "cap_area_mm2": 341.3,
+ "crease_length_mm": 4417.7,
+ "body_area_mm2": 16109.2,
+ "flags": [
+  "unexplained flat patches 453.5 mm2",
+  "hard-coded sidepod-top cap 341.3 mm2"
+ ]
+}

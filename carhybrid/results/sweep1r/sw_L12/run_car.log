@@ -1,0 +1,5 @@
+[run_car 07:29:20] 1-2 BODY + PARTS: parametric body sized against the manufactured parts [peak 0.0 GB]
+[run_car 07:31:54]   pass 1: body 23.018 g, car 37.947 g (-10.253); joints ; supports each [np.float64(2.38), np.float64(1.92)] [peak 5.5 GB]
+[run_car 07:31:54]   MASS NOT CONVERGED: car 37.947 g, -10.253 g from the target [peak 5.5 GB]
+[run_car 07:31:54] 3 LEGAL [peak 5.5 GB]
+[run_car 07:33:02] done: {'n_checks': 177, 'n_failed': 4, 'failed': ['T3.6_mass', 'T5.1_diameter_min', 'T5.5_chamber_clear', 'block_body_inside_official_block']} [peak 5.5 GB]
