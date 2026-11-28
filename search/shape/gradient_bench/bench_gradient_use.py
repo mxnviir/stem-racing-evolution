@@ -49,6 +49,8 @@ CMA-preconditioned descent direction -C g, scaled to unit length in CMA's metric
       samples + 4 injected points m + sigma t d on the adjoint's line, t in (0.5, 1, 2, 4) (one round); all 20
       forward-run and told to CMA (injected steps clipped to Mahalanobis length sqrt(n) + 2n/(n + 2), Hansen 2011
       "Injecting external solutions into CMA-ES"), so CMA's own selection verifies the gradient every generation.
+  Amendment (post hoc, reported, PLAN.md): setting `fail0.5`: each adjoint fails to converge with probability 0.5
+      (its units and round spent, no gradient): G / G2 / Glag then run a plain generation; P stops its polish.
   GP  "both" (reported): G while units + 20 + A <= 0.65 b, then P's polish from G's mean.
   G2  (reported): G with an adjoint only every other generation (guided and plain generations alternate).
   Glag (reported): G with the adjoint at the CURRENT mean taken in the same round as the batch and used for the NEXT
@@ -103,6 +105,7 @@ SETTINGS = {
     "noise0.2": dict(PRIMARY, noise=0.20),
     "kappa1": dict(PRIMARY, kappa=1.0),
     "cosmodel": dict(PRIMARY, mode="model"),
+    "fail0.5": dict(PRIMARY, fail=0.5),       # amendment 2026-11-28 (post hoc): half the adjoints do not converge
 }
 ARMS = ("C", "P", "G", "GP", "Glag", "G2")
 BUDGETS = (100, 200, 400)
@@ -266,7 +269,8 @@ class Run:
         self.r_cma = np.random.default_rng([inst, seed, 1])
         self.r_noise = np.random.default_rng([inst, seed, 2])
         self.r_adj = np.random.default_rng([inst, seed, 3])
-        self.units = 0; self.rounds = 0; self.n_adj = 0
+        self.r_fail = np.random.default_rng([inst, seed, 4])
+        self.units = 0; self.rounds = 0; self.n_adj = 0; self.n_fail = 0
         self.designs = []           # [x (clipped), [measurements]]
         self.cos = []; self.accepts = 0; self.steps = 0
         self.limit = budget - math.ceil(RESERVE * budget)
@@ -287,7 +291,11 @@ class Run:
         self.units += k
 
     def adjoint(self, x):
+        """None = the adjoint did not converge (setting 'fail': probability; its cost and round are spent)."""
         self.units += self.st["A"]; self.n_adj += 1
+        if self.st.get("fail", 0) and self.r_fail.random() < self.st["fail"]:
+            self.n_fail += 1
+            return None
         g, c = adjoint(self.p, np.clip(x, -BOX, BOX), self.st["cos"], self.st["kappa"], self.r_adj,
                        self.st.get("mode", "exact"))
         self.cos.append(c)
@@ -305,6 +313,8 @@ class Run:
         es.tell(xs, self.told(xs, ys))
 
     def guided_gen(self, es, g):
+        if g is None:                       # no gradient this generation: a plain one
+            return self.cma_gen(es)
         k = len(FAN)
         xs = es.sample(POP - k)
         d = es.direction(g)
@@ -321,6 +331,8 @@ class Run:
         x0 = np.clip(es.m, -BOX, BOX)
         _, (i0,) = self.forward([x0]); self.rerun(i0)
         g = self.adjoint(x0); self.rounds += 1
+        if g is None:
+            return i0
         d = es.direction(g); sig = es.sigma
         Delta, rej = 2.0, 0
         while self.units + 1 <= stop:
@@ -336,6 +348,8 @@ class Run:
                 i0, rej = i1, 0
                 if self.units + A + 1 <= stop:
                     self.rerun(i1); g = self.adjoint(self.designs[i1][0]); self.rounds += 1
+                    if g is None:
+                        break
                     d = es.direction(g)
                 else:
                     break
@@ -400,13 +414,11 @@ def run_arm(task):
         while R.units + POP + A <= R.limit:
             # the adjoint at this mean runs in the same round as this generation's batch (skipped when no later
             # generation fits the budget: nothing could use it)
-            gn = R.adjoint(es.m) if R.units + 2 * (POP + A) <= R.limit else None
-            if g is None:
-                R.cma_gen(es)
-            else:
-                R.guided_gen(es, g)
+            take = R.units + 2 * (POP + A) <= R.limit
+            gn = R.adjoint(es.m) if take else None
+            R.guided_gen(es, g)                  # g None (generation 1, or a failed adjoint): plain
             g = gn
-            if gn is None:
+            if not take:
                 while R.units + POP <= R.limit:
                     R.cma_gen(es)
                 break
@@ -426,7 +438,7 @@ def run_arm(task):
     return {"setting": sname, "arm": arm, "inst": inst, "seed": seed, "budget": b,
             "regret": p.f(hx) - p.fstar, "regret_current": p.f(cx) - p.fstar, "f0": p.f(np.zeros(N)) - p.fstar,
             "measured_handed": float(min(np.mean(r) for x, r in R.designs if np.array_equal(x, hx))),
-            "rounds": R.rounds, "adjoints": R.n_adj, "forwards": b - A * R.n_adj,
+            "rounds": R.rounds, "adjoints": R.n_adj, "failed": R.n_fail, "forwards": b - A * R.n_adj,
             "cos_mean": float(np.mean(R.cos)) if R.cos else None, "steps": R.steps, "accepts": R.accepts,
             "sigma_end": float(es.sigma), "secs": round(time.time() - t0, 3)}
 

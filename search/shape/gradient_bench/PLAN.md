@@ -93,3 +93,11 @@ Nothing in the arms was changed after it (G2 was added as a reported arm after i
   and DAFoam may fail to converge on some shapes (1 of 6 converged far from the team pod): not modelled (a failed
   adjoint costs its units and gives nothing; at a failure rate q, G's adjoint cost per useful gradient is A/(1-q)).
 - The noise is independent Gaussian; real mesh-to-mesh noise may be correlated between nearby shapes.
+
+## Amendment (2026-11-28, after the held-out primary and registered rows, before any run of the row it adds)
+**Post hoc, reported, not marked; the registered decision is unchanged.** On the record DAFoam converged on 1 of 6
+shapes far from the team pod, and the bench gave every adjoint a gradient. Added row **`fail0.5`** (primary otherwise):
+each adjoint fails with probability 0.5 (a separate random stream), its A units and its round are spent and no
+gradient comes back; G / G2 / Glag then run a plain CMA generation, P stops its polish (start point kept as a
+candidate) and its units go back to CMA. Same 25 pairs; written to `results/heldout_fail.json`. The code change was
+checked to leave every registered result bit-identical.
