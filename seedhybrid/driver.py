@@ -237,6 +237,21 @@ def advance(results, run_id, adj):
                 dst = LIN / name / "dafoam_g0.npz"; shutil.copy(daf, dst)
                 Ls["dafoam_latest"] = f"{REL}/{name}/dafoam_g0.npz"
             log["lineages"][name] = {"dafoam": daf.exists()}
+        # a gradient still missing (redaf run 46137619748: team's GMRES stopped at 2000 iterations, still falling)
+        # is re-run once more for that lineage only, with a longer Krylov budget, before generation 1 is drawn:
+        # without it the lineage's adjoint arm would run random-only and its ablation would compare nothing
+        miss = [n for n, Ls in S["lineages"].items()
+                if not Ls.get("base_of") and Ls["status"] == "active" and Ls["guides"] and not Ls.get("dafoam_latest")]
+        S["redaf_runs"] = S.get("redaf_runs", []) + [int(run_id)]
+        if miss and len(S["redaf_runs"]) < 2:
+            cases = [{"type": "dafoam", "lineage": n, "name": f"{n}_daf_g0", "parent": "", "tag": "g0",
+                      "gmres_iters": "6000", "gmres_restart": "300"} for n in miss]
+            log["redaf_again"] = miss
+            S.setdefault("log", []).append(log)
+            save(ST, S)
+            save(REQ, {"stage": "redaf", "gen": 0, "setup_run": S["setup_run"], "lineages": cfg["lineages"], "cases": cases})
+            print(f"redaf again for {miss} (GMRES 6000 iterations, restart 300)")
+            return True
         enable_ablation(S, log)
     else:
         for name, Ls in S["lineages"].items():

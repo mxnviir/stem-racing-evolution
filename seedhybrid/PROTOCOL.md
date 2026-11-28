@@ -159,3 +159,11 @@ Times are commit times (UTC); the commit history is the authoritative record of 
   `driver.py redaf` re-runs only the three g0 gradients (bases kept), then generation 1 is drawn from the rule as
   pre-registered (E2: d7_noadj / window_noadj enabled by which seeds have a gradient). If the re-run fails again
   the cause is read from the log before anything else runs.
+- 2026-11-28 13:10 (deviation, before any generation ran): redaf run 46137619748. **window**: GMRES converged
+  (2.76e-2 -> 2.76e-8 in 1,290 iterations, ~40 min), gradient written (3,275 surface points). **team**: GMRES did not reach
+  the 1e-6 relative tolerance in its 2,000-iteration budget (residual norm 1.13e-5 at 2,000 and still falling,
+  PetscConvergedReason -3 = iteration limit); DAFoam treats that as a failed adjoint and writes nothing. Memory was not
+  the cause (13 GB free). The cause of the setup's three losses is the same budget. Fix: a guided seed still without
+  a gradient after a redaf is re-run once more, alone, with 6,000 GMRES iterations and restart 300 (driver.py,
+  `gmres_iters` / `gmres_restart` per case); the tolerance is unchanged. Generation 1 is drawn after that run, whatever it
+  returns. d7's result was not known when this was written.
