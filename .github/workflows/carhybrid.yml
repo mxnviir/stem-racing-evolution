@@ -215,13 +215,14 @@ jobs:
       # the loop hook (batches named loop*): loop.py advance judges the stage from the committed results (it needs the
       # evolution race model: the builder checkout at EVO_SHA with this branch's patches) and writes the next stage
       - uses: actions/checkout@v4
-        if: startsWith(needs.init.outputs.batch, 'loop')
+        if: startsWith(needs.init.outputs.batch, 'loop') || startsWith(needs.init.outputs.batch, 'bo_')
         with: { repository: mxnviir/stem-racing-evolution, ref: "${{ env.EVO_SHA }}", path: evo }
       - uses: actions/setup-python@v5
-        if: startsWith(needs.init.outputs.batch, 'loop')
+        if: startsWith(needs.init.outputs.batch, 'loop') || startsWith(needs.init.outputs.batch, 'bo_')
         with: { python-version: "3.11" }
-      - name: loop hook (carhybrid/loop.py advance; dispatch the batch it writes)
-        if: startsWith(needs.init.outputs.batch, 'loop')
+      # batches loop*: carhybrid/loop.py (P2F); batches bo_*: carhybrid/bo.py (P3, the stage-1 layout search)
+      - name: loop hook (carhybrid/loop.py or bo.py advance; dispatch the batch it writes)
+        if: startsWith(needs.init.outputs.batch, 'loop') || startsWith(needs.init.outputs.batch, 'bo_')
         timeout-minutes: 40
         env: { GH_TOKEN: "${{ github.token }}", CARHYBRID_EVO: evo }
         run: |
@@ -232,12 +233,13 @@ jobs:
           echo "evo/" >> .git/info/exclude                     # never committed
           R=carhybrid/results/${{ needs.init.outputs.batch }}
           set +e
-          python carhybrid/loop.py advance $R ${{ github.run_id }} --evo evo
+          case "${{ needs.init.outputs.batch }}" in bo_*) DRV=carhybrid/bo.py;; *) DRV=carhybrid/loop.py;; esac
+          python $DRV advance $R ${{ github.run_id }} --evo evo
           RC=$?
           set -e
           # 0 = next stage written (dispatch request.json's launch); 3 = the loop stopped (nothing to dispatch);
           # anything else (2 = refused / error) fails this job
-          if [ $RC -eq 3 ]; then echo "loop.py: stopped, no further batch"; STOPPED=1; elif [ $RC -ne 0 ]; then echo "loop.py advance FAILED (exit $RC)"; exit 1; fi
+          if [ $RC -eq 3 ]; then echo "$DRV: stopped, no further batch"; STOPPED=1; elif [ $RC -ne 0 ]; then echo "$DRV advance FAILED (exit $RC)"; exit 1; fi
           if [ -n "${STOPPED:-}" ]; then
             git add carhybrid; git commit -m "carhybrid loop: stopped after ${{ needs.init.outputs.batch }} (run ${{ github.run_id }})" || true
             for i in 1 2 3 4 5; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((i*10)); done
