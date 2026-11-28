@@ -32,6 +32,8 @@ MARGIN_MM = 0.3
 WHEEL_CLEAR_MM = 1.0
 HALF_WIDTH_MAX_MM = 42.5        # T3.4: 85 mm
 CENTRE_CLEAR_MM = 2.5           # team (user 2026-11-23): nothing on the centre line -- a support's inner face this far off it
+ROOT_MIN = 0.15                # a pylon no nearer the centre line than this share of the half span
+ROOT_FALLBACK = (1.0, 0.8, 0.6, 0.4)   # where else a support is tried when the asked one cannot be built
 STRUT_ROOM_MM = 4.0             # the half span leaves its side struts this much of T3.4's 42.5 mm
 ZONE_MARGIN_MM = 0.6            # the wing this far clear of T7.9's zones (its struts' first section is 0.1 mm bigger)
 FOOT_REACH_MM = 60.0            # a support reaches no further than this to the body
@@ -54,6 +56,8 @@ class Support:
     mid_y: float = 0.0
     mid_z: float = 0.0
     swell: float = 1.0          # its section half way, times its own          # 2 an ellipse, higher squarer
+    root: float = 1.0           # where it leaves the wing, share of the half span: 1 through the tip's face, below 1 a
+                                # pylon out of the wing's underside at that share (owner 2026-11-28: not only struts)
 
 
 @dataclass
@@ -209,35 +213,56 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
         pcs = sorted(((M - Mbody) ^ half).decompose(), key=lambda p: -p.volume())
         return pcs[0] if pcs else None
 
-    # T9.6 against its own strut: the wing away from the joint (5.5 mm in from the tip) keeps 5 mm from it
+    # T9.6 against its own support: the wing away from the joint (5.5 mm either side of it) keeps 5 mm from it
     import trimesh as _tm
-    Pw, _ = _tm.sample.sample_surface_even(wing_tm, 2500, seed=3)
-    Pw = Pw[Pw[:, 1] < hs - cc.CLEAR_AIR - 0.5]
-
+    Pw_all, _ = _tm.sample.sample_surface_even(wing_tm, 2500, seed=3)
     wb = wing_tm.bounds
     span_box = se._box(wb[0, 0] - 1.0, wb[1, 0] + 1.0, -1.0, hs - 0.35, wb[0, 2] - 0.5, wb[1, 2] + 0.5)
-
-    def accept(M):
-        if (M ^ span_box).volume() > 1e-3:              # not back into the wing's own span past the joint
-            return False
-        T = trimmed(M)
-        if T is None:
-            return False
-        t = wl.to_trimesh(T)
-        b = t.bounds
-        if len(Pw) and _tm.proximity.closest_point(t, Pw)[1].min() < cc.CLEAR_AIR + 0.05:
-            return False
-        return (b[0, 0] >= ref_b + MARGIN_MM and b[1, 0] <= ref_b + cc.REAR_OVERHANG_MAX - MARGIN_MM
-                and b[1, 1] <= HALF_WIDTH_MAX_MM - MARGIN_MM and b[0, 1] >= CENTRE_CLEAR_MM
-                and b[1, 2] <= cc.REAR_Z_MAX - MARGIN_MM and _clear(t, wheel_rear, W_mm, x_front_mm))
     g = dataclasses.asdict(sp)
-    M, sinfo = ws.design(face_xz, face_pt, np.array([0.0, 1.0, 0.0]), ws.whole(body), np.array([0.0, 0.0, -1.0]), g,
-                         reach_mm=FOOT_REACH_MM, accept=accept, wall_mm=cc.BUILD_WALL_MM, go_around=True)
-    sup, placed = None, []
-    if M is not None:
-        sup = wl.to_trimesh(trimmed(M))
-        placed = [dict(y_mm=round(hs, 2), width_mm=0.0, plate_mm=cc.BUILD_WALL_MM, **sinfo)]
-    else:
+    root0 = float(np.clip(g.pop("root", 1.0), ROOT_MIN, 1.0))
+
+    def attempt(root):
+        """One support leaving at `root` (share of the half span): (manifold or None, info, joint y)."""
+        if root >= 1.0 - 1e-6:                            # through the tip's aerofoil face, out and down (as before)
+            Pw = Pw_all[Pw_all[:, 1] < hs - cc.CLEAR_AIR - 0.5]
+            fxz, fpt, n_out, fv, around, y_j = face_xz, np.array([x_le + 0.5 * chord, hs, z]), np.array([0.0, 1.0, 0.0]), None, True, hs
+            check_span = True
+        else:                                             # a pylon: its footprint under the wing at y_s, straight down
+            w = max(float(g["thick_mm"]), cc.BUILD_WALL_MM)
+            y_s = float(np.clip(root * hs, CENTRE_CLEAR_MM + 0.5 * w + 0.5, hs - 0.5 * w - 0.5))
+            xa, xb = x_le + 0.2 * chord, x_le + 0.8 * chord
+            fxz = np.array([[xa, y_s - 0.5 * w], [xb, y_s - 0.5 * w], [xb, y_s + 0.5 * w], [xa, y_s + 0.5 * w]])
+            fpt, n_out, fv, around, y_j = np.array([x_le + 0.5 * chord, y_s, z]), np.array([0.0, 0.0, -1.0]), np.array([0.0, 1.0, 0.0]), False, y_s
+            Pw = Pw_all[np.abs(Pw_all[:, 1] - y_s) > 0.5 * w + cc.CLEAR_AIR + 0.5]
+            check_span = False
+
+        def accept(M):
+            if check_span and (M ^ span_box).volume() > 1e-3:   # a tip strut: not back into the wing's own span
+                return False
+            T = trimmed(M)
+            if T is None:
+                return False
+            t = wl.to_trimesh(T)
+            b = t.bounds
+            if len(Pw) and _tm.proximity.closest_point(t, Pw)[1].min() < cc.CLEAR_AIR + 0.05:
+                return False
+            return (b[0, 0] >= ref_b + MARGIN_MM and b[1, 0] <= ref_b + cc.REAR_OVERHANG_MAX - MARGIN_MM
+                    and b[1, 1] <= HALF_WIDTH_MAX_MM - MARGIN_MM and b[0, 1] >= CENTRE_CLEAR_MM
+                    and b[1, 2] <= cc.REAR_Z_MAX - MARGIN_MM and _clear(t, wheel_rear, W_mm, x_front_mm))
+        M, sinfo = ws.design(fxz, fpt, n_out, ws.whole(body), np.array([0.0, 0.0, -1.0]), g,
+                             reach_mm=FOOT_REACH_MM, accept=accept, wall_mm=cc.BUILD_WALL_MM, go_around=around, face_v=fv)
+        return M, sinfo, y_j
+
+    sup, placed, tried = None, [], []
+    for root in [root0] + [r for r in ROOT_FALLBACK if abs(r - root0) > 1e-6]:
+        M, sinfo, y_j = attempt(root)
+        tried.append(round(root, 2))
+        if M is not None:
+            sup = wl.to_trimesh(trimmed(M))
+            placed = [dict(y_mm=round(y_j, 2), width_mm=0.0, plate_mm=cc.BUILD_WALL_MM, root=round(root, 2), **sinfo)]
+            break
+    info["roots_tried"] = tried
+    if not placed:
         info["supports_not_placed"] = sinfo
     info["struts"] = placed
     info["supported"] = bool(placed)
@@ -282,17 +307,24 @@ def measure(d, wing, sup, body, others, fwd, ref_b, wheel_rear, x_front_mm, W_mm
     g["T9.5.3_rw_thick_min"] = float(b[1, 2] - b[0, 2]) - cc.WING_THICK_MIN
     g["T9.5.3_rw_thick_max"] = cc.WING_THICK_MAX - float(b[1, 2] - b[0, 2])
     pts, _ = trimesh.sample.sample_surface_even(wing, 2500, seed=3)
-    keep = np.ones(len(pts), bool)
-    for p in placed:                                     # the joint with a side support: 5 mm in from the tip
-        keep &= pts[:, 1] < b[1, 1] - cc.CLEAR_AIR
-    q = pts[keep]
+    def off_joints(P, extra=0.0):
+        """Points of the wing away from every support's joint (the fillet the rule allows)."""
+        k = np.ones(len(P), bool)
+        for p in placed:
+            if p.get("root", 1.0) >= 1.0 - 1e-6:          # a tip strut: 5 mm in from the tip
+                k &= P[:, 1] < b[1, 1] - cc.CLEAR_AIR - extra
+            else:                                        # a pylon under the wing: 5 mm either side of its footprint
+                w = 0.5 * max(float(p.get("thick_mm", cc.BUILD_WALL_MM)), cc.BUILD_WALL_MM)
+                k &= np.abs(P[:, 1] - float(p["y_mm"])) > w + cc.CLEAR_AIR + extra
+        return k
+    q = pts[off_joints(pts)]
     if len(q):
         gaps = [float(np.concatenate([trimesh.proximity.closest_point(m, q[i:i + 256])[1]
                                       for i in range(0, len(q), 256)]).min()) for m in [body] + others]
         # its own struts too, away from the joint (the fillet the rule allows: the strut runs 0.3 mm into the
         # tip, so 5.5 mm in): a strut that arcs back over or under the wing must not take its clear air
         if sup is not None:
-            qs = pts[pts[:, 1] < b[1, 1] - cc.CLEAR_AIR - 0.5]
+            qs = pts[off_joints(pts, 0.5)]
             if len(qs):
                 gaps.append(float(np.concatenate([trimesh.proximity.closest_point(sup, qs[i:i + 256])[1]
                                                   for i in range(0, len(qs), 256)]).min()))

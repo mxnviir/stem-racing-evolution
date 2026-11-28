@@ -158,7 +158,7 @@ def build(d: FrontWingDesign, nose_half_m, x_front_mm, wheel, body_half_m=None):
     A wing the nose does not hold, closer than 5 mm to it, is lowered by what it lacks and built again
     (down to the track's own 5 mm)."""
     r = _build_once(d, nose_half_m, x_front_mm, wheel, body_half_m)
-    if d.pieces == 1 and not r["info"].get("held_by_nose"):
+    if d.pieces == 1 and not r["info"].get("held_by_nose") and not r["info"].get("struts"):
         # one wing across the centre line is held only by the nose it runs through (T1.7): moved to the
         # nose's own height at its chord, then built again
         nose = nose_half_m.copy(); nose.apply_scale(1e3)
@@ -269,6 +269,36 @@ def _build_once(d: FrontWingDesign, nose_half_m, x_front_mm, wheel, body_half_m=
             info["supports_not_placed"] = sinfo
     info["root_in_nose"] = root_in_nose
     held = held or root_in_nose
+    if not held and not placed:
+        # (owner 2026-11-28: supports not only struts from the root) a pylon out of the wing's underside, straight
+        # down into the nose, anywhere along the span inside T8.5.1's 15 mm band
+        import wing_loft as wl
+        import wing_strut as ws
+        sp_ = dict(dataclasses.asdict(d.support))
+        w = max(float(sp_["thick_mm"]), cc.BUILD_WALL_MM)
+        lo_y = max(y0, 0.0) + 0.5 * w + 0.5
+        hi_y = min(tip, SUPPORT_BAND_MM) - 0.5 * w - MARGIN_MM - 0.3
+        half_ = se._box(-1e3, 1e3, 0.0, 1e3, -1e3, 1e3)
+
+        def accept_p(M):
+            b = wl.to_trimesh(M ^ half_).bounds
+            return (b[1, 1] <= SUPPORT_BAND_MM - MARGIN_MM and b[1, 2] <= 25.0 - MARGIN_MM
+                    and b[1, 0] <= ref_a - MARGIN_MM and b[0, 0] >= ref_a - OVERHANG_MM + MARGIN_MM
+                    and b[0, 2] >= TRACK_CLEAR_MM)
+        tried = []
+        for y_s in (np.linspace(lo_y, hi_y, 3) if hi_y > lo_y else []):
+            fxz = np.array([[x_le + 0.2 * d.chord_mm, y_s - 0.5 * w], [x_le + 0.8 * d.chord_mm, y_s - 0.5 * w],
+                            [x_le + 0.8 * d.chord_mm, y_s + 0.5 * w], [x_le + 0.2 * d.chord_mm, y_s + 0.5 * w]])
+            M, sinfo = ws.design(fxz, np.array([x_le + 0.5 * d.chord_mm, y_s, z]), np.array([0.0, 0.0, -1.0]), ws.whole(nose),
+                                 np.array([0.0, 0.0, -1.0]), sp_, reach_mm=30.0, accept=accept_p, wall_mm=cc.BUILD_WALL_MM,
+                                 face_v=np.array([0.0, 1.0, 0.0]))
+            tried.append(round(float(y_s), 2))
+            if M is not None:
+                pylons.append(M)
+                placed.append(dict(y_mm=round(float(y_s), 2), t_mm=0.0, pylon="underside", **sinfo))
+                info.pop("supports_not_placed", None)
+                break
+        info["underside_pylons_tried_y_mm"] = tried
     info["struts"] = placed
     info["pylon_y_placed_mm"] = [p["y_mm"] for p in placed]
     pyl = None

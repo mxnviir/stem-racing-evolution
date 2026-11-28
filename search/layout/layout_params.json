@@ -1778,6 +1778,18 @@
    "why": "user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range"
   },
   {
+   "group": "rear wing",
+   "name": "rwsup_root",
+   "value": 1.0,
+   "lo": 0.15,
+   "hi": 1.0,
+   "mode": "shape",
+   "unit": "0-1",
+   "what": "supports: where each leaves the wing, share of the half span (1 through the tip's face, below 1 a pylon out of its underside)",
+   "rule": "T9.6 5 mm clear air but at the joint; T3.4 85 wide",
+   "why": "owner 2026-11-28: supports not only struts from the tips"
+  },
+  {
    "group": "tether guides",
    "name": "tether_front",
    "value": 5.0,

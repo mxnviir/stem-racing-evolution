@@ -110,12 +110,14 @@ def _section_props(R):
 
 
 def sweep(face_xz, face_point, n_out, foot, n_foot, leave, arrive, chord_mm, thick_mm, flare, roundness,
-          into_wing=0.3, into_foot=1.5, wall_mm=1.2, mid=(0.0, 0.0, 0.0), swell=1.0, around=0.0):
+          into_wing=0.3, into_foot=1.5, wall_mm=1.2, mid=(0.0, 0.0, 0.0), swell=1.0, around=0.0, face_v=None):
     """The strut as rings (N_PATH + 2, N_RING, 3) and its path, before any check.
-    face_xz: the wing's aerofoil outline in its side face, (k, 2) in (x, z), absolute; face_point: the face's
-    centre (x, y, z); n_out: the face's outward normal (unit, along +-y); foot: where it lands; n_foot: the
-    surface's outward normal there."""
+    face_xz: the face's outline, (k, 2), absolute: (x, z) in the wing's side face (n_out along +-y), or, with
+    face_v (a unit world vector square to n_out and to x), (x, coordinate along face_v) -- e.g. a pylon's
+    footprint under the wing: n_out = -z, face_v = +y; face_point: the face's centre (x, y, z); n_out: its
+    outward normal; foot: where it lands; n_foot: the surface's outward normal there."""
     face_point, n_out, foot, n_foot = (np.asarray(v, float) for v in (face_point, n_out, foot, n_foot))
+    fv = np.array([0.0, 0.0, 1.0]) if face_v is None else np.asarray(face_v, float) / np.linalg.norm(face_v)
     L = float(np.linalg.norm(foot - face_point))
     # straight out of the face for STRAIGHT_MM (its sections square to it: the aerofoil itself), then the curve
     Ps = face_point + STRAIGHT_MM * n_out
@@ -134,12 +136,13 @@ def sweep(face_xz, face_point, n_out, foot, n_foot, leave, arrive, chord_mm, thi
     T, U, V = _rmf(pts, n_out, np.array([1.0, 0.0, 0.0]))
     # the aerofoil, in its face's (u, v) = (x, z) about the face's centre; the strut's own section; the foot
     from shapely.geometry import Polygon
-    grown = Polygon(np.asarray(face_xz, float) - face_point[[0, 2]]).buffer(FACE_GROW_MM, quad_segs=16)
+    grown = Polygon(np.asarray(face_xz, float) - np.array([face_point[0], face_point @ fv])).buffer(FACE_GROW_MM, quad_segs=16)
     air = _resample(np.asarray(grown.exterior.coords)[:-1])
     a, b = max(chord_mm / 2, wall_mm / 2), max(thick_mm / 2, wall_mm / 2)
     own = _superellipse(a, b, roundness)
     foot_sec = _superellipse(a * flare, b * flare, roundness)
     hold = 0.0
+    vsign = 1.0 if V[0] @ fv >= 0 else -1.0                      # the face's v axis is face_v (z for a side face)
     rings = []
     for i, si in enumerate(s):
         w1 = np.clip((si - hold) / 0.35, 0.0, 1.0)            # aerofoil -> own over the next 35 %
@@ -150,7 +153,7 @@ def sweep(face_xz, face_point, n_out, foot, n_foot, leave, arrive, chord_mm, thi
         sec = (1 - w1) * air + w1 * own * sw
         sec = (1 - w2) * sec + w2 * foot_sec
         # u along the flow (U), v up at the face
-        rings.append(pts[i] + np.outer(sec[:, 0], U[i]) + np.outer(sec[:, 1], -V[i] if n_out[1] > 0 else V[i]))
+        rings.append(pts[i] + np.outer(sec[:, 0], U[i]) + np.outer(sec[:, 1], vsign * V[i]))
     return np.array(rings), pts, (T, U, V), s
 
 
@@ -198,7 +201,8 @@ def aim(n_out, out_deg, fwd_deg, base):
     toward n_out by out_deg and toward +x (forward is -x: fwd_deg leans toward -x) by fwd_deg."""
     base = np.asarray(base, float) / np.linalg.norm(base)
     n_out = np.asarray(n_out, float)
-    side = n_out if abs(n_out @ base) < 0.9 else np.array([0.0, 0.0, -1.0])   # front: base and n_out are both
+    side = n_out if abs(n_out @ base) < 0.9 else (np.array([0.0, 0.0, -1.0]) if abs(base[2]) < 0.9
+                                                  else np.array([0.0, 1.0, 0.0]))   # a pylon straight down: out is +y
     d = math.cos(math.radians(out_deg)) * base + math.sin(math.radians(out_deg)) * side   # inward: lean down/up
     d = math.cos(math.radians(fwd_deg)) * d + math.sin(math.radians(fwd_deg)) * np.array([-1.0, 0.0, 0.0])
     return d / np.linalg.norm(d)
@@ -222,7 +226,7 @@ def nearest(m, o):
 
 
 def design(face_xz, face_point, n_out, target, base_dir, g, reach_mm=60.0, accept=None, wall_mm=1.2, load_at=None,
-           go_around=False):
+           go_around=False, face_v=None):
     """A strut (manifold3d, mm) for genes g (dict: aim_out_deg, aim_fwd_deg, leave, arrive, chord_mm, thick_mm,
     flare, round) from the face to `target` (trimesh, mm), or (None, info). It heads along its aim (leaned back
     towards base_dir when the result breaks a rule: accept(manifold) -> bool), lands on the first surface that
@@ -254,7 +258,7 @@ def design(face_xz, face_point, n_out, target, base_dir, g, reach_mm=60.0, accep
                                           mid=k * np.array([float(g.get("mid_x", 0.0)), float(g.get("mid_y", 0.0)),
                                                             float(g.get("mid_z", 0.0))]),
                                           swell=max(1.0 + (float(g.get("swell", 1.0)) - 1.0) * k, wall_mm / max(min(c, t), 1e-6)),
-                                          around=(1.0 - k) if go_around else 0.0)
+                                          around=(1.0 - k) if go_around else 0.0, face_v=face_v)
             sig = stress_mpa(rings, pts, frames, load_at if load_at is not None else face_point)
             if sig <= ALLOW_MPA:
                 break

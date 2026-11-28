@@ -125,6 +125,7 @@ def judge(out: Path, rec: dict, d: dict, rc=0) -> dict:
     return _save(out, rec)
 
 
+BLOCK_SPECK_MM3 = 1.0                    # outside the block by less than this in one place: a grid speck, not a body
 BORE_BOX = ((-9.2, 9.2), (21.8, 40.2))   # |y|, z of the 18.15 mm bore round the 31 mm chamber axis, 0.1 mm over
 
 
@@ -138,9 +139,12 @@ def _grid_bore(key, S) -> bool:
     if key == "T5.5_chamber_clear":
         return bool(note) and all(part.strip().startswith("machined_body") for part in note.split(","))
     if key == "block_body_inside_official_block":
-        boxes = re.findall(r"\[\[([-\d.]+), ([-\d.]+), ([-\d.]+)\], \[([-\d.]+), ([-\d.]+), ([-\d.]+)\]\]", note)
+        # each "<v> mm3 in [[x, y, z], [x, y, z]]": the bore's own envelope is waived, and so are specks under
+        # SPECK_MM3 anywhere (a free-form surface grazing the block's floor by a cell edge: 0.2 mm3, 2026-11-28)
+        boxes = re.findall(r"([\d.]+) mm3 in \[\[([-\d.]+), ([-\d.]+), ([-\d.]+)\], \[([-\d.]+), ([-\d.]+), ([-\d.]+)\]\]", note)
         (ylo, yhi), (zlo, zhi) = BORE_BOX
-        return bool(boxes) and all(ylo <= float(b[1]) and float(b[4]) <= yhi and zlo <= float(b[2]) and float(b[5]) <= zhi
+        return bool(boxes) and all(float(b[0]) < BLOCK_SPECK_MM3 or
+                                   (ylo <= float(b[2]) and float(b[5]) <= yhi and zlo <= float(b[3]) and float(b[6]) <= zhi)
                                    for b in boxes)
     return False
 
