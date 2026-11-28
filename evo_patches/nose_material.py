@@ -64,8 +64,10 @@ import numpy as np
 H_MM = 0.25                  # grid the nose is evaluated on (as freeform.build_nose)
 LAP_MM = 5.0                 # the body's field runs this far ahead of x_cut; the mesh is cut at x_cut
 OVERLAP_MM = 0.3             # the printed piece runs this far into the foam (one closed solid in the union)
-BLOCK_MARGIN_MM = 1.0        # foam this far inside the block's front (the referee places the block by the
-                             # measured bore, drawn up to 0.6 mm off on the 1 mm build grid)
+BLOCK_MARGIN_MM = 1.0        # plan(): foam this far inside the block's DESIGN front (rear face - 223) ...
+REF_BLOCK_MARGIN_MM = 0.5    # fit_to_block(): ... and this far inside the block as the REFEREE places it on the built
+                             # body (the measured bore end + 52 - 223: 1.2-2.3 mm aft of the design front on the
+                             # 1 mm grid, sweep3; the bore is drawn a cell long and its closed end gauged at 0.6 r)
 COLLAR_MM = 1.2              # ABS behind the last point the wing / its supports touch (load-bearing minimum)
 TENON_LEN_MM = 8.0           # joints.nose_part: 8 mm aft of the joint face ...
 TENON_HALF_W_MM = 4.0        # ... 8 mm wide (the 6.35 mm ball needs >= 6.35) ...
@@ -334,6 +336,53 @@ def _closed(M, scale=1e-3):
     return t
 
 
+def referee_block_front(half_m):
+    """The official block's front (mm) exactly as the referee places it (legality.manufactured_checks): the
+    chamber measured on the body, both halves (legality.chamber_measures on as_drawn_solids' union), its rear face
+    at the bore's end + 52 mm, the block 223 mm long. None if the referee's module or the chamber is not found."""
+    try:
+        import legality
+        import rules_constants as rc
+        import trimesh
+    except ImportError:
+        return None
+    m = half_m.copy()
+    m.apply_scale(1e3)
+    mir = m.copy()
+    mir.vertices[:, 1] *= -1.0
+    mir.invert()
+    try:
+        full = trimesh.boolean.union([m, mir], engine="manifold")
+    except ValueError:
+        return None
+    ch = legality.chamber_measures(full)
+    if ch is None:
+        return None
+    return float(ch["rim_x_mm"] - ch["depth_mm"] + rc.BLOCK_BORE_DEPTH_MM - rc.BLOCK_LENGTH_MM)
+
+
+def fit_to_block(half_m, p):
+    """The plan made to agree with the referee's block on the built body (half_m, the milled half before the cut,
+    m): the foam's face moved aft to REF_BLOCK_MARGIN_MM behind the block's front as the referee measures it (on
+    the H_MM grid, never behind Ref A), the tenon with it. Returns the (new) plan; the old one is not changed."""
+    f = referee_block_front(half_m)
+    q = dict(p)
+    if f is None:
+        return q
+    q["block_front_design_mm"] = p.get("block_front_design_mm", p["block_front_mm"])
+    q["block_front_mm"] = f
+    need = f + REF_BLOCK_MARGIN_MM
+    q["limits_mm"] = dict(p["limits_mm"], block_referee=float(need))
+    if p["x_cut_mm"] < need - 1e-9 and p["x_cut_mm"] < p["ref_a_mm"] - 1e-9:
+        x = float(min(math.ceil(need / H_MM - 1e-9) * H_MM, p["ref_a_mm"]))
+        dx = x - p["x_cut_mm"]
+        q.update(x_cut_mm=x, foam_len_mm=float(p["ref_a_mm"] - x), decided_by="block_referee",
+                 moved_for_referee_block_mm=float(dx))
+        if p.get("tenon"):
+            q["tenon"] = dict(p["tenon"], x0=p["tenon"]["x0"] + dx, x1=p["tenon"]["x1"] + dx)
+    return q
+
+
 def cut_body(half_m, p):
     """(the milled body's right half cut exactly at x_cut with the tenon's pocket, the tenon's right half) in
     metres; the tenon is the body's own shape inside the pocket box (None if there is no tenon)."""
@@ -425,7 +474,7 @@ def gates(p) -> dict:
         g["nose_joint_foam_stress"] = FOAM_BOND_MPA - b["util_mpa"]
         g["nose_joint_abs_stress"] = ABS_ALLOW_MPA - b["util_mpa"]
     if p["foam_len_mm"] > 0:
-        g["nose_foam_inside_block"] = p["x_cut_mm"] - p["block_front_mm"]
+        g["nose_foam_inside_block"] = p["x_cut_mm"] - p["block_front_mm"]       # (the referee's, once fitted)
         g["nose_foam_not_thin"] = p["x_cut_mm"] - p["limits_mm"]["thin"]
         if p.get("attachment") and p["attachment"].get("x_mm") is not None:
             g["nose_foam_behind_wing_attachment"] = p["x_cut_mm"] - p["attachment"]["x_mm"] - COLLAR_MM
@@ -589,6 +638,10 @@ def part4_kwargs(a) -> dict:
     _ns = (getattr(geom, "landmarks", None) or {}).get("nose_split")
     if _ns:     # evo_patches/nose_material.py: the foam nose's face cut exactly at x_cut, the tenon's pocket
         import nose_split as _nsx
+        # the foam inside the block as the referee places it on THIS body (its measured bore), the plan updated
+        _ns = _nsx.fit_to_block(half, _ns)
+        geom.landmarks["nose_split"] = _ns
+        path.with_name("nose_split.json").write_text(json.dumps(_ns, indent=1, default=float))
         half, _ten = _nsx.cut_body(half, _ns)
         _tp = path.with_name("nose_tenon_half.stl")
         if _ten is not None:
@@ -621,6 +674,9 @@ def part4_kwargs(a) -> dict:
             # evo_patches/nose_material.py: the printed piece only (ahead of x_cut, and the tenon); the foam nose
             # is the body's (car/body/nose_split.py). The wing is designed against the whole drawn nose, as before.
             import nose_split as nsx
+            _pj = Path(body_half_stl).with_name("nose_split.json")      # as fitted to the referee's block
+            if _pj.exists():
+                nose_split = json.loads(_pj.read_text())
             _tp = Path(body_half_stl).with_name("nose_tenon_half.stl")
             nm = nsx.printed_nose(freeform, nose_split, trimesh.load(str(_tp), force="mesh") if _tp.exists() else None)
             if nm is None:
