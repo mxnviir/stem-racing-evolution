@@ -76,6 +76,8 @@ def test_lift_equal_to_drag(tmp, g45):
     # lift + up: more upforce unloads the wheels -> faster (race_objective's lift_20_n, + up)
     assert r["dT_dL_s_per_N"] < 0 and r["dT_dD_s_per_N"] > 0
     assert r["L20_N_used"] == 0.195 and r["L20_source"] == "cli"
+    SL = G.evo_import(EVO)[1]
+    assert r["T0_s"] == pytest.approx(SL.race_time(json.loads((P0 / "rec.json").read_text()), 0.465, 0.195), abs=1e-12)
     exp = (r["dT_dD_s_per_N"] + r["dT_dL_s_per_N"]) * dD     # no --body: dm/du = 0
     assert np.allclose(r["dT_du_s"], exp, rtol=1e-12, atol=1e-18)
     print(f"\ndT/dD {r['dT_dD_s_per_N'] * 1e3:.1f} ms/N, dT/dL {r['dT_dL_s_per_N'] * 1e3:.2f} ms/N at D20 0.465, L20 0.195")

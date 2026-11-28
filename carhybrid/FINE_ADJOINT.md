@@ -73,3 +73,32 @@ Per iteration i, at the current numbers u_i:
 3. Accept the best legal candidate if its paired race-time change is <= -3 SE and <= -0.1 ms; the trust radius grows x1.5
    when the largest step wins and halves when nothing is accepted. Stop at radius < 0.02 or 20 iterations.
 The no-adjoint control arm (same budget, random unit directions in place of d_i) runs alongside for the claim.
+
+### Decisions (carhybrid/loop.py; the text above does not fix these)
+
+1. **Initial trust radius 0.25** (P1's h: 1.5 mm at 6 mm per unit), capped at **1.0** when it grows (a 2 x radius step
+   then spans the whole unit box; larger ones would only be clipped). `init --radius` changes the start.
+2. **The line uses the frame 0 and 1 scores of u_i re-run in the same batch** ("base"), not the grad stage's own score
+   of u_i (frame i mod 4): the pairing needs the same frames for every candidate.
+3. **After a rejected line, the next grad stage still runs** (at the same u, the next frame, as the text's k_i = i mod
+   4) and **the line direction is the mean of every gradient taken at that u** (frames of the same derivative, as
+   grad.py averages frames); the list resets when a candidate is accepted. Each grad record keeps the cosine with the
+   previous gradient at that u (the fine gradient's frame-to-frame agreement, measured for free).
+4. **Projection on the box**: d_i = -g / |g| with the components that push out of an active face (u_j = +-1) dropped,
+   then unit length; candidates are clipped to [-1, 1]. No feasible direction stops the arm.
+5. **Race time and SE**: whole car D20 = 2 drag_mN / 1e3, L20 = 2 lift_mN / 1e3 (lift + up, no sign change:
+   grad.py's docstring); the block SE in race time is dT/dD20 x 2 x drag_block_se_mN (the score has no lift block
+   SE; lift's race-time weight is ~1 % of drag's per N: dT/dL20 = -2.0 ms/N against dT/dD20 = +185 ms/N on the team
+   car). For K frames the frame part is std(Delta_k) / sqrt(K) (= |Delta_0 - Delta_1| / 2 for two).
+6. **A missing base** (either frame) cannot be judged against: the same line stage is issued once more (batch
+   `loop_<arm>_<i>_line_r1`); missing twice counts as nothing accepted.
+7. **Gates on every grad stage**: no `grad.json`, a non-finite or wrong-length `dT_du_s`, or a gate known to be
+   missed on that job (`fine_adjoint.json` `F1_pass` / `F2_pass` / `F3_pass` false; `steady.json` `"pass": false`;
+   `dafoam_sens.json` `"gmres": {f: {"converged": false}}`) stops the arm (exit 3); a gate that is unknown (None) does
+   not. `loop.py reissue <arm>` re-issues a pending stage by hand (e.g. after a runner fault).
+8. **The random arm's directions**: unit normal vectors from numpy `default_rng([seed, i])` (seed 20261128 by
+   default), recorded per iteration in state.json; same accept, radius and stop rules, no grad stage.
+9. **Both arms in one state file** (`carhybrid/loop/state.json`, keyed by arm); `advance` finds the arm by the batch
+   name of the results folder. Each advance sets `launch` to that arm's next batch, so two arms running at once rely
+   on the collect hook dispatching the batch `advance` wrote (as `.github/workflows/carhybrid.yml` does), not on
+   `launch` alone.

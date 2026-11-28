@@ -15,9 +15,9 @@
 Per iteration i of an arm, at its current numbers u_i:
   grad  (adjoint arm only) one case {"type": "fine_adjoint", "u": u_i, "k": i mod 4, "grid", "bg_div", "runner"} ->
         <case>/grad.json (carhybrid/grad.py). g_i = its race-time gradient dT_du_s (with lead on board grad.py has
-        already zeroed dT/dm: drag + lift only). Gates: no grad.json, a non-finite or wrong-length gradient,
-        steady.json "pass": false (F2) or a false "converged" in dafoam_sens.json (F3) stops the arm (a gate missed
-        stops the line it gates).
+        already zeroed dT/dm: drag + lift only). Gates: no grad.json, a non-finite or wrong-length gradient, or a
+        gate known to be missed (fine_adjoint.json F1_pass / F2_pass / F3_pass false, steady.json "pass" false,
+        dafoam_sens.json "gmres": {f: {"converged": false}}) stops the arm (a gate missed stops the line it gates).
   line  candidates u_i + a * r * d_i (a = 0.5, 1, 2; r the trust radius) clipped to the unit box [-1, 1], plus u_i
         itself ("base"), each {"type": "score"} on frames 0 and 1. d_i = -g / |g| projected on the box (components
         pushing out of a face u_j = +-1 dropped, then unit length); the random arm draws d_i as a unit normal vector
@@ -96,10 +96,13 @@ def race_eval(rec, D20, L20, evo):
         sys.path.insert(0, str(HERE))
         from grad import evo_import
         _SL = evo_import(evo)[1]
-    T = _SL.race_time(rec, D20, L20)
+    from grad import race_fn
+    RT = race_fn(_SL, rec)                                   # simscale_layout.race_time on one jitted model
     h = 1e-3
-    dTdD = (_SL.race_time(rec, D20 + h, L20) - _SL.race_time(rec, D20 - h, L20)) / (2 * h)
-    return float(T), float(dTdD)
+    return RT(D20, L20), (RT(D20 + h, L20) - RT(D20 - h, L20)) / (2 * h)
+
+
+_race_eval_evo = race_eval
 
 
 # ------------------------------------------------------------------ stages
@@ -176,14 +179,23 @@ def ingest_grad(A, R):
     D = Path(R) / name
     g = load(D / "grad.json")
     st, ds, res = load(D / "steady.json"), load(D / "dafoam_sens.json"), load(D / "result.json")
+    fa = load(D / "fine_adjoint.json") or {}                 # carhybrid/fine_adjoint.sh's summary: F1_pass, F2_pass, F3_pass
     rec = {"i": A["i"], "batch": A["pending"], "case": name, "k": A["i"] % 4, "u": A["u"],
-           "score": {k: (res or {}).get(k) for k in ("drag_mN", "drag_block_se_mN", "lift_mN")} if res else None}
+           "score": {k: (res or {}).get(k) for k in ("drag_mN", "drag_block_se_mN", "lift_mN")} if res else None,
+           "gates": {k: fa.get(k) for k in ("F1_dafoam_vs_pipeline_drag", "F1_pass", "F2_span_mN", "F2_pass",
+                                            "F3_gmres_converged", "F3_pass")}}
     why = None
-    if st is not None and st.get("pass") is False:
-        why = "F2 (steadiness) missed"
-    conv = (ds or {}).get("converged")
-    if why is None and (conv is False or (isinstance(conv, dict) and not all(bool(v) for v in conv.values()))):
-        why = f"F3 (adjoint convergence) missed: {conv}"
+    # a gate stops the arm only when it is known to be missed (False); unknown (None, absent) does not
+    if fa.get("F1_pass") is False:
+        why = f"F1 (DAFoam's primal vs the pipeline's drag) missed: {fa.get('F1_dafoam_vs_pipeline_drag')}"
+    elif fa.get("F2_pass") is False or (st is not None and st.get("pass") is False):
+        why = f"F2 (steadiness) missed: span {fa.get('F2_span_mN', (st or {}).get('span_mN'))} mN"
+    if why is None:
+        conv = (ds or {}).get("converged")
+        gm = {f: v.get("converged") for f, v in ((ds or {}).get("gmres") or {}).items() if isinstance(v, dict)}
+        if fa.get("F3_pass") is False or conv is False or any(v is False for v in gm.values()) or \
+                (isinstance(conv, dict) and not all(bool(v) for v in conv.values())):
+            why = f"F3 (adjoint convergence) missed: {fa.get('F3_gmres_converged') or gm or conv}"
     if why is None and g is None:
         why = "no grad.json (the fine_adjoint job or its map failed)"
     if why is None:
@@ -226,7 +238,13 @@ def frame_score(Rd, name, evo):
         return None, None, {"why": "illegal or failed build"}
     D20 = 2.0 * float(res["drag_mN"]) / 1e3
     L20 = 2.0 * float(res.get("lift_mN") or 0.0) / 1e3
-    T, dTdD = race_eval(rec, D20, L20, evo)
+    if (Path(evo) / "repo_paths.py").exists() or race_eval is not _race_eval_evo:
+        T, dTdD = race_eval(rec, D20, L20, evo)
+    elif res.get("race_time_s") is not None and res.get("dT_dD20_s_per_N") is not None:
+        T, dTdD = float(res["race_time_s"]), float(res["dT_dD20_s_per_N"])   # computed by the case job
+    else:
+        raise RuntimeError(f"no evolution checkout at {evo} (--evo / CARHYBRID_EVO) for the race model, and "
+                           f"{name}/result.json carries no race_time_s / dT_dD20_s_per_N")
     se = abs(dTdD) * 2.0 * float(res.get("drag_block_se_mN") or 0.0) / 1e3
     return T, se, {"drag_mN": res["drag_mN"], "lift_mN": res.get("lift_mN"), "se_mN": res.get("drag_block_se_mN"),
                    "mass_g": rec.get("mass", {}).get("race_mass_g"), "T_s": T, "se_s": se}
@@ -320,6 +338,9 @@ def find_arm(S, results, arm=None):
     hit = [a for a, A in S["arms"].items() if A.get("pending") == b]
     if hit:
         return hit[0]
+    hit = [a for a, A in S["arms"].items() if A["status"] != "active" and A["runs"] and A["runs"][-1]["batch"] == b]
+    if hit:                                                  # the last batch of an arm that has stopped since
+        return hit[0]
     hit = [a for a, A in S["arms"].items() if A.get("pending_cases") and
            any((Path(results) / c).is_dir() for c in A["pending_cases"])]
     return hit[0] if len(hit) == 1 else None
@@ -339,10 +360,14 @@ def advance(results, run_id, evo="evo", arm=None):
         print(f"arm {a} is {A['status']}", file=sys.stderr)
         return EXIT_STOP
     A["runs"].append({"batch": A["pending"], "run": str(run_id)})
-    if A["stage"] == "grad":
-        batch, cases = ingest_grad(A, results)
-    else:
-        batch, cases = ingest_line(A, results, evo)
+    try:
+        if A["stage"] == "grad":
+            batch, cases = ingest_grad(A, results)
+        else:
+            batch, cases = ingest_line(A, results, evo)
+    except Exception as e:                                   # noqa: BLE001  nothing is saved: the stage can be advanced again
+        print(f"{a}: advance failed, state unchanged: {e!r}"[:2000], file=sys.stderr)
+        return EXIT_REFUSED
     save(state_path(), S)
     if batch:
         print(f"{a}: iteration {A['i']} {A['stage']} -> {batch} ({len(cases)} cases); radius {A['radius']:.4g}")

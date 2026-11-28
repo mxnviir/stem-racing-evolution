@@ -80,6 +80,21 @@ def evo_import(evo):
     return mods
 
 
+def race_fn(SL, rec):
+    """T(D20, L20, extra race mass g) = simscale_layout.race_time(rec with that mass, D20, L20), on ONE race model (each
+    new model is a fresh jax.jit: race_time per call recompiles, ~3 s)."""
+    m = rec["mass"]
+    base = {"race_mass_g": m["race_mass_g"], "com_z_mm": m["com_z_mm"], "com_x_car_mm": m["com_x_car_mm"]}
+    if hasattr(SL, "race_model"):
+        M = SL.race_model(rec["decoded"])
+        return lambda D, L, dm=0.0: float(M(D, L, {**base, "race_mass_g": base["race_mass_g"] + dm})[0])
+
+    def T(D, L, dm=0.0):
+        r2 = json.loads(json.dumps(rec)); r2["mass"]["race_mass_g"] = m["race_mass_g"] + dm
+        return float(SL.race_time(r2, D, L))
+    return T
+
+
 def parse_grid(s, SS):
     if s is None:
         return tuple(SS.COARSE)
@@ -295,12 +310,12 @@ def main(evo, rec_p, sens_p, u_s, out_p, body_dir=None, d20=None, l20=None, grid
         return default, "default"
     D20, D20_src = pick(d20, "D20_N", D_N, 0.36)
     L20, L20_src = pick(l20, "L20_N", L_N, 0.0)
-    T0 = SL.race_time(rec, D20, L20)
+    RT = race_fn(SL, rec)
+    T0 = RT(D20, L20)
     h = 1e-3
-    dT_dD = (SL.race_time(rec, D20 + h, L20) - SL.race_time(rec, D20 - h, L20)) / (2 * h)       # s per N
-    dT_dL = (SL.race_time(rec, D20, L20 + h) - SL.race_time(rec, D20, L20 - h)) / (2 * h) if have_lift else 0.0
-    r2 = json.loads(json.dumps(rec)); r2["mass"]["race_mass_g"] = m["race_mass_g"] + 0.1
-    dT_dm = (SL.race_time(r2, D20, L20) - T0) / 0.1 if lead <= 0 else 0.0                          # s per g
+    dT_dD = (RT(D20 + h, L20) - RT(D20 - h, L20)) / (2 * h)                                       # s per N
+    dT_dL = (RT(D20, L20 + h) - RT(D20, L20 - h)) / (2 * h) if have_lift else 0.0                 # s per N (+ up)
+    dT_dm = (RT(D20, L20, 0.1) - T0) / 0.1 if lead <= 0 else 0.0                                  # s per g
     tD, tL, tm = dT_dD * dD, dT_dL * dL, dT_dm * dm
     dT = tD + tL + tm
     gN = float(np.linalg.norm(dT))
@@ -327,6 +342,9 @@ def main(evo, rec_p, sens_p, u_s, out_p, body_dir=None, d20=None, l20=None, grid
 
 if __name__ == "__main__":
     a = sys.argv[1:]
+    if not a or a[0] in ("-h", "--help"):
+        print(__doc__)
+        sys.exit(0)
     opt = lambda k: a[a.index(k) + 1] if k in a else None
     main(*a[:5], body_dir=opt("--body"), d20=opt("--d20"), l20=opt("--l20"), grid=opt("--grid"),
          smooth=opt("--smooth"), method=opt("--method") or "lin")
