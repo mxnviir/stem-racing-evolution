@@ -146,6 +146,6 @@ These cannot be closed inside this campaign. Each says what would close it.
 
 Times are commit times (UTC); the commit history is the authoritative record of when each line was written.
 - 2026-11-28 06:09 UTC (commit e93631b): protocol written (before any generation result).
-- 2026-11-28 06:2x UTC (the commit that adds this line; before any generation result): the unlegalised seed is scored on frames 0-3 (not only 0-1), so
+- 2026-11-28 06:18 UTC (commit 390cd6a; before any generation result): the unlegalised seed is scored on frames 0-3 (not only 0-1), so
   E4's "gain kept" uses the same four frames on both sides. Flow-state flag made concrete: a frame whose body drag is
   more than 1.0 mN from the median body drag of that design's frames.
