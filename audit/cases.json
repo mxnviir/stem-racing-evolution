@@ -1,5 +1,5 @@
 {
- "launch": "b2",
+ "launch": "b3",
  "batches": {
   "b1": [
    {
@@ -211,6 +211,80 @@
    {
     "name": "t5_legal_hybrid_final_k3",
     "design": "legal:hybrid_final",
+    "k": 3,
+    "bg_div": 12
+   }
+  ],
+  "b3": [
+   {
+    "name": "t6_hybrid_region_k0",
+    "design": "hybrid_region",
+    "k": 0,
+    "bg_div": 12
+   },
+   {
+    "name": "t6_hybrid_region_k1",
+    "design": "hybrid_region",
+    "k": 1,
+    "bg_div": 12
+   },
+   {
+    "name": "t6_hybrid_region_k2",
+    "design": "hybrid_region",
+    "k": 2,
+    "bg_div": 12
+   },
+   {
+    "name": "t6_hybrid_region_k3",
+    "design": "hybrid_region",
+    "k": 3,
+    "bg_div": 12
+   },
+   {
+    "name": "t6_legal_hybrid_region_k0",
+    "design": "legal:hybrid_region",
+    "k": 0,
+    "bg_div": 12
+   },
+   {
+    "name": "t6_legal_hybrid_region_k1",
+    "design": "legal:hybrid_region",
+    "k": 1,
+    "bg_div": 12
+   },
+   {
+    "name": "t6_legal_hybrid_region_k2",
+    "design": "legal:hybrid_region",
+    "k": 2,
+    "bg_div": 12
+   },
+   {
+    "name": "t6_legal_hybrid_region_k3",
+    "design": "legal:hybrid_region",
+    "k": 3,
+    "bg_div": 12
+   },
+   {
+    "name": "t6_legal_team_rm_k0",
+    "design": "legal:team_rm",
+    "k": 0,
+    "bg_div": 12
+   },
+   {
+    "name": "t6_legal_team_rm_k1",
+    "design": "legal:team_rm",
+    "k": 1,
+    "bg_div": 12
+   },
+   {
+    "name": "t6_legal_team_rm_k2",
+    "design": "legal:team_rm",
+    "k": 2,
+    "bg_div": 12
+   },
+   {
+    "name": "t6_legal_team_rm_k3",
+    "design": "legal:team_rm",
     "k": 3,
     "bg_div": 12
    }

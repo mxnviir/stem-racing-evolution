@@ -57,8 +57,25 @@ def main(adj, case, out):
         folder = car / "car"
     elif design.startswith("folder:"):                       # an already-built car folder (seedhybrid confirm stage)
         folder = Path(design.split(":", 1)[1])
+    elif design == "hybrid_region":                          # the hybrid's in-region moves only (audit/region_only.py)
+        folder = sp / "gate" / "hybrid_region"
+        shutil.copytree(sp / "gate" / "original_rm", folder, ignore=shutil.ignore_patterns("_body_half.stl", "car_half.stl"))
+        r = subprocess.run([py, "-W", "ignore", str(Path(__file__).resolve().parent / "region_only.py"), str(adj),
+                            str(folder / "car_half.stl")], capture_output=True, text=True)
+        (out / "region_only.log").write_text(r.stdout[-3000:] + r.stderr[-3000:])
+        if r.returncode != 0:
+            rec["error"] = "region_only: " + (r.stdout + r.stderr)[-400:]
+            (out / "result.json").write_text(json.dumps(rec, indent=1)); return 1
     elif design.startswith("legal:"):                        # a morphed design put back through the legal builder
-        src = {"hybrid_final": sp / "hybrid" / "final_design" / "car_half.stl"}[design.split(":", 1)[1]]
+        name = design.split(":", 1)[1]
+        if name == "hybrid_region":
+            src = out / "region_only.stl"
+            r = subprocess.run([py, "-W", "ignore", str(Path(__file__).resolve().parent / "region_only.py"), str(adj), str(src)],
+                               capture_output=True, text=True)
+            (out / "region_only.log").write_text(r.stdout[-3000:] + r.stderr[-3000:])
+        else:
+            src = {"hybrid_final": sp / "hybrid" / "final_design" / "car_half.stl",
+                   "team_rm": sp / "gate" / "original_rm" / "car_half.stl"}[name]
         r = subprocess.run([py, "-W", "ignore", str(Path(__file__).resolve().parents[1] / "seedhybrid" / "legalise.py"),
                             str(adj), str(src), str(out / "legal"), design.split(":", 1)[1]], capture_output=True, text=True)
         (out / "legalise.log").write_text(r.stdout[-5000:] + r.stderr[-5000:])
