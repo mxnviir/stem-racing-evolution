@@ -169,3 +169,7 @@ Times are commit times (UTC); the commit history is the authoritative record of 
   returns. d7's result was not known when this was written.
   Outcome (13:03): d7 also stopped at the 2,000-iteration limit; redaf-again run 46147679334 re-runs team and d7
   with 6,000 iterations; window's gradient is kept.
+  Outcome of redaf-again run 46147679334: team converged in 1,963 GMRES iterations, d7 in 1,615 (both inside the
+  6,000 budget; window's from run 46137619748). All three seeds are adjoint-guided in generation 1 (daf and dafh
+  children); ablation arms by the pre-registered rule: team_noadj and d7_noadj enabled, window_noadj skipped (d7 has
+  a gradient). Generation 1 dispatched as run 46156806568.
