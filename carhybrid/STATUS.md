@@ -103,7 +103,13 @@ It waits on the constraints (section 5), the `grad.py` fix, and DAFoam convergin
 - Built: `evo_patches/rear_wing_shape.py`; `make_car.py --wing` takes the shape and strut numbers.
 - Tested locally on L01's body: four shapes plus pylon cases. All gates met; the pylon that would break the span is
   refused; the strict referee agrees.
-- On GitHub: batch `wing1` (16 builds, random shapes and pylon edge cases) is running.
+- On GitHub, batch `wing1` (run 46174764457; 12 random shapes plus 4 pylon cases): **10 of 16 legal**.
+  - 2 broke T9.4.3/T3.5 (65 mm): a large rise (11–13 mm) on a wing set at the lowest height T9.6 allowed. This is the
+    wing model inventing a shape against a rule. Fixed by **W7**: the rise is cut until the top fits, and the height is
+    found again. Under local re-test.
+  - 5 found no support (`rw_supported`): random strut numbers with no landing; includes the pylon at 0.7 of the half
+    span (refused for the strict span as designed, and then no fallback landed). Not a rule break (the car is not
+    built), but each costs a Bayesian-search slot. Open: trace why L5's move forward did not land them.
 - Not yet:
   - re-judging sweep5's 32 cars under the strict span;
   - a second vane;

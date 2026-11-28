@@ -25,6 +25,9 @@ W4 T9.5.1, strict (docs/rules/README.md): a part joined to the rear wing breaks 
    move forward). The half span's floor rises to 25.6 mm (2 x (25.6 - 0.35) = 50.5).
 W5 The engine's own gates measured per section (chord, thickness, top-surface deviation T9.5.4, strict span), not on
    the bounding box (which a bent or swept wing would make meaningless).
+W7 The rise is cut when the wing, placed at the lowest height T9.6 allows, would top T9.4.3's 65 mm (wing1:
+   wg_L08 and wg_L12, rise 11-13 mm, broke T9.4.3/T3.5); the height is then found again. Recorded as
+   info["rise_cut_for_T9.4.3_mm"].
 W6 The parameters: rw_camber (+-0.06) is released (it was fixed at 0); new shape parameters rw_camber_pos, rw_rise,
    rw_rise_p, rw_sweep, rw_sweep_p, rw_tip_chord_ratio, rw_tip_t_ratio; rw_aoa stays fixed at 0.
 L7 (in car/build/legality.py, the referee) T9.5.1 strict: the rear span is the longest stretch of the wing that no
@@ -228,6 +231,82 @@ def _wing(d, x_le, z):'''),
                 sweep_mm=float(v.get("rw_sweep", 0.0)), sweep_p=float(v.get("rw_sweep_p", 1.0)),
                 tip_chord_ratio=float(v.get("rw_tip_chord_ratio", 1.0)), tip_t_ratio=float(v.get("rw_tip_t_ratio", 1.0)),
                 support=_strut(v, "rwsup"))'''),
+    dict(id="W7_rise_within_height", file=RW,
+         old='''    base = se._to_trimesh(_wing(d, x_le, 0.0))
+    pts0, _ = trimesh.sample.sample_surface_even(base, 1500, seed=1)
+    keep = np.ones(len(pts0), bool)
+    for a, b in bands():
+        keep &= ~((pts0[:, 1] >= a) & (pts0[:, 1] <= b))
+    q0 = pts0[keep] if keep.any() else pts0
+    lo0 = float(base.bounds[0, 2])
+
+    def short(zr, exact=False):
+        q = q0 + np.array([0.0, 0.0, zr])
+        if exact:
+            gap = min(float(np.concatenate([trimesh.proximity.closest_point(m, q[i:i + 256])[1]
+                                            for i in range(0, len(q), 256)]).min()) for m in [body] + others)
+        else:
+            gap = float(tree.query(q)[0].min()) - 0.15
+        gap = min(gap, float(q[:, 2].min()))
+        w_ = base.copy(); w_.apply_translation([0.0, 0.0, zr])
+        return cc.CLEAR_AIR + MARGIN_MM - gap, _front_view_top(w_, fwd) + 0.1 - (lo0 + zr)
+    lo, hi = 0.0, cc.REAR_Z_MAX - 1.0
+    if max(short(hi)) > 0:
+        z = hi
+    else:
+        for _ in range(16):
+            mid = 0.5 * (lo + hi)
+            lo, hi = (mid, hi) if max(short(mid)) > 0 else (lo, mid)
+        z = hi
+        for _ in range(3):
+            a, b = short(z, exact=True)
+            if max(a, b) <= 0:
+                break
+            z += max(a, b) + 0.05
+    wing_tm = se._to_trimesh(_wing(d, x_le, z))''',
+         new='''    import wing_strut as _ws0
+    _top_max = cc.REAR_Z_MAX - MARGIN_MM - _ws0.FACE_GROW_MM - 0.05
+    for _rise_try in range(8):                        # evo_patches W7: a rise the height limit (T9.4.3) cannot take
+                                                      # is cut and the height found again (as W2 does for the sweep)
+        base = se._to_trimesh(_wing(d, x_le, 0.0))
+        pts0, _ = trimesh.sample.sample_surface_even(base, 1500, seed=1)
+        keep = np.ones(len(pts0), bool)
+        for a, b in bands():
+            keep &= ~((pts0[:, 1] >= a) & (pts0[:, 1] <= b))
+        q0 = pts0[keep] if keep.any() else pts0
+        lo0 = float(base.bounds[0, 2])
+
+        def short(zr, exact=False):
+            q = q0 + np.array([0.0, 0.0, zr])
+            if exact:
+                gap = min(float(np.concatenate([trimesh.proximity.closest_point(m, q[i:i + 256])[1]
+                                                for i in range(0, len(q), 256)]).min()) for m in [body] + others)
+            else:
+                gap = float(tree.query(q)[0].min()) - 0.15
+            gap = min(gap, float(q[:, 2].min()))
+            w_ = base.copy(); w_.apply_translation([0.0, 0.0, zr])
+            return cc.CLEAR_AIR + MARGIN_MM - gap, _front_view_top(w_, fwd) + 0.1 - (lo0 + zr)
+        lo, hi = 0.0, cc.REAR_Z_MAX - 1.0
+        if max(short(hi)) > 0:
+            z = hi
+        else:
+            for _ in range(16):
+                mid = 0.5 * (lo + hi)
+                lo, hi = (mid, hi) if max(short(mid)) > 0 else (lo, mid)
+            z = hi
+            for _ in range(3):
+                a, b = short(z, exact=True)
+                if max(a, b) <= 0:
+                    break
+                z += max(a, b) + 0.05
+        wing_tm = se._to_trimesh(_wing(d, x_le, z))
+        _over = float(wing_tm.bounds[1, 2]) - _top_max
+        if _over <= 0 or abs(float(d.rise_mm)) < 1e-6:
+            break
+        _r = float(d.rise_mm)
+        d = dataclasses.replace(d, rise_mm=float(np.sign(_r) * max(0.0, abs(_r) - _over - 0.1)))
+        info["rise_cut_for_T9.4.3_mm"] = round(float(info["shape"]["rise_mm"]) - float(d.rise_mm), 3)
+    info["shape"]["rise_mm"] = float(d.rise_mm)'''),
     dict(id="L7a_strict_span_fn", file=REF,
          old='''def _wing_checks(assembly: dict, body_mm, parts_mm: dict) -> dict:''',
          new='''def _rear_span_strict(elements, blockers, tol_mm=0.05):
