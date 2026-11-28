@@ -1,5 +1,8 @@
 # Seeded hybrid lineages
 
+**New here? Read [GUIDE.md](GUIDE.md) first**: what the workflow does, why, a diagram, a worked example, and how to
+operate it. This page is the formal record (settings, pass marks, change log).
+
 The hybrid (adjoint-led) loop of `mxnviir/stem-racing-adjoint` (`research/sidepod_opt/hybrid/`), run from several
 legal seeds at once instead of only the team pod's CAD surface. Why: the drag audit (`audit/RESULTS_b1.md`) found the
 hybrid's gain real on fresh meshes (-10.4 mN vs its start), three times seed evolution's, while the team pod's own
