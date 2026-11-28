@@ -269,7 +269,7 @@ def _h8_stiffness(E, nu, a):
     return K, C, np.mean(Bs, axis=0)
 
 
-def fe_check(solid, fixed, loaded, load_n, h, E=E_ABS_MPA, nu=NU_ABS):
+def fe_check(solid, fixed, loaded, load_n, h, E=E_ABS_MPA, nu=NU_ABS, max_cells=True):
     """Linear elastic voxel FE of a printed solid (mm, N, MPa): cells `fixed` held (glued to the foam or the nose),
     load_n (N, x y z) spread over the cells `loaded` (the wing). Returns (max von Mises MPa, its cell, max |u| mm)."""
     import scipy.sparse as sp
@@ -277,6 +277,11 @@ def fe_check(solid, fixed, loaded, load_n, h, E=E_ABS_MPA, nu=NU_ABS):
     idx = np.argwhere(solid)
     if not len(idx):
         return np.inf, None, np.inf
+    if len(idx) > 40000 and max_cells:                   # memory: the same check on cells twice the size
+        from scipy.ndimage import zoom  # noqa: F401
+        c = lambda m: m[: m.shape[0] // 2 * 2, : m.shape[1] // 2 * 2, : m.shape[2] // 2 * 2].reshape(
+            m.shape[0] // 2, 2, m.shape[1] // 2, 2, m.shape[2] // 2, 2).mean((1, 3, 5)) >= 0.5
+        return fe_check(c(solid), c(fixed) & c(solid), c(loaded) & c(solid), load_n, 2 * h, E, nu, max_cells)
     Ke, C, Bc = _h8_stiffness(E, nu, h)
     off = np.array([[x, y, z] for z in (0, 1) for y in (0, 1) for x in (0, 1)])
     nshape = np.array(solid.shape) + 1
@@ -311,3 +316,17 @@ def fe_check(solid, fixed, loaded, load_n, h, E=E_ABS_MPA, nu=NU_ABS):
                  + 3 * (s[:, 3] ** 2 + s[:, 4] ** 2 + s[:, 5] ** 2))
     k = int(np.argmax(vm))
     return float(vm[k]), idx[k].tolist(), float(np.abs(u).max())
+
+
+# ------------------------------------------------------------------ evolution's topology move
+def grow_path(u, ctrl, a, b, rng, bend_mm=6.0, reach_mm=3.0, value=1.0):
+    """Evolution's growth move: raise the numbers of the control points within reach_mm of a random smooth path
+    (a quadratic Bezier through a mid point displaced up to bend_mm) from a (on the wing) to b (on the body),
+    so a new connected leg appears. Which a, b, bend and where it pays is the CFD's to judge."""
+    u = np.array(u, float, copy=True)
+    mid = 0.5 * (np.asarray(a) + np.asarray(b)) + rng.uniform(-bend_mm, bend_mm, 3)
+    t = np.linspace(0, 1, 60)[:, None]
+    path = (1 - t) ** 2 * np.asarray(a) + 2 * (1 - t) * t * mid + t ** 2 * np.asarray(b)
+    d = np.min(np.linalg.norm(ctrl[:, None, :] - path[None], axis=2), axis=1)
+    u[d <= reach_mm] = np.maximum(u[d <= reach_mm], value)
+    return np.clip(u, -1, 1)

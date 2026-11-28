@@ -108,6 +108,44 @@ The same joint is to replace today's joints:
   opening and the tenon its exact positive;
 - the wheel-support slots, which already have a ball-opened ceiling: to be measured with the same checks.
 
-## 5. Status
+## 5. Making new topology: evolution's growth move
 
-See the commit log and section 6 for what has been run.
+Scattered positive numbers almost never join the wing to the body. Two runs of 40 random growth points each gave no
+support. So evolution gets a connected move, `grow_path`. It raises the numbers along a random smooth path from a
+point on the wing to a random legal landing point on the foam (above the chamber wall, the body's side, a pod). A
+new leg appears, and the CFD then decides whether it stays. Further moves and the adjoint reshape it: thicken, thin,
+sweep, merge two legs, fair it.
+
+## 6. Prototype results
+
+Car v3_L01's rear (rear-wing zone, 0.5 mm grid, 1,388 numbers), `prototype_rear.png`:
+
+| support | support mm3 | pocket mm3 | fillet mm3 | plastic in the chamber keep | stress MPa (limit 20) |
+|---|---|---|---|---|---|
+| today's loft strut as the seed, u = 0 | 2,174 | 0 | 77 | 0 | 4.2 |
+| seed + random u | 2,887 | 1.6 | 72 | 0 | 4.2 |
+| no seed: one leg grown onto the foam above the chamber wall | 1,031 | 6.6 | 154 | 0 | 1.5 |
+| no seed: one leg grown onto the body's side | 1,726 | 94 | 199 | 0 | 1.4 |
+| no seed: two legs | 2,680 | 51 | 361 | 0 | 0.6 |
+
+Volumes are for the half car.
+
+**Open: the 3.175 mm radius is not yet met everywhere.** 0.25-3.25 mm3 of the foam's concave corners, and 4-12 mm3
+round the whole joint, still do not admit the ball on the 0.5 mm grid. Each such corner must be traced to a grid
+artifact or a real gap (where the fillet ends at the zone or keep boundary, or a pocket against the kept chamber
+wall), fixed, and the check re-run on a 0.25 mm grid. Until then the requirement is not claimed as met.
+
+## 7. Still to do (in order)
+
+1. The open radius item above.
+2. Builder integration:
+   - `rear_wing_engine` / `front_wing_engine` gain a support mode "field": today's lofts are the seed, so
+     u = 0 rebuilds today's car plus the fillet and pocket;
+   - the support numbers join the stage-2 numbers;
+   - the mass counts the pocket foam out;
+   - the manufactured foam file = body - pocket;
+   - the referee gets the field gates: connected, stress, keep, radius.
+3. `carhybrid/grad.py`: dD/du_j for the support numbers (the support's surface points; section 1).
+4. Evolution's support moves (grow_path, thicken / thin, merge) in the loop and the layout search.
+5. The nose tenon and the loft feet through `joint()` (section 4).
+6. The front zone (T8.5.1) run as the rear has been.
