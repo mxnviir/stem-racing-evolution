@@ -8,7 +8,8 @@
 #   bash carhybrid/fine_adjoint.sh          (from the repository root, inputs from the environment)
 #
 # Inputs: NAME, LAYOUT (team | genes json | Lxxxx), U ("zero" | json list), K (frame, default 0), BG_DIV (default
-#   12.889), GRID (optional, passed to grad.py if it takes --grid), NP (DAFoam MPI ranks, default all cores),
+#   12.889), GRID (optional, passed to make_car.py and to grad.py if it takes --grid), SMOOTH (grad.py --smooth mm;
+#   default 10 on any grid but 5,2,3,4), NP (DAFoam MPI ranks, default all cores),
 #   SCORE_NP (score's ranks, default 4 = the audit protocol, as every hosted score), GATE_DOMAIN_JSON (meshing frame),
 #   ADJ (adjoint checkout, default adj), EVO (evolution checkout, default evo), CAR (built car, default /tmp/car; built
 #   here if CAR/rec.json is missing), OUT (default out/$NAME), WORK (scratch, default $RUNNER_TEMP/fine_adjoint),
@@ -46,7 +47,7 @@ say "case $NAME: layout ${LAYOUT:0:60} u ${U:0:60} k $K bg_div $BG_DIV grid ${GR
 phase build
 if [ ! -f "$CAR/rec.json" ] || [ ! -d "$CAR/cfd" ]; then
   rm -rf "$CAR"
-  $PY -W ignore carhybrid/make_car.py "$EVO" "$LAYOUT" "$U" "$CAR" > "$OUT/make_car.log" 2>&1 || { tail -c 2500 "$OUT/make_car.log"; say "BUILD FAILED"; }
+  $PY -W ignore carhybrid/make_car.py "$EVO" "$LAYOUT" "$U" "$CAR" ${GRID:+--grid "$GRID"} > "$OUT/make_car.log" 2>&1 || { tail -c 2500 "$OUT/make_car.log"; say "BUILD FAILED"; }
 fi
 [ -d "$CAR/cfd" ] || { say "no car folder $CAR/cfd: stop"; exit 1; }
 
@@ -148,6 +149,9 @@ if [ -z "${STOP:-}" ] && [ -f "$OUT/dafoam_sens.npz" ]; then
   HELP=$($PY carhybrid/grad.py --help 2>&1 | head -c 4000 || true)
   if echo "$HELP" | grep -q -- "--l20" || grep -q -- '"--l20"' carhybrid/grad.py; then GA+=(--l20 "$L20"); fi
   if [ -n "$GRID" ] && { echo "$HELP" | grep -q -- "--grid" || grep -q -- '"--grid"' carhybrid/grad.py; }; then GA+=(--grid "$GRID"); fi
+  # the 720-number grid needs smoothing of the surface sensitivities (grad.py: --smooth 10 mm or more there)
+  if [ -z "${SMOOTH:-}" ] && [ -n "$GRID" ] && [ "$GRID" != "5,2,3,4" ]; then SMOOTH=10; fi
+  if [ -n "${SMOOTH:-}" ] && echo "$HELP" | grep -q -- "--smooth"; then GA+=(--smooth "$SMOOTH"); fi
   say "grad.py ${GA[*]}"
   $PY -W ignore carhybrid/grad.py "$EVO" "$CAR/rec.json" "$OUT/dafoam_sens.npz" "$U" "$OUT/grad.json" "${GA[@]}" 2>&1 | tail -20 \
     || say "grad mapping failed"
