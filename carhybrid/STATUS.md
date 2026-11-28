@@ -31,6 +31,7 @@ run time by `evo_patches/`.
 | L4 | front-wing tip moved out when a strut's flare leaves a segment under 25 mm (T8.6.1) | same |
 | L5 | rear wing built further forward when no support can land ahead of the body's back | same |
 | L6 | nose-joint check fails a sliver face instead of crashing the build | same |
+| rear_wing_shape W1-W6, L7 | rear wing as the regulations allow with zero AoA (bend, sweep, taper, thickness, camber); T9.5.1 strict in engine and referee (own supports break the span) | `evo_patches/rear_wing_shape.py`, `docs/rules/README.md` |
 
 Legality of the 32 test layouts:
 
@@ -94,6 +95,20 @@ It waits on the constraints (section 5), the `grad.py` fix, and DAFoam convergin
     no plastic in the chamber keep.
   - Open: 2–12 mm³ of concave corner still under the ball at the 0.5 mm grid (to trace); wiring into the builder,
     `grad.py` and the loop; the front zone.
+
+## 5b. Rear wing (built 2026-11-28 evening)
+
+- Rules: `docs/rules/` (the owner's 2026-2027 regulations); T9.5.1 read strictly.
+- Built: `evo_patches/rear_wing_shape.py`; `make_car.py --wing` takes the shape and strut numbers.
+- Tested locally on L01's body: four shapes plus pylon cases. All gates met; the pylon that would break the span is
+  refused; the strict referee agrees.
+- On GitHub: batch `wing1` (16 builds, random shapes and pylon edge cases) is running.
+- Not yet:
+  - re-judging sweep5's 32 cars under the strict span;
+  - a second vane;
+  - the wing and strut numbers in the Bayesian search and in our hybrid (gene vector, gradient through
+    DAFoam's surface sensitivity);
+  - the front wing (owner: unchanged for now).
 
 ## 6. Waiting on you
 
