@@ -1,15 +1,37 @@
 {
- "note": "seedhybrid/README.md. Seeds are rebuilt legally from seed evolution's POC campaign: 0 = the team pod (field rebuild, 174.75 mN on the audit protocol), 7 = d7 (171.44), 3 = the windowed seed (173.50).",
+ "note": "seedhybrid/README.md. Seeds are rebuilt legally from seed evolution's POC campaign: 0 = the team pod (field rebuild, 174.75 mN on the audit protocol), 7 = d7 (171.44), 3 = the windowed seed (173.50). ESI removed 2026-11-28 before generation 1 (owner): it failed its validation and its map lengthened every generation's slowest job.",
  "lineages": [
-  {"name": "team", "seed": {"kind": "seedevo", "campaign": "seedevo/campaign_poc", "id": 0}},
-  {"name": "d7", "seed": {"kind": "seedevo", "campaign": "seedevo/campaign_poc", "id": 7}},
-  {"name": "window", "seed": {"kind": "seedevo", "campaign": "seedevo/campaign_poc", "id": 3}}
+  {
+   "name": "team",
+   "seed": {
+    "kind": "seedevo",
+    "campaign": "seedevo/campaign_poc",
+    "id": 0
+   }
+  },
+  {
+   "name": "d7",
+   "seed": {
+    "kind": "seedevo",
+    "campaign": "seedevo/campaign_poc",
+    "id": 7
+   }
+  },
+  {
+   "name": "window",
+   "seed": {
+    "kind": "seedevo",
+    "campaign": "seedevo/campaign_poc",
+    "id": 3
+   }
+  }
  ],
  "amp0": 1.0,
  "amp_min": 0.125,
  "floor_mN": 0.15,
  "n_rnd": 3,
  "max_gen": 6,
- "esi_after": 1000,
- "auto": true
+ "esi_after": 0,
+ "auto": true,
+ "use_esi": false
 }

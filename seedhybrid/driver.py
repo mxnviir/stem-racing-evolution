@@ -171,7 +171,7 @@ def advance(results, run_id, adj):
             kids["daf"] = (f"dafnpz:{Ls['dafoam_latest']}", amp)
             if k1 == 1:
                 kids["dafh"] = (f"dafnpz:{Ls['dafoam_latest']}", amp / 2)
-        if Ls["esi_latest"]:
+        if cfg.get("use_esi") and Ls["esi_latest"]:
             kids["esi"] = (f"esinpz:{Ls['esi_latest']}", amp)
         gdir = LIN / name / f"g{k1}"
         for arm, tag in (("guided", "comb"), ("es", "es")):
@@ -186,7 +186,7 @@ def advance(results, run_id, adj):
         for n, (f, a) in kids.items():
             c = {"type": "child", "lineage": name, "name": f"{name}_g{k1}_{n}", "chainparent": Ls["parent"],
                  "field": f, "amp": f"{a:g}"}
-            if n == "zero" and cfg.get("esi_after"):
+            if n == "zero" and cfg.get("use_esi") and cfg.get("esi_after"):
                 c["esi_after"] = str(cfg["esi_after"])
             cases.append(c)
         if Ls.get("dafoam_at") != Ls["parent"]:          # a fresh gradient only where the parent has moved since the last try

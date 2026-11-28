@@ -28,9 +28,8 @@ better and different shapes.
    - *dafoam*: coarse (105 k) steady state of the seed and its DAFoam discrete-adjoint drag gradient.
 2. **generation k** (every active lineage, in parallel): children = parent + ONE move each, chained explicit morph of
    the lineage's base mesh, warm start, 1000 steady iterations, drag = mean of the last 404:
-   - `zero` (parent re-run; it also computes an ESI frozen-turbulence map at the parent for k+1),
+   - `zero` (parent re-run),
    - `daf` along the newest DAFoam gradient (gen 1 also at half amplitude),
-   - `esi` along the newest ESI map,
    - `comb` / `es`: steepest descent in the span of generation k-1's measured moves (all / random only),
    - 3 new random smooth fields (5 if a seed has no DAFoam gradient),
    - plus a fresh DAFoam gradient wherever the parent moved.
@@ -44,6 +43,10 @@ Seeds (`config.json`): `team` = the team pod's legal field rebuild (174.75 mN on
 
 - **S1 (setup)**: a lineage runs only if its base state exists; `steady_pass` and whether DAFoam converged at the seed
   are recorded per seed (the adjoint's convergence on shapes unlike the team pod is itself a result: 1 of 6 before).
+- **Change log (before any generation result)**: 2026-11-28, owner: ESI removed (`use_esi: false`). The original
+  loop used an ESI continuous-adjoint map as a second guide; it failed its own validation (wrong signs at 2 of 3
+  wall-resolved bumps, 7/11 signs vs DAFoam's 10/11 in hybrid round 1) and computing it after each parent re-run
+  added 1-2 h to every generation's slowest job. Guides are now DAFoam only, plus random and recombined moves.
 - **G (each generation)**: the acceptance rule above. Steady-model numbers on the morphed mesh are the loop's
   internal yardstick only, never a claim.
 - **F (the claim, after the lineages stop; confirm stage)**: each lineage's final design is legalised through the same
