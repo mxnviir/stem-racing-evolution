@@ -172,7 +172,8 @@ jobs:
           DAF_FUNCS: "${{ matrix.case.funcs || 'D,L' }}"
           DAF_PRIMAL_ITERS: "${{ matrix.case.daf_primal_iters || 300 }}"
           DAF_GMRES_TOL: "${{ matrix.case.gmres_tol || '1e-6' }}"
-          DAF_GMRES_ITERS: "${{ matrix.case.gmres_iters || 2000 }}"
+          DAF_GMRES_ITERS: "${{ matrix.case.gmres_iters || 6000 }}"   # coarse runs stopped at 2000 still falling (run 46137619748)
+          DAF_GMRES_RESTART: "${{ matrix.case.gmres_restart || 200 }}"
           DAF_PC_FILL: "${{ matrix.case.pc_fill || 0 }}"
           DAF_PC_LEVEL: "${{ matrix.case.pc_level || 1 }}"
         run: |

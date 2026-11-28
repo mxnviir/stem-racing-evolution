@@ -14,7 +14,8 @@
 #   ADJ (adjoint checkout, default adj), EVO (evolution checkout, default evo), CAR (built car, default /tmp/car; built
 #   here if CAR/rec.json is missing), OUT (default out/$NAME), WORK (scratch, default $RUNNER_TEMP/fine_adjoint),
 #   DAF_PRIMAL_ONLY=1 (DAFoam primal only, no adjoint), DAF_FUNCS (default D,L), DAF_PRIMAL_ITERS (default 300),
-#   DAF_GMRES_TOL / DAF_GMRES_ITERS / DAF_GMRES_RESTART / DAF_PC_FILL / DAF_PC_LEVEL (adjoint settings).
+#   DAF_GMRES_TOL / DAF_GMRES_ITERS / DAF_GMRES_RESTART / DAF_PC_FILL / DAF_PC_LEVEL (adjoint settings; defaults 1e-6,
+#   6000, 200, 0, 1: coarse 105 k-cell solves needed 1,290 to > 2,000 iterations, seedhybrid run 46137619748).
 # Outputs in OUT: result.json (score), steady.json (F2), dafoam_sens.npz/.json (or dafoam_primal.json), dafoam.log
 #   (DAFoam's output, condensed), resources.json (cells, ranks, peak memory, wall times), grad.json, fine_adjoint.json
 #   (the gates F1 F2 F3 and the key numbers in one place).
@@ -115,7 +116,7 @@ phase dafoam
 if [ -z "${STOP:-}" ]; then
   say "DAFoam: $NP ranks, functions ${DAF_FUNCS:-D,L}, primal only ${DAF_PRIMAL_ONLY:-0}"
   env DAF_NP="$NP" DAF_FUNCS="${DAF_FUNCS:-D,L}" DAF_ADJ="${DAF_ADJ:-Krylov}" DAF_PC_FILL="${DAF_PC_FILL:-0}" \
-      DAF_PC_LEVEL="${DAF_PC_LEVEL:-1}" DAF_GMRES_ITERS="${DAF_GMRES_ITERS:-2000}" DAF_GMRES_RESTART="${DAF_GMRES_RESTART:-200}" \
+      DAF_PC_LEVEL="${DAF_PC_LEVEL:-1}" DAF_GMRES_ITERS="${DAF_GMRES_ITERS:-6000}" DAF_GMRES_RESTART="${DAF_GMRES_RESTART:-200}" \
       DAF_GMRES_TOL="${DAF_GMRES_TOL:-1e-6}" DAF_PRIMAL_ONLY="${DAF_PRIMAL_ONLY:-}" \
       "$ADJ/research/sidepod_opt/dafoam/run_docker.sh" "$WORK/daf" "$NP" "$IMAGE" > "$WORK/dafoam.out" 2>&1
   DRC=$?
@@ -143,21 +144,33 @@ log = (w / "dafoam.out").read_text(errors="replace") if (w / "dafoam.out").exist
 # one block per adjoint solve: "Main iteration N KSP Residual norm R t s." lines closed by "**Completed**! ..."
 solves, cur = [], []
 for line in log.splitlines():
-    m = re.match(r"\s*Main iteration\s+(\d+)\s+KSP Residual norm\s+([0-9.eE+-]+)", line)
+    m = re.match(r"\s*Main iteration\s+(\d+)\s+KSP Residual norm\s+([0-9.eE+-]+)\s+([0-9.eE+-]+)?", line)
     if m:
-        cur.append((int(m.group(1)), float(m.group(2))))
+        cur.append((int(m.group(1)), float(m.group(2)), float(m.group(3)) if m.group(3) else None))
     m = re.search(r"\*\*Completed\*\*! Total iterations: (\d+)\. PetscConvergedReason: (-?\d+)", line)
     if m:
         solves.append({"iterations": int(m.group(1)), "reason": int(m.group(2)), "converged": int(m.group(2)) > 0,
                        "residual_first": cur[0][1] if cur else None, "residual_last": cur[-1][1] if cur else None,
-                       "relative_drop": (cur[-1][1] / cur[0][1]) if cur and cur[0][1] else None})
+                       "relative_drop": (cur[-1][1] / cur[0][1]) if cur and cur[0][1] else None,
+                       "history": [[i, r] for i, r, _ in cur],
+                       "seconds_per_iteration": ((cur[-1][2] - cur[0][2]) / (cur[-1][0] - cur[0][0]))
+                       if len(cur) > 1 and cur[-1][2] is not None and cur[0][2] is not None and cur[-1][0] > cur[0][0] else None})
         cur = []
+if cur:                                                  # a solve still running when DAFoam died or was killed
+    solves.append({"iterations": cur[-1][0], "reason": None, "converged": False, "unfinished": True,
+                   "residual_first": cur[0][1], "residual_last": cur[-1][1],
+                   "relative_drop": cur[-1][1] / cur[0][1] if cur[0][1] else None, "history": [[i, r] for i, r, _ in cur]})
 gl = {f: s for f, s in zip(funcs, solves)}
+if solves:
+    (o / "dafoam_gmres.json").write_text(json.dumps({"functions": funcs, "solves": gl}, indent=1))
 sj = o / "dafoam_sens.json"
 if sj.exists():
-    d = json.loads(sj.read_text()); d["gmres_log"] = gl; sj.write_text(json.dumps(d, indent=1))
+    d = json.loads(sj.read_text())
+    d["gmres_log"] = {f: {k: v for k, v in s.items() if k != "history"} for f, s in gl.items()}
+    sj.write_text(json.dumps(d, indent=1))
 m = re.search(r"Global Adjoint States:\s*(\d+)", log)
-res = {"adjoint_states": int(m.group(1)) if m else None, "gmres_log": gl}
+res = {"adjoint_states": int(m.group(1)) if m else None,
+       "gmres_log": {f: {k: v for k, v in s.items() if k != "history"} for f, s in gl.items()}}
 json.dump(res, open(w / "daf_log.json", "w"))
 PY
 
@@ -202,6 +215,10 @@ res = {"cells": cells, "ranks": npr, "score_ranks": snp, "adjoint_states": lg.ge
        "baseline_GB": round(mem[0][1] / 1024, 2) if mem else None,
        "kB_per_cell_dafoam_peak": round((peak(*spans["dafoam"]) or 0) * 1048576 / cells, 1) if cells and "dafoam" in spans and peak(*spans["dafoam"]) else None,
        "estimate_GB_at_150kB_per_cell": round(cells * 150e3 / 1e9, 1) if cells else None,
+       # GMRES keeps restart+1 Krylov vectors of the adjoint state (DAF_GMRES_RESTART): part of the adjoint's peak
+       "gmres_restart": int(os.environ.get("DAF_GMRES_RESTART") or 200),
+       "estimate_GB_krylov_basis": round((int(os.environ.get("DAF_GMRES_RESTART") or 200) + 1) * lg["adjoint_states"] * 8 / 1e9, 2)
+       if lg.get("adjoint_states") else None,
        "wall_s": {n: (b - a if b < 10**12 else None) for n, (a, b) in spans.items() if n != "end"},
        "score_wall_s": r.get("wall_s"), "dafoam_primal_s": (sens or prim).get("primal_s"), "dafoam_adjoint_s": sens.get("adjoint_s"),
        "dafoam_adjoint_s_per_function": sens.get("adjoint_s_per_function"), "job_wall_s": int(ph[-1][1]) - t0 if ph else None,
