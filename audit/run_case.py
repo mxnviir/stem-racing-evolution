@@ -56,6 +56,14 @@ def keep_state(st, dst):
         raise RuntimeError(f"no time folder in {st}")
     last = max(times, key=lambda p: float(p.name))
     shutil.move(str(st / "constant" / "polyMesh"), str(dst / "constant" / "polyMesh"))
+    # OpenFOAM reads each mesh file from the newest instance at or before the time: snappyHexMesh's layer stage can
+    # leave its points in 0/polyMesh (constant/polyMesh/points is then the pre-layer mesh's), a moved mesh in <t>/polyMesh
+    over = []
+    for tdir in sorted([p for p in st.iterdir() if p.is_dir() and re.fullmatch(r"\d+(\.\d+)?", p.name)
+                        and float(p.name) <= float(last.name) and (p / "polyMesh").is_dir()], key=lambda p: float(p.name)):
+        for f in (tdir / "polyMesh").iterdir():
+            if f.is_file():
+                shutil.copy(f, dst / "constant" / "polyMesh" / f.name); over.append(f"{tdir.name}/polyMesh/{f.name}")
     for f in (st / "constant").glob("*Properties"):
         shutil.copy(f, dst / "constant" / f.name)
     shutil.move(str(st / "system"), str(dst / "system"))
@@ -64,7 +72,19 @@ def keep_state(st, dst):
         for g in (last / f, last / (f + ".gz")):
             if g.exists():
                 shutil.move(str(g), str(dst / last.name / g.name))
-    return {"path": str(dst), "time": last.name, "fields": sorted(p.name for p in (dst / last.name).iterdir())}
+    rec = {"path": str(dst), "time": last.name, "fields": sorted(p.name for p in (dst / last.name).iterdir()),
+           "mesh_files_from_time_dirs": over}
+    # consistency: owner's header note carries nPoints; the points file's count must match it
+    pm = dst / "constant" / "polyMesh"
+    note = re.search(rb"nPoints:\s*(\d+)", (pm / "owner").read_bytes()[:2000]) if (pm / "owner").exists() else None
+    head = (pm / "points").read_bytes()[:3000] if (pm / "points").exists() else b""
+    m = re.search(rb"\}\s*(?://[^\n]*\n\s*)*(\d+)\s*\(", head)
+    rec["n_points_owner"] = int(note.group(1)) if note else None
+    rec["n_points_file"] = int(m.group(1)) if m else None
+    if rec["n_points_owner"] and rec["n_points_file"] and rec["n_points_owner"] != rec["n_points_file"]:
+        raise RuntimeError(f"kept mesh inconsistent: owner says {rec['n_points_owner']} points, points has "
+                           f"{rec['n_points_file']} (mesh files in time dirs: {over})")
+    return rec
 
 
 def main(adj, case, out):
