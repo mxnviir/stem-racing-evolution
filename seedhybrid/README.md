@@ -1,6 +1,7 @@
 # Seeded hybrid lineages
 
-**New here? Read [GUIDE.md](GUIDE.md) first**: what the workflow does, why, a diagram, a worked example, and how to
+**New here? Read [GUIDE.md](GUIDE.md) first**; the experiments and their pass marks are in
+[PROTOCOL.md](PROTOCOL.md): what the workflow does, why, a diagram, a worked example, and how to
 operate it. This page is the formal record (settings, pass marks, change log).
 
 The hybrid (adjoint-led) loop of `mxnviir/stem-racing-adjoint` (`research/sidepod_opt/hybrid/`), run from several
@@ -50,6 +51,9 @@ Seeds (`config.json`): `team` = the team pod's legal field rebuild (174.75 mN on
   loop used an ESI continuous-adjoint map as a second guide; it failed its own validation (wrong signs at 2 of 3
   wall-resolved bumps, 7/11 signs vs DAFoam's 10/11 in hybrid round 1) and computing it after each parent re-run
   added 1-2 h to every generation's slowest job. Guides are now DAFoam only, plus random and recombined moves.
+- **Change log**: 2026-11-28 06:40 UTC, before any generation result: ablation arms added (PROTOCOL.md E2):
+  `team_noadj` (always), `d7_noadj` (if DAFoam converged at d7), `window_noadj` (if not, and it converged at window).
+  Every arm now gets the same number of children per generation (6 in generation 1, 7 after), random moves filling up.
 - **G (each generation)**: the acceptance rule above. Steady-model numbers on the morphed mesh are the loop's
   internal yardstick only, never a claim.
 - **F (the claim, after the lineages stop; confirm stage)**: each lineage's final design is legalised through the same

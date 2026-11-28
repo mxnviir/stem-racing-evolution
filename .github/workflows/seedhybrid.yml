@@ -110,7 +110,7 @@ jobs:
       - name: lineage geometry and data
         run: |
           python seedhybrid/patch_adj.py adj
-          mkdir -p /tmp/geom && gh run download ${{ needs.init.outputs.setup_run }} -R ${{ github.repository }} -n geom-${{ matrix.case.lineage }} -D /tmp/geom
+          mkdir -p /tmp/geom && gh run download ${{ needs.init.outputs.setup_run }} -R ${{ github.repository }} -n geom-${{ matrix.case.art || matrix.case.lineage }} -D /tmp/geom
           tar xzf /tmp/geom/geom.tgz -C $SP
           mkdir -p $SP/seedhybrid_lineages && cp -r seedhybrid/lineages/. $SP/seedhybrid_lineages/ 2>/dev/null || true
           mkdir -p out/${{ matrix.case.name }}
@@ -158,7 +158,7 @@ jobs:
         run: |
           source /usr/lib/openfoam/openfoam2412/etc/bashrc || true
           O=$GITHUB_WORKSPACE/out/$NAME
-          gh run download ${{ needs.init.outputs.setup_run }} -R ${{ github.repository }} -n base-${{ matrix.case.lineage }} -D /tmp/base
+          gh run download ${{ needs.init.outputs.setup_run }} -R ${{ github.repository }} -n base-${{ matrix.case.art || matrix.case.lineage }} -D /tmp/base
           tar xzf /tmp/base/base.tgz -C . && rm -rf /tmp/base
           D=gate/refA_base
           for t in $(ls "$D" | grep -E '^[0-9]+$' | sort -n -r); do

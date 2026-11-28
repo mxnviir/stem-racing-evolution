@@ -39,17 +39,26 @@ def init():
     cfg = load(CFG)
     S = {"stage": "setup", "gen": 0, "setup_run": None, "lineages": {}}
     for L in cfg["lineages"]:
-        S["lineages"][L["name"]] = {"seed": L["seed"], "status": "setup", "parent": "", "amp": cfg["amp0"],
-                                    "dafoam_latest": None, "dafoam_at": "", "esi_latest": None, "next_seed": 1000,
-                                    "generations": {}, "base": None}
+        S["lineages"][L["name"]] = {**new_lineage(cfg, L), "status": "setup"}
         (LIN / L["name"]).mkdir(parents=True, exist_ok=True)
     save(ST, S)
     cases = []
     for L in cfg["lineages"]:
+        if L.get("base_of"):
+            continue
         cases.append({"type": "base", "lineage": L["name"], "name": f"{L['name']}_base"})
         cases.append({"type": "dafoam", "lineage": L["name"], "name": f"{L['name']}_daf_g0", "parent": "", "tag": "g0"})
     save(REQ, {"stage": "setup", "gen": 0, "setup_run": None, "lineages": cfg["lineages"], "cases": cases})
     print(f"setup request: {len(cases)} cases")
+
+
+def new_lineage(cfg, L):
+    """A lineage's state. base_of: shares that lineage's seed, geometry, base mesh and base state (an ablation arm);
+    guides: false = no adjoint (random and recombined moves only)."""
+    return {"seed": L.get("seed"), "base_of": L.get("base_of"), "art": L.get("base_of") or L["name"],
+            "guides": L.get("guides", True), "enable_if": L.get("enable_if"), "status": "pending", "parent": "",
+            "amp": cfg["amp0"], "dafoam_latest": None, "dafoam_at": "", "esi_latest": None, "next_seed": 1000,
+            "generations": {}, "base": None}
 
 
 def child_result(R, name):
@@ -81,11 +90,18 @@ def advance(results, run_id, adj):
     results = Path(results)
     stage, k = req["stage"], int(req["gen"])
     log = {"stage": stage, "gen": k, "run": run_id, "lineages": {}}
+    for L in cfg["lineages"]:                                 # lineages added to the config after init (ablation arms)
+        if L["name"] not in S["lineages"]:
+            S["lineages"][L["name"]] = new_lineage(cfg, L)
+        S["lineages"][L["name"]].setdefault("art", L.get("base_of") or L["name"])
+        S["lineages"][L["name"]].setdefault("guides", L.get("guides", True))
     for name in S["lineages"]:
         (LIN / name).mkdir(parents=True, exist_ok=True)     # empty folders are not in git
     if stage == "setup":
         S["setup_run"] = int(run_id)
         for name, Ls in S["lineages"].items():
+            if Ls.get("base_of"):
+                continue
             b = load(results / f"{name}_base" / "base.json")
             g = load(results / f"{name}_geom" / "geom.json")
             daf = results / f"{name}_daf_g0" / "dafoam_sens.npz"
@@ -97,6 +113,17 @@ def advance(results, run_id, adj):
             Ls["status"] = "active" if ok else "failed_setup"
             log["lineages"][name] = {"base_ok": ok, "steady_pass": (b or {}).get("steady_pass"),
                                      "base_D20_mN": (b or {}).get("D20_half_N", 0) * 1e3, "dafoam": daf.exists()}
+        for name, Ls in S["lineages"].items():          # ablation arms: enabled by the rule in PROTOCOL.md E2
+            if not Ls.get("base_of"):
+                continue
+            B = S["lineages"][Ls["base_of"]]
+            Ls["base"], Ls["geom"] = B.get("base"), B.get("geom")
+            cond = Ls.get("enable_if") or {}
+            has = lambda n: bool(S["lineages"].get(n, {}).get("dafoam_latest"))
+            ok = (B["status"] == "active" and (not cond.get("dafoam") or has(cond["dafoam"]))
+                  and (not cond.get("no_dafoam") or not has(cond["no_dafoam"])))
+            Ls["status"] = "active" if ok else "skipped_by_rule"
+            log["lineages"][name] = {"base_of": Ls["base_of"], "enabled": ok, "rule": cond}
     else:
         for name, Ls in S["lineages"].items():
             gen = Ls["generations"].get(str(k))
@@ -144,7 +171,7 @@ def advance(results, run_id, adj):
             if len(meas) >= 2:
                 # combine.py writes under the adjoint checkout (it resolves "vec:" paths there): run it on a copy of
                 # this repo's lineages folder placed at <checkout>/research/sidepod_opt/seedhybrid_lineages, copy back
-                sp = with_geom(adj, name, results / "_setup")
+                sp = with_geom(adj, Ls["art"], results / "_setup")
                 shutil.copytree(LIN, sp / REL, dirs_exist_ok=True)
                 rel = f"{REL}/{name}/g{k + 1}"
                 r = subprocess.run([sys.executable, "-W", "ignore", "hybrid/combine.py", f"{rel}/measured.json", rel],
@@ -167,7 +194,7 @@ def advance(results, run_id, adj):
             continue
         amp = Ls["amp"]
         kids = {"zero": ("zero", 0.0)}
-        if Ls["dafoam_latest"]:
+        if Ls["guides"] and Ls["dafoam_latest"]:
             kids["daf"] = (f"dafnpz:{Ls['dafoam_latest']}", amp)
             if k1 == 1:
                 kids["dafh"] = (f"dafnpz:{Ls['dafoam_latest']}", amp / 2)
@@ -177,20 +204,23 @@ def advance(results, run_id, adj):
         for arm, tag in (("guided", "comb"), ("es", "es")):
             if (gdir / f"{arm}.npy").exists():
                 kids[tag] = (f"vec:{REL}/{name}/g{k1}/{arm}.npy", amp)
-        n_rnd = cfg["n_rnd"] + (2 if k1 == 1 and not Ls["dafoam_latest"] else 0)
+        # equal children per generation in every arm (PROTOCOL.md E2): random moves fill up to the target
+        target = cfg["children_gen1"] if k1 == 1 else cfg["children_after"]
+        n_rnd = max(cfg["n_rnd"], target - len(kids))
         s0 = Ls["next_seed"]
         kids.update({f"rnd{s}": (f"rnd{s}", amp) for s in range(s0, s0 + n_rnd)})
         Ls["next_seed"] = s0 + n_rnd
         Ls["generations"][str(k1)] = {"parent": Ls["parent"], "amp": amp,
                                       "children": {f"{name}_g{k1}_{n}": [f, a] for n, (f, a) in kids.items() if n != "zero"}}
         for n, (f, a) in kids.items():
-            c = {"type": "child", "lineage": name, "name": f"{name}_g{k1}_{n}", "chainparent": Ls["parent"],
+            c = {"type": "child", "lineage": name, "art": Ls["art"], "name": f"{name}_g{k1}_{n}", "chainparent": Ls["parent"],
                  "field": f, "amp": f"{a:g}"}
             if n == "zero" and cfg.get("use_esi") and cfg.get("esi_after"):
                 c["esi_after"] = str(cfg["esi_after"])
             cases.append(c)
-        if Ls.get("dafoam_at") != Ls["parent"]:          # a fresh gradient only where the parent has moved since the last try
-            cases.append({"type": "dafoam", "lineage": name, "name": f"{name}_daf_g{k1}", "parent": Ls["parent"], "tag": f"g{k1}"})
+        if Ls["guides"] and Ls.get("dafoam_at") != Ls["parent"]:   # a fresh gradient only where the parent has moved
+            cases.append({"type": "dafoam", "lineage": name, "art": Ls["art"], "name": f"{name}_daf_g{k1}",
+                          "parent": Ls["parent"], "tag": f"g{k1}"})
             Ls["dafoam_at"] = Ls["parent"]
     S["stage"], S["gen"] = ("gen", k1) if cases else ("stopped", k)
     save(ST, S)

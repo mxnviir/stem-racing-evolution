@@ -28,6 +28,9 @@ it can find out whether starting from a better or different pod ends better.
   piece, cargo inside, ground clearance) by seed evolution's builder. Seeds here: `team` (the team pod, legally
   rebuilt), `d7` (seed evolution's best), `window` (a pod with through-openings).
 - **Lineage**: one seed and everything descended from it. Lineages never mix.
+- **Arm**: guided lineages use the adjoint; *no-adjoint* lineages (`team_noadj`, and one more chosen by a rule in
+  `PROTOCOL.md` E2) share a guided lineage's seed, mesh and starting flow but never use the adjoint. Comparing the two
+  is how the campaign tests whether the adjoint is the reason for the gain.
 - **Parent / child / generation**: the parent is the lineage's current best shape. A generation makes several
   children, each = the parent plus **one** move. If a child wins, it becomes the next parent.
 - **Move**: a smooth push of the surface along its normals, at most `amp` millimetres anywhere (the *amplitude*). Every
