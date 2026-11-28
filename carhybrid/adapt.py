@@ -27,11 +27,20 @@ def main(src, out):
     M = mf.Manifold(mf.Mesh(vert_properties=np.asarray(m.vertices, np.float32), tri_verts=np.asarray(m.faces, np.uint32)))
     half = M ^ mf.Manifold.cube([2e3, 1e3, 1e3]).translate([-1e3, 0.0, -5e2])
     hm = half.to_mesh()
-    h = trimesh.Trimesh(np.asarray(hm.vert_properties)[:, :3] * 1e-3, np.asarray(hm.tri_verts), process=True)
+    # manifold's output is closed and 2-manifold by construction: keep its exact topology (process=False). trimesh's
+    # own vertex merge (process=True, tolerance 1e-8 in metres, near float32 spacing at 0.27 m) could fuse distinct
+    # vertices and open edges: P1 run 46132124252 lost three legal cars to "half_watertight": false that way.
+    V, F = np.asarray(hm.vert_properties)[:, :3].astype(np.float64), np.asarray(hm.tri_verts)
+    h = trimesh.Trimesh(V * 1e-3, F, process=False)
+    how = "manifold topology"
+    if not h.is_watertight:                                        # fallback: merge + repair, recorded
+        h = trimesh.Trimesh(V * 1e-3, F, process=True)
+        trimesh.repair.fill_holes(h); trimesh.repair.fix_normals(h)
+        how = "trimesh merge + fill_holes (manifold topology was not watertight)"
     if h.volume < 0:
         h.invert()
     rep = {"full_volume_mm3": float(m.volume), "half_volume_mm3": float(h.volume * 1e9),
-           "half_watertight": bool(h.is_watertight), "pieces": int(len(half.decompose()))}
+           "half_watertight": bool(h.is_watertight), "pieces": int(len(half.decompose())), "half_mesh": how}
     rep["half_ratio"] = rep["half_volume_mm3"] / rep["full_volume_mm3"]
     (out / "car_half.stl").write_text(_ascii(h, "car"))           # ASCII, solid named "car" (Part 2 reads patch names)
     wheels = json.loads((src / "wheels.json").read_text())

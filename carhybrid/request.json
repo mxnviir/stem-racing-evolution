@@ -848,11 +848,35 @@
     "layout": "team",
     "u": "[-0.1888, -0.4085, -0.1183, 0.513, 0.4549, 0.3413, 0.5466, -0.0158, 0.8022, 0.5466, -0.7433, 0.5077, -0.09, -0.9164, -0.3312, -0.0965, 0.615, 0.0335, -0.4237, -0.1563, 0.0516, -0.3941, -0.2755, -0.0163, 0.8365, -0.6262, -0.1058, 0.2881, -0.2416, -0.2058, 1.1154, -0.5353, 0.3558, -0.0404, -0.5705, -0.142, -0.3245, 0.0337, -0.4907, 0.4473, -0.5567, 0.2629, 0.1779, -0.2149, 0.3046]"
    }
+  ],
+  "p1r": [
+   {
+    "name": "p1_S1_k0",
+    "type": "score",
+    "layout": "team",
+    "k": 0,
+    "u": "[-0.028938, -0.071414, 0.007063, -0.064056, -0.089659, 0.078417, -0.026274, 0.189484, -0.021117, 0.052376, 0.061648, -0.003697, -0.080051, -0.001079, -0.032412, -0.055372, 0.001791, 0.015665, -0.06356, -0.086216, 0.053979, -0.040875, -0.089868, 0.014022, 0.174693, 0.089136, -0.016403, -0.108059, -0.001076, -0.039575, 0.132633, 0.087035, -0.128941, -0.033572, 0.145711, 0.060413, -0.00794, 0.029569, -0.020403, 0.084471, -0.074479, -0.080168, 0.036736, -0.010599, 0.072917]"
+   },
+   {
+    "name": "p1_S1_k1",
+    "type": "score",
+    "layout": "team",
+    "k": 1,
+    "u": "[-0.028938, -0.071414, 0.007063, -0.064056, -0.089659, 0.078417, -0.026274, 0.189484, -0.021117, 0.052376, 0.061648, -0.003697, -0.080051, -0.001079, -0.032412, -0.055372, 0.001791, 0.015665, -0.06356, -0.086216, 0.053979, -0.040875, -0.089868, 0.014022, 0.174693, 0.089136, -0.016403, -0.108059, -0.001076, -0.039575, 0.132633, 0.087035, -0.128941, -0.033572, 0.145711, 0.060413, -0.00794, 0.029569, -0.020403, 0.084471, -0.074479, -0.080168, 0.036736, -0.010599, 0.072917]"
+   },
+   {
+    "name": "p1_S2_k0",
+    "type": "score",
+    "layout": "team",
+    "k": 0,
+    "u": "[-0.072841, -0.115137, -0.029926, 0.022838, 0.03743, -0.080965, 0.01793, -0.009556, 0.102782, -0.070916, 0.000281, -0.237034, 0.030038, 0.122723, -0.033546, 0.084288, 0.018188, -0.007788, -0.008282, 0.066998, 0.109009, 0.19807, -0.087784, -0.094385, 0.015557, 0.013763, -0.011926, -0.08844, 0.053085, 0.041327, 0.107619, -0.064384, -0.024596, 0.066848, 0.02724, 0.072135, 0.044839, -0.046629, -0.018099, -0.049374, 0.001793, -0.054173, 0.023963, 0.029533, -0.044715]"
+   }
   ]
  },
  "_sweep1_note": "readiness sweep, build only (no CFD): 24 scrambled-Sobol layouts over the 12 stage-1 genes (seed 20261128) and 8 stage-2 perturbations of the team layout (45 free-form numbers ~ N(0, 0.5), clipped +-2, as CMA's sigma 0.5)",
  "_sweep1r_note": "sweep1 relaunched before any of it ran (it was still queued), with a render and a shape audit of every car",
  "_sweep2_note": "the same 32 cars as sweep1/sweep1r, on the builder with evo_patches (mass: P1-P3; soft_cap: no flat deck, no sharp shelf, no step at the axles)",
  "_p1_note": "P1 gradient check, pre-registered in carhybrid/P1.md before any result: team layout, directions from the P0 gradient (carhybrid/results/p0/p0_team_dafoam/grad.json) by carhybrid/p1_cases.py, on the builder with every evo_patches fix (mass bookkeeping, soft cap v2, nose material); plus a DAFoam gradient on that base car.",
- "_sweep3_note": "sweep2's 32 cars rebuilt with soft cap v2 (the halo's visibility region compressed, not truncated) and the multi-material nose (evo_patches/nose_material.py); renders and shape audits."
+ "_sweep3_note": "sweep2's 32 cars rebuilt with soft cap v2 (the halo's visibility region compressed, not truncated) and the multi-material nose (evo_patches/nose_material.py); renders and shape audits.",
+ "_p1r_note": "P1's three cases whose legal cars were lost to the adapter (half car not watertight after trimesh's vertex merge; carhybrid/adapt.py now keeps manifold's topology); same u, frames and names, results in results/p1r."
 }
