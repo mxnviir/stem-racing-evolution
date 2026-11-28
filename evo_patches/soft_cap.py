@@ -17,6 +17,8 @@ seed's spine (rising to 30-33 mm ahead of the halo) into a flat deck at the rim 
 flat top per car in sweep2. field() takes halo = freeform.halo_span(Ref A, d_halo); param_body.build passes it, and
 carhybrid/grad.py passes the same, so the gradient sees the field the builder builds. The weight is zero at Ref A and
 ahead of it, so the nose (and evo_patches/nose_material.py's foam/print split there) is unchanged.
+v2.1 (sweep3): the halo-region weight fades out over the 5 mm BEFORE the halo's rear face, not after it; behind the rear
+face the body must stand to the halo's top (team_halo_face_joined failed on L03 and L19 with the fade behind it).
 
     import soft_cap; soft_cap.apply(<evolution checkout>)
 """
@@ -48,7 +50,9 @@ TOP_NEW = """    top, bot, side = surfaces(ff, X, Y, Z, x_tip, x_rear)
             def ss_(u):
                 c = np.clip(u, 0.0, 1.0)
                 return c * c * (3.0 - 2.0 * c)
-            wh = (ss_((X - xa_) / T_) * ss_((xh1_ + T_ - X) / T_) *                      # Ref A .. the halo's rear
+            # Ref A .. the halo's rear face, fading out BEFORE it: behind the rear face the body must stand up to the
+            # halo's top to back it (referee: team_halo_face_joined; sweep3 L03 / L19 lost it when the fade ran past it)
+            wh = (ss_((X - xa_) / T_) * ss_((xh1_ - X) / T_) *
                   np.maximum(ss_((hw_ + T_ - np.abs(Y)) / T_), ss_((X - xh0_ + T_) / T_)))   # its width ahead; all y beside
             wt = np.maximum(wt, wh)
         top = top + wt * (tc - top)"""
