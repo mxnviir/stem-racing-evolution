@@ -137,8 +137,10 @@ def step_dafoam(job, st: dict, work: Path, adjoint_root: Path, n_proc: int) -> d
     core = _core(job)
     if core:                                     # the shared core's DAFoam patch (idempotent)
         subprocess.run([sys.executable, str(core / "patch_daf.py"), str(adjoint_root)], check=True)
-    env = dict(os.environ, **DAFOAM_DEFAULT_ENV, **(CORE_ENV if core else {}),
-               **{k: str(v) for k, v in (d.get("env") or {}).items()})
+    env = dict(os.environ)                        # later wins: defaults < the core's measured settings < the job's
+    env.update(DAFOAM_DEFAULT_ENV)
+    env.update(CORE_ENV if core else {})
+    env.update({k: str(v) for k, v in (d.get("env") or {}).items()})
     t0 = time.time()
     if os.environ.get("DAFOAM_RUNNER", "docker") == "native":
         shutil.copy(dd / "runScript.py", case / "runScript.py")
