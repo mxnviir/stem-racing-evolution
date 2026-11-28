@@ -1,0 +1,3 @@
+{"what": "link.py (unmasked) vs carhybrid/grad.py (commit 3101248) on carhybrid/results/p0/p0_team_dafoam/dafoam_sens.npz, 45 coarse numbers, whole-car dD/du",
+ "cosine": 1.0, "ratio_of_norms": 1.0001, "max_abs_diff_over_max_abs": 0.0006, "points_on_body": {"link": 2203, "grad_py": 2203},
+ "top5_mN_per_unit": {"37": [-9.0974, -9.0984], "34": [-7.1563, -7.1508], "8": [6.5921, 6.5925], "6": [-5.8902, -5.89], "44": [4.3341, 4.3337]}}
