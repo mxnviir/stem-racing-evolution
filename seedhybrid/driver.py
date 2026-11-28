@@ -81,6 +81,8 @@ def advance(results, run_id, adj):
     results = Path(results)
     stage, k = req["stage"], int(req["gen"])
     log = {"stage": stage, "gen": k, "run": run_id, "lineages": {}}
+    for name in S["lineages"]:
+        (LIN / name).mkdir(parents=True, exist_ok=True)     # empty folders are not in git
     if stage == "setup":
         S["setup_run"] = int(run_id)
         for name, Ls in S["lineages"].items():
