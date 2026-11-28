@@ -14,7 +14,7 @@
  ],
  "bg_div": 12.889,
  "_domain_note": "the trial car's frame (-0.005..0.265 m) is too short for whole cars (team layout: x 16.5..270.2 mm); background cell kept at the audited 22.5 mm: 12 x 0.290/0.270",
- "launch": "sweep5",
+ "launch": "bo_1",
  "batches": {
   "p0": [
    {
@@ -1317,6 +1317,104 @@
     "layout": "team",
     "u": "[-0.1888, -0.4085, -0.1183, 0.513, 0.4549, 0.3413, 0.5466, -0.0158, 0.8022, 0.5466, -0.7433, 0.5077, -0.09, -0.9164, -0.3312, -0.0965, 0.615, 0.0335, -0.4237, -0.1563, 0.0516, -0.3941, -0.2755, -0.0163, 0.8365, -0.6262, -0.1058, 0.2881, -0.2416, -0.2058, 1.1154, -0.5353, 0.3558, -0.0404, -0.5705, -0.142, -0.3245, 0.0337, -0.4907, 0.4473, -0.5567, 0.2629, 0.1779, -0.2149, 0.3046]"
    }
+  ],
+  "bo_1": [
+   {
+    "name": "bo_B000_k0",
+    "type": "score",
+    "layout": "[0.155465, 0.588747, 0.607532, 0.2424, 1.0, 0.262561, 0.67539, 0.376663, 0.731446, 0.490984, 0.982017, 0.440544]",
+    "k": 0
+   },
+   {
+    "name": "bo_B001_k1",
+    "type": "score",
+    "layout": "[0.578209, 0.470991, 0.413903, 0.506909, 0.0, 0.709395, 0.465773, 0.945207, 0.237127, 0.577289, 0.043933, 0.775342]",
+    "k": 1
+   },
+   {
+    "name": "bo_B002_k2",
+    "type": "score",
+    "layout": "[0.770956, 0.898929, 0.940493, 0.289159, 0.0, 0.973396, 0.928936, 0.565059, 0.406935, 0.918151, 0.290623, 0.604363]",
+    "k": 2
+   },
+   {
+    "name": "bo_B003_k3",
+    "type": "score",
+    "layout": "[0.463201, 0.031415, 0.0106, 0.960197, 1.0, 0.061, 0.211243, 0.004696, 0.936899, 0.021298, 0.727478, 0.172061]",
+    "k": 3
+   },
+   {
+    "name": "bo_B004_k0",
+    "type": "score",
+    "layout": "[0.311418, 0.804411, 0.262276, 0.768969, 1.0, 0.382566, 0.867354, 0.64706, 0.323988, 0.653513, 0.447381, 0.035938]",
+    "k": 0
+   },
+   {
+    "name": "bo_B005_k1",
+    "type": "score",
+    "layout": "[0.986084, 0.139757, 0.692722, 0.480744, 0.0, 0.590852, 0.02271, 0.203884, 0.832101, 0.285958, 0.511197, 0.748183]",
+    "k": 1
+   },
+   {
+    "name": "bo_B006_k2",
+    "type": "score",
+    "layout": "[0.676405, 0.74008, 0.157832, 0.690683, 0.0, 0.859017, 0.621613, 0.333726, 0.506288, 0.195165, 0.763743, 0.887752]",
+    "k": 2
+   },
+   {
+    "name": "bo_B007_k3",
+    "type": "score",
+    "layout": "[0.120633, 0.32567, 0.851884, 0.058986, 1.0, 0.176838, 0.269421, 0.769455, 0.02503, 0.873267, 0.20262, 0.335816]",
+    "k": 3
+   },
+   {
+    "name": "bo_B008_k0",
+    "type": "score",
+    "layout": "[0.058651, 0.987988, 0.234703, 0.420796, 0.0, 0.096512, 0.769457, 0.716942, 0.307675, 0.118528, 0.184491, 0.406217]",
+    "k": 0
+   },
+   {
+    "name": "bo_B009_k1",
+    "type": "score",
+    "layout": "[0.737467, 0.073338, 0.806262, 0.82984, 1.0, 0.930072, 0.121606, 0.148887, 0.786004, 0.938232, 0.872567, 0.817481]",
+    "k": 1
+   },
+   {
+    "name": "bo_B010_k2",
+    "type": "score",
+    "layout": "[0.928016, 0.548657, 0.341166, 0.123825, 1.0, 0.635553, 0.522762, 0.278378, 0.615952, 0.534869, 0.618072, 0.552935]",
+    "k": 2
+   },
+   {
+    "name": "bo_B011_k3",
+    "type": "score",
+    "layout": "[0.368582, 0.38425, 0.645082, 0.62689, 0.0, 0.328589, 0.367332, 0.83923, 0.102955, 0.400711, 0.431209, 0.231301]",
+    "k": 3
+   },
+   {
+    "name": "bo_B012_k0",
+    "type": "score",
+    "layout": "[0.404148, 0.655167, 0.893406, 0.568108, 0.0, 0.228211, 0.711297, 0.446316, 0.654099, 0.768226, 0.651736, 0.117338]",
+    "k": 0
+   },
+   {
+    "name": "bo_B013_k1",
+    "type": "score",
+    "layout": "[0.831042, 0.287414, 0.088937, 0.182231, 1.0, 0.799832, 0.428912, 0.889981, 0.127064, 0.167271, 0.337928, 0.658971]",
+    "k": 1
+   },
+   {
+    "name": "bo_B014_k2",
+    "type": "score",
+    "layout": "[0.523071, 0.840348, 0.562334, 0.896061, 1.0, 0.501638, 0.965812, 0.50994, 0.45361, 0.320566, 0.093187, 0.954973]",
+    "k": 2
+   },
+   {
+    "name": "bo_B015_k3",
+    "type": "score",
+    "layout": "[0.211653, 0.222839, 0.490352, 0.354204, 0.0, 0.463967, 0.175381, 0.074699, 0.952813, 0.735973, 0.904317, 0.260783]",
+    "k": 3
+   }
   ]
  },
  "_sweep1_note": "readiness sweep, build only (no CFD): 24 scrambled-Sobol layouts over the 12 stage-1 genes (seed 20261128) and 8 stage-2 perturbations of the team layout (45 free-form numbers ~ N(0, 0.5), clipped +-2, as CMA's sigma 0.5)",
@@ -1335,5 +1433,6 @@
  "_f0_aws_max_hours": 36,
  "_aws_scaling_note": "How DAFoam's time scales with MPI ranks (the instance-size question), measured: the team car, frame 0, bg_div 10.23 (~1.24 M cells), the same score each time (128 ranks), DAFoam on 128 / 64 / 32 ranks. Run on a 128-core machine (TYPE=m7a.32xlarge) with STOP_ON_FAIL=0; resources.json gives each phase's wall time and dafoam_gmres.json the seconds per GMRES iteration and the iteration count at each rank count. About 3-5 h, a few USD on spot.",
  "_aws_scaling_aws_max_hours": 10,
- "_sweep5_note": "sweep4's 32 layouts with evo_patches/legality_fixes.py (L1 rear wing ahead of the body's back, L2 body clamped to the official block, L3 wheel-support variants, L4 front-wing segment); sweep4: 16/32 legal"
+ "_sweep5_note": "sweep4's 32 layouts with evo_patches/legality_fixes.py (L1 rear wing ahead of the body's back, L2 body clamped to the official block, L3 wheel-support variants, L4 front-wing segment); sweep4: 16/32 legal",
+ "_bo_note": "P3 (carhybrid/bo.py, carhybrid/BO.md): batches bo_<n> and bo_confirm are written by bo.py advance; its state is carhybrid/bo/state.json and designs.jsonl"
 }
