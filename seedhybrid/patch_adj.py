@@ -66,4 +66,12 @@ a = 'extra["stage_timeout_s"] = int(os.environ.get("PRODCHECK_TIMEOUT", 18000))\
 assert a in t
 t = t.replace(a, a + 'if os.environ.get("PRODCHECK_TURB", "kOmegaSST") != "kOmegaSST":\n    extra["turbulence_model"] = os.environ["PRODCHECK_TURB"]\n', 1)
 pk.write_text(t)
-print("patched", ms, pc, oc, pk)
+# opt-in: GATE_DOMAIN_JSON = [[x0, y0, z0], [x1, y1, z1]] (m) replaces gate.py's fixed meshing frame (the trial car's,
+# 257 mm long), for whole cars that do not fit inside it (carhybrid); unset = the original frame
+gp = sp / "gate.py"
+t = gp.read_text()
+a = "DOMAIN = ((-0.005, 0.0, 0.0), (0.265, 0.045, 0.066))"
+assert t.count(a) == 1, "gate DOMAIN"
+t = t.replace(a, a + "\nif os.environ.get(\"GATE_DOMAIN_JSON\"):\n    DOMAIN = tuple(tuple(map(float, c)) for c in json.loads(os.environ[\"GATE_DOMAIN_JSON\"]))", 1)
+gp.write_text(t)
+print("patched", ms, pc, oc, pk, gp)

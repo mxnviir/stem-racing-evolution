@@ -1,0 +1,146 @@
+name: carhybrid
+run-name: "Whole-car hybrid: ${{ github.event.inputs.batch || 'request file' }}"
+
+# carhybrid/DESIGN.md. Each case builds one whole car with the pinned evolution builder (another agent's branch
+# claude/loving-keller-q72mvv at EVO_SHA, read only), adapts it to an OpenFOAM half car, and either scores it on the
+# audit protocol ("score") or computes its coarse DAFoam gradient and maps it to stage 2's free-form numbers
+# ("dafoam"). Launch: commit carhybrid/request.json on this branch.
+on:
+  push:
+    branches: [claude/wizardly-brahmagupta-1edalc]
+    paths: ["carhybrid/request.json"]
+  workflow_dispatch:
+    inputs:
+      batch: { description: "key in carhybrid/request.json batches", required: false }
+
+permissions: { contents: write }
+
+env:
+  EVO_SHA: e9c896b9774622eb53552db5b1e2d36d4108b5a1
+  ADJ_SHA: 9ab9092debd0e0297b290d886bf45a765045448c
+  PY_DEPS: scikit-learn==1.9.1 numpy==2.4.6 scipy==1.17.1 pandas pillow trimesh==5.2.0 scikit-image shapely rtree==1.4.1 mapbox-earcut manifold3d==3.5.4 fast_simplification==0.2.0 jax jaxlib matplotlib pymeshlab==2025.7.post1 numba cadquery-ocp cma
+  OMPI_MCA_rmaps_base_oversubscribe: "1"
+  OMPI_MCA_hwloc_base_use_hwthreads_as_cpus: "1"
+  OMPI_ALLOW_RUN_AS_ROOT: "1"
+  OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: "1"
+
+jobs:
+  init:
+    runs-on: ubuntu-24.04
+    outputs:
+      cases: ${{ steps.r.outputs.cases }}
+      batch: ${{ steps.r.outputs.batch }}
+      domain: ${{ steps.r.outputs.domain }}
+      bgdiv: ${{ steps.r.outputs.bgdiv }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: r
+        env: { I_BATCH: "${{ github.event.inputs.batch }}" }
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os
+          r = json.load(open("carhybrid/request.json"))
+          b = os.environ.get("I_BATCH") or r["launch"]
+          print("cases=" + json.dumps(r["batches"][b])); print("batch=" + b)
+          print("domain=" + json.dumps(r["domain_m"])); print("bgdiv=" + str(r["bg_div"]))
+          PY
+
+  case:
+    name: "${{ matrix.case.name }}"
+    needs: init
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        case: ${{ fromJSON(needs.init.outputs.cases) }}
+    steps:
+      - name: room (free disk, 10 GB swap)
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          sudo fallocate -l 10G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with: { repository: mxnviir/stem-racing-evolution, ref: "${{ env.EVO_SHA }}", path: evo }
+      - uses: actions/checkout@v4
+        with: { repository: mxnviir/stem-racing-adjoint, ref: "${{ env.ADJ_SHA }}", path: adj }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - uses: actions/cache@v4
+        with: { path: ~/ofdebs, key: openfoam2412-260127-noble-debs }
+      - name: OpenFOAM v2412 + python deps
+        timeout-minutes: 30
+        run: |
+          (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
+          for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
+          bash adj/.github/scripts/install_openfoam.sh
+          pip install $PY_DEPS
+          python seedhybrid/patch_adj.py adj
+          if [ "${{ matrix.case.type }}" = "dafoam" ]; then for i in 1 2 3; do docker pull dafoam/opt-packages:v5.1.1 && break; sleep 30; done; fi
+      - name: build the car (evolution builder) and adapt it for OpenFOAM
+        timeout-minutes: 90
+        env: { LAYOUT: "${{ matrix.case.layout }}", U: "${{ matrix.case.u || 'zero' }}" }
+        run: |
+          mkdir -p out/${{ matrix.case.name }}
+          set +e
+          python -W ignore carhybrid/make_car.py evo "$LAYOUT" "$U" /tmp/car > out/${{ matrix.case.name }}/make_car.log 2>&1
+          RC=$?
+          set -e
+          tail -c 2500 out/${{ matrix.case.name }}/make_car.log
+          cp /tmp/car/rec.json /tmp/car/cfd/adapt.json out/${{ matrix.case.name }}/ 2>/dev/null || true
+          cp /tmp/car/evo/summary.json /tmp/car/evo/run_car.log out/${{ matrix.case.name }}/ 2>/dev/null || true
+          exit $RC
+      - name: score (audit protocol; fresh wall-resolved mesh, production scheme, 1000 its)
+        if: matrix.case.type == 'score'
+        timeout-minutes: 300
+        run: |
+          source /usr/lib/openfoam/openfoam2412/etc/bashrc || true
+          export GATE_DOMAIN_JSON='${{ needs.init.outputs.domain }}'
+          python3 -c "import json; print(json.dumps({'name': '${{ matrix.case.name }}', 'design': 'folder:/tmp/car/cfd', 'k': ${{ matrix.case.k || 0 }}, 'bg_div': ${{ needs.init.outputs.bgdiv }}}))" > /tmp/case.json
+          python -W ignore audit/run_case.py adj /tmp/case.json out/${{ matrix.case.name }} | tail -1
+          echo "=== result"; cat out/${{ matrix.case.name }}/result.json | head -c 1500
+          echo "=== prodcheck tail"; tail -c 3000 out/${{ matrix.case.name }}/prodcheck.log || true
+      - name: DAFoam gradient (coarse steady state, discrete adjoint) and its map to the free-form numbers
+        if: matrix.case.type == 'dafoam'
+        timeout-minutes: 300
+        working-directory: adj/research/sidepod_opt
+        env: { U: "${{ matrix.case.u || 'zero' }}" }
+        run: |
+          source /usr/lib/openfoam/openfoam2412/etc/bashrc || true
+          O=$GITHUB_WORKSPACE/out/${{ matrix.case.name }}
+          export GATE_DOMAIN_JSON='${{ needs.init.outputs.domain }}' P2_BG_DIV=${{ needs.init.outputs.bgdiv }}
+          GATE_RES=coarse GATE_RESULTS=/tmp/gr CFD_DIV_U="bounded Gauss upwind" \
+            python -W ignore -u hybrid/coarse_state.py /tmp/car/cfd gate/refA_hyb 5000 $O/state.json 2>&1 | tail -3
+          python dafoam/make_case.py --src gate/refA_hyb --out gate/dafoam_case --iters 300 | tail -1
+          env DAF_ADJ=Krylov DAF_PC_FILL=0 DAF_PC_LEVEL=1 DAF_GMRES_ITERS=2000 DAF_GMRES_RESTART=200 \
+            dafoam/run_docker.sh gate/dafoam_case 4 > $O/dafoam.out 2>&1 || true
+          grep -E "DAFOAM|Killed|Maximum resident" $O/dafoam.out || tail -30 $O/dafoam.out
+          cp gate/dafoam_case/dafoam_sens.npz gate/dafoam_case/dafoam_sens.json $O/ 2>/dev/null || { echo "no gradient"; exit 0; }
+          cd $GITHUB_WORKSPACE
+          python -W ignore carhybrid/grad.py evo /tmp/car/rec.json $O/dafoam_sens.npz "$U" $O/grad.json --body /tmp/car/evo || echo "grad mapping failed"
+          cat $O/grad.json | head -c 1500 || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: "out-${{ matrix.case.name }}", path: out/, retention-days: 60 }
+
+  collect:
+    needs: [init, case]
+    if: always() && needs.init.result == 'success'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "${{ github.ref_name }}", fetch-depth: 0 }
+      - uses: actions/download-artifact@v4
+        with: { pattern: "out-*", merge-multiple: true, path: /tmp/res }
+      - name: commit the results (json, logs; no meshes)
+        run: |
+          R=carhybrid/results/${{ needs.init.outputs.batch }}
+          mkdir -p $R
+          for d in /tmp/res/*/; do n=$(basename $d); mkdir -p $R/$n
+            find $d -maxdepth 1 \( -name "*.json" -o -name "*.log" -o -name "*.out" -o -name "*.npz" \) -size -5M -exec cp {} $R/$n/ \;
+          done
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add carhybrid/results
+          git commit -m "carhybrid ${{ needs.init.outputs.batch }}: results (run ${{ github.run_id }})" || exit 0
+          for i in 1 2 3 4 5; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((i*10)); done
