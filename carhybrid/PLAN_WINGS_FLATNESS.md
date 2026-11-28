@@ -33,11 +33,19 @@ So the struts become part of our hybrid (adjoint plus measured steps), not rando
 **Problem (owner).** A strut that touches or passes through a wing can split it into elements. For the rear wing,
 the result may then not count as one legal rear wing.
 
+**The rule text, now in the repository** (`docs/rules/`, the owner's PDF; readings in `docs/rules/README.md`).
+T9.5.1 requires a single, unbroken span of at least 50 mm, measured along the shortest of the leading edge, trailing
+edge, top and bottom surface. Every figure shows the wing held at its ENDS. **Strict reading, adopted:** any part
+joined to or passing through the rear wing breaks its span there.
+
 **What the code does today:**
 - The referee (`legality.py` `_wing_split`, `_wing_measures`) never counts the rear wing's own supports as breaking
   the span. Only the body and other parts do.
-- That is a reading recorded in the rule map ("its own pylon under it does not break it"). The rule text itself is
-  not in either repository. **It must be checked against the official T9.5.1 wording before anything relies on it.**
+- That reading ("its own pylon under it does not break it") is **not supported by T9.5.1's text or figures**. Cars
+  whose rear struts fell back to under-wing pylons (the engine's root fallback 0.8 / 0.6 / 0.4 of the half span:
+  sw_L08's render shows struts joining the wing well inboard) may be illegal under the strict reading. The referee
+  must be fixed first: own supports count as span breaks for the rear wing, and the measure is the shortest of
+  LE, TE, top and bottom. Then sweep5 is re-judged.
 
 **Plan:**
 1. **Rule definitions first.** Take T8.5–T8.8 and T9.4–T9.7 verbatim from the rules PDF into `docs/RULES_TEXT.md`.
