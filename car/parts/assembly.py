@@ -161,6 +161,11 @@ def _printed_minus_body(part_m, body_m):
     import wing_loft as wl
     import trimesh
     p = part_m.copy(); p.apply_scale(1e3); b = body_m.copy(); b.apply_scale(1e3)
+    # a half part cut on the centre plane is open there: close it 0.3 mm off the plane (a capped slice) first
+    if p.bounds[0, 1] < 0.3:
+        q = p.slice_plane([0.0, 0.3, 0.0], [0.0, 1.0, 0.0], cap=True)
+        if len(q.faces):
+            p = q
     t = None
     try:
         pcs = sorted((se._to_manifold(p) - se._to_manifold(b)).decompose(), key=lambda q: -q.volume())
