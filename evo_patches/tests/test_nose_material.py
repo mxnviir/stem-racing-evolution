@@ -259,7 +259,7 @@ def test_car_nose_split_and_masses():
     nose = trimesh.load(str(car / "parts" / "nose.stl"), force="mesh")
     assert body.is_volume and nose.is_volume
     assert body.bounds[0, 0] * 1e3 == pytest.approx(ns["x_cut_mm"], abs=0.05)              # the foam's face
-    assert body.bounds[0, 0] * 1e3 >= ns["block_front_mm"] + 0.99                          # inside the block
+    assert body.bounds[0, 0] * 1e3 >= ns["block_front_mm"] + 0.49       # inside the block as the referee places it
     assert nose.bounds[1, 0] * 1e3 <= (ns["tenon"]["x1"] if ns.get("tenon") else ns["x_cut_mm"] + 0.31) + 0.05
     # masses: the print at its density in parts_mass_g and the race model's "printed"; the foam nose in the body
     assert S["parts_mass_g"]["nose"] == pytest.approx(ns["printed_g"], rel=1e-6)
@@ -302,3 +302,44 @@ def test_car_junction_is_flush():
     zs = np.arange(6.0, 22.0, 0.5)
     zw = zs[int(np.nanargmax([side(n, xc - 0.5, z) for z in zs]))]
     assert abs(side(n, xc - 0.15, zw) - side(b, xc + 0.15, zw)) < 0.5
+
+
+@need_car
+def test_car_foam_inside_the_referees_block():
+    """The plan is fitted to the block the referee places on the built body (its measured bore end + 52 mm): the
+    referee finds nothing outside the block ahead of Ref A (only the 1 mm grid's bore, waived, if anything)."""
+    import re
+    car, S, asm, rec = _car()
+    ns = asm["info"]["nose_split"]
+    note = S["legality"]["checks"]["block_body_inside_official_block"]["note"]
+    boxes = re.findall(r"([\d.]+) mm3 in \[\[([-\d.]+),", note)
+    assert all(float(v) < 1.0 or float(x0) > ns["ref_a_mm"] for v, x0 in boxes), note
+    if ns.get("block_front_design_mm") is not None:
+        assert ns["block_front_mm"] >= ns["block_front_design_mm"] - 0.5        # the measured bore end is not ahead
+
+
+@need_evo
+@need_car
+def test_fit_to_block_moves_the_cut_and_the_tenon(checkout):
+    """fit_to_block on a built body: a plan whose foam starts ahead of the referee's block is moved aft to 0.5 mm
+    inside it (on the 0.25 mm grid), its tenon with it; a plan already inside is left where it is."""
+    import trimesh
+    import nose_split as NS
+    car, S, asm, rec = _car()
+    ns = dict(asm["info"]["nose_split"])
+    body = trimesh.load(str(car / "body_half.stl"), force="mesh")
+    f = NS.referee_block_front(body)
+    assert f is not None and f == pytest.approx(ns["block_front_mm"], abs=0.05)
+    bad = dict(ns, x_cut_mm=f - 2.0, foam_len_mm=ns["ref_a_mm"] - f + 2.0,
+               tenon=dict(ns["tenon"], x0=f - 2.0, x1=f + 6.0) if ns.get("tenon") else None)
+    q = NS.fit_to_block(body, bad)
+    if f + NS.REF_BLOCK_MARGIN_MM < ns["ref_a_mm"]:
+        assert f + NS.REF_BLOCK_MARGIN_MM - 1e-9 <= q["x_cut_mm"] < f + NS.REF_BLOCK_MARGIN_MM + NS.H_MM
+        assert q["decided_by"] == "block_referee"
+        if q.get("tenon"):
+            assert q["tenon"]["x0"] == pytest.approx(q["x_cut_mm"])
+            assert q["tenon"]["x1"] - q["tenon"]["x0"] == pytest.approx(NS.TENON_LEN_MM)
+    else:
+        assert q["x_cut_mm"] == pytest.approx(ns["ref_a_mm"])
+    same = NS.fit_to_block(body, ns)
+    assert same["x_cut_mm"] == ns["x_cut_mm"]

@@ -34,7 +34,7 @@ map in `docs/RULES.md` and the referee's code were used.
 |---|---|---|
 | T1.3 / T4.1 | body = one piece of block material behind Ref A | behind Ref A nothing changes; the foam nose is the same field and mesh (`T4.1_single_body`: 1 body) |
 | T1.7 | nose cone only forward of Ref A | no material rule in the map. The team: "Nose cone: may mix foam and ABS. Ahead of Ref A plastic is allowed, not required" (stem-racing-adjoint `research/sidepod_opt/PARTS_PLAN.md`, answers of 2026-11-19). `unified_phi.py`'s older note (nose printed, owner 2026-07-20) predates it |
-| T1.14, App. ii | made from the official block (223 x 65 x 50, 6 x 6 slot) | foam only from 1.0 mm behind the block's front (rear face - 223); the slot and underside are the field's hard air already; the referee's `block_body_inside_official_block` measures the whole milled body, foam nose included |
+| T1.14, App. ii | made from the official block (223 x 65 x 50, 6 x 6 slot) | foam only from 0.5 mm behind the block's front AS THE REFEREE PLACES IT (measured bore end + 52 - 223, `fit_to_block`; the plan's design front, rear face - 223, + 1.0 mm, first); the slot and underside are the field's hard air already; the referee's `block_body_inside_official_block` measures the whole milled body, foam nose included |
 | T8.2 | nose overhang <= 40 mm ahead of Ref A | unchanged shape; referee: front of every non-wheel part incl. the body |
 | T8.5.1 | nose and wing support ahead of Ref A <= 25 high, <= 15 each side | the field's cap (24.5 / 14.5) on the foam, the same cap on the print; referee: body vertices ahead of Ref A - 0.5 and the printed nose (`check()`, already there) |
 | T8.7 / T8.8 | 5 mm clear air from the front wing; nothing ahead of it | wing designed against the whole drawn nose as before; the referee's "within 5 mm (sideways) of the nose" now takes the nose's widest point over print AND foam (`_foam_nose_half_width`) |
@@ -50,7 +50,7 @@ The nose stays ONE drawn shape: the free-form field ahead of Ref A. The front wi
 before (`front_wing_engine.build` on `freeform.build_nose`: the plan calls the same function first, 7-11 s, to know
 where the wing holds on). Only the material inside is split, by one plane `x_cut`, printed ahead, foam behind:
 
-    x_cut = max( block front + 1.0 mm                                   (b) outside the block
+    x_cut = max( design block front (rear face - 223) + 1.0 mm          (b) outside the block
                  last x where the wing touches the nose or its struts /
                    underside pylons end, + 1.2 mm ABS collar             (a) the wing's attachment
                  last x of a section with > 1 mm2 under the 3 mm wall    (c) thin (opening by a 1.5 mm ball)
@@ -109,8 +109,9 @@ dips 0.5 mm into the slot's band, the foam cannot (the body behind Ref A has the
 Shape audit (`carhybrid/shape_audit.py`): rectangularity unchanged (team median/max 0.750/0.878 -> 0.747/0.877,
 short 0.756/0.873 both); unexplained flat area team 571 -> 802 mm2, short 521 -> 730 mm2: the new flats are the glued
 face at `x_cut` (130 / 96 mm2 a half, covered by the print) and the tenon pocket's walls (internal); sidepod cap
-unchanged. Crease length fell (team 7215 -> 430 mm, short 3463 -> 288 mm): the cut body is re-meshed through manifold
-(`nose_split._closed`, edges under 0.01 mm merged), which also removes sliver creases elsewhere on the body.
+unchanged. (These two cars were built before the sweep3 fixes below: their bodies were re-meshed whole by
+`manifold.simplify(0.01)`, which is why their crease length fell, team 7215 -> 430 mm; the body is now left as built
+away from the cut.)
 Renders: `evo_patches/renders/{team,short}_{before,after}.png` (purple: print; grey: foam).
 
 ## Limits
@@ -136,3 +137,36 @@ Renders: `evo_patches/renders/{team,short}_{before,after}.png` (purple: print; g
 `run_car.py` (_nose_split plan, build_body, export_body cut, part4_kwargs); `assembly.py` (printed piece, wing on the
 drawn nose, masses, info); `legality.py` (_foam_nose_half_width for T8.7/T8.8, nose_joint_checks); `joints.py`
 (make_all); `layout_car.py` (mass breakdown).
+
+## Sweep3 fixes (2026-11-28)
+
+32 cars with the patch (carhybrid/results/sweep3): the legal count fell from 17 to 11. What was the patch's:
+
+1. **Foam outside the block the referee places** (`block_body_inside_official_block` on L01, L03, L07, L11, L13, L19,
+   L21, L23, S03, S07: a full-section slab 0.2-1.2 mm thick just ahead of `x_cut`, 48-286 mm3). The plan put the block's
+   front at the design rear face - 223 (+1.0 mm). The referee (legality.manufactured_checks) puts the block's rear face
+   at the MEASURED bore end + 52 mm (`chamber_measures`: depth gauged at 0.6 r from the rim). On the 1 mm build grid that
+   end lies 1.2-2.3 mm aft of the design one (the bore is drawn a cell long, `fixed_hardware`'s canister cylinder, and
+   its closed end is rounded where the gauge reads it); sweep3: L01 +2.0, L11 +2.0, L23 +2.0, S03 +1.8, L13 +1.8,
+   S07 +1.8, L07 +2.0, L21 +2.3 mm; team car +1.83 mm.
+   Fix: `nose_split.fit_to_block`, called in `run_car.export_body` on the milled body before it is cut, measures the
+   block exactly as the referee does (the referee's own `legality.chamber_measures` on both halves, `rules_constants`'
+   52 and 223 mm) and moves `x_cut` (and the tenon) aft to 0.5 mm inside it, on the 0.25 mm grid, never behind Ref A
+   (`decided_by: "block_referee"`, `moved_for_referee_block_mm`). The fitted plan replaces `nose_split.json`, the body's
+   `landmarks` (its mass) and what `assembly.build` reads (the print). No margin is guessed: the foam is inside the
+   referee's block by construction, on any grid.
+2. **S05 `P4.machining_rear_slot_cut_from_below` -10.04** (x_cut = Ref A, no foam). Not the nose: the column check
+   (support_engine.column_check) samples the rear support's slot on a 0.25 mm grid of vertical rays; at x 196.4,
+   y 11.0 the body has a 1 mm foam ledge (z 15.6-16.6) under the slot, between the saddle's own faces. Shifting that
+   grid by under 0.05 mm turns the margin from +0.20 to -10.1/-10.2 (2 of 12 offsets, the same body). S05 rebuilt with
+   the patch reads +0.20 (legal). The patch did change the body's triangulation everywhere (the cut body was
+   re-meshed through `simplify(0.01)`), which can move such a ray verdict; it no longer does: `_closed` first keeps the
+   Boolean's own mesh (dropping only the zero-volume two-face slivers an STL's rounding leaves at the pocket), so the
+   body is untouched away from the cut (41870 faces -> 41960 on the team body).
+3. **L19 `T4.4.4_halo_fits_pocket`** (5.1 mm3, a 0.28 mm skin on the pocket floor, x 103-149): nothing in the patch
+   acts there (the T8.5.1 cap and the milling relief only at x <= Ref A + 1 mm; the 0.01-0.05 mm re-mesh could not make
+   0.28 mm). See the rebuild below.
+
+Rebuilt with the fixes (soft_cap v2.1, apply.py, this patch; one at a time):
+
+@@REBUILDS@@

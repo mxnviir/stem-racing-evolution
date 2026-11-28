@@ -327,12 +327,20 @@ def _closed(M, scale=1e-3):
     back (edges under 0.01 mm merged, as freeform.build_nose: Boolean cuts leave 2 um slivers an STL collapses)."""
     import io
     import trimesh
-    for tol in (0.01, 0.02, 0.05):
-        Q = max(M.simplify(tol).decompose(), key=lambda q: q.volume())
+    for tol in (0.0, 0.01, 0.02, 0.05):             # 0: the Boolean's own mesh (the body untouched away from the cut)
+        Q = max((M.simplify(tol) if tol > 0 else M).decompose(), key=lambda q: q.volume())
         t = _tm(Q, scale)
         back = trimesh.load(io.BytesIO(t.export(file_type="stl_ascii").encode()), file_type="stl")
         if t.is_volume and back.is_volume and len(back.split(only_watertight=False)) == 1:
             return t
+        if tol == 0.0 and t.is_volume:
+            # what the file's rounding leaves is the solid and a few zero-volume two-face slivers at the cut:
+            # the solid alone, as read back (no re-meshing of the rest of the body)
+            pcs = sorted(back.split(only_watertight=False), key=lambda q: -abs(q.volume))
+            if pcs and pcs[0].is_volume and sum(abs(q.volume) for q in pcs[1:]) < 1e-3 * scale ** 3:   # 0.001 mm3
+                again = trimesh.load(io.BytesIO(pcs[0].export(file_type="stl_ascii").encode()), file_type="stl")
+                if again.is_volume and len(again.split(only_watertight=False)) == 1:
+                    return pcs[0]
     return t
 
 
