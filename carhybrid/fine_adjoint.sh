@@ -63,6 +63,16 @@ $PY -W ignore audit/run_case.py "$ADJ" "$WORK/case.json" "$OUT" | tail -1
 echo "=== result"; head -c 1500 "$OUT/result.json"; echo
 if ! $PY -c "import json,sys; r=json.load(open('$OUT/result.json')); sys.exit(0 if r.get('converged') and 'path' in (r.get('kept_state') or {}) else 1)"; then
   echo "=== prodcheck tail"; tail -c 3000 "$OUT/prodcheck.log" 2>/dev/null
+  # the pipeline keeps a failed run folder: print what its meshing and decomposition said (artifacts are not readable)
+  RUN=$(grep -o "run dir KEPT for diagnosis: [^ ]*" "$OUT/prodcheck.log" 2>/dev/null | tail -1 | awk '{print $NF}')
+  if [ -n "$RUN" ] && [ -d "$RUN/logs" ]; then
+    mkdir -p "$OUT/failed_logs"; cp "$RUN"/logs/*.log "$OUT/failed_logs/" 2>/dev/null
+    echo "=== failed run $RUN: snappy layers"; grep -E "Extruding|Layer mesh|cells:" "$RUN/logs/snappyHexMesh.log" 2>/dev/null | tail -8
+    grep -A8 "patch  faces        layers" "$RUN/logs/snappyHexMesh.log" 2>/dev/null | tail -9
+    echo "=== snappy tail"; tail -25 "$RUN/logs/snappyHexMesh.log" 2>/dev/null
+    echo "=== checkMesh"; grep -E "cells:|points:|faces:|\*\*\*|Mesh OK|Failed|^ +[A-Za-z]+ +[0-9]+ +[0-9]+ " "$RUN/logs/checkMesh.log" 2>/dev/null | head -30
+    echo "=== decomposePar tail"; tail -40 "$RUN/logs/decomposePar.log" 2>/dev/null
+  fi
   say "SCORE FAILED or no kept state: stop"; STOP=1
 fi
 

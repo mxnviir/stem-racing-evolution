@@ -874,12 +874,12 @@
   ],
   "f0_hosted": [
    {
-    "name": "f0h_team_bg4_k0",
+    "name": "f0h_team_bg4.5_k0",
     "type": "fine_adjoint",
     "layout": "team",
     "u": "zero",
     "k": 0,
-    "bg_div": 4.0,
+    "bg_div": 4.5,
     "runner": "hosted"
    }
   ],
@@ -916,6 +916,6 @@
  "_p1_note": "P1 gradient check, pre-registered in carhybrid/P1.md before any result: team layout, directions from the P0 gradient (carhybrid/results/p0/p0_team_dafoam/grad.json) by carhybrid/p1_cases.py, on the builder with every evo_patches fix (mass bookkeeping, soft cap v2, nose material); plus a DAFoam gradient on that base car.",
  "_sweep3_note": "sweep2's 32 cars rebuilt with soft cap v2 (the halo's visibility region compressed, not truncated) and the multi-material nose (evo_patches/nose_material.py); renders and shape audits.",
  "_p1r_note": "P1's three cases whose legal cars were lost to the adapter (half car not watertight after trimesh's vertex merge; carhybrid/adapt.py now keeps manifold's topology); same u, frames and names, results in results/p1r.",
- "_f0_hosted_note": "carhybrid/FINE_ADJOINT.md plumbing test on a hosted runner (4 cores, 16 GB + 10 GB swap): the team car, frame 0, bg_div 4.0 = ~96 k cells (measured locally: cells ~ bg_div^2.4 from 2.12 M at 12.889; the wall-resolved layer stack forms only partly on 2 mm walls, mean 1.5 of 15 layers on the body), small enough for DAFoam's Krylov adjoint at ~150 kB/cell. A plumbing test only: not the production mesh, gates F1-F3 are read but not judged on it.",
+ "_f0_hosted_note": "carhybrid/FINE_ADJOINT.md plumbing test on a hosted runner (4 cores, 16 GB + 13 GB swap): the team car, frame 0, bg_div 4.5 (~0.13 M cells: cells ~ bg_div^2.4 from 2.12 M at 12.889; bg_div 4.0 gave 96 k cells locally, but on the hosted runner its mesh crashed decomposePar with SIGFPE, the known failure of the layer stack on coarse walls), small enough for DAFoam's Krylov adjoint at ~150 kB/cell. The wall-resolved layers form only partly on these ~2 mm walls (locally at 4.0: mean 1.5 of 15 layers on the body). A plumbing test only: not the production mesh; gates F1-F3 are read, not judged, on it.",
  "_f0_note": "Gate F0, the adjoint memory law, on the bigmem runner: the team car, frame 0, bg_div 8.12 / 10.23 / 12.889 (~0.74 / 1.24 / 2.12 M cells, cells ~ bg_div^2.4); peak whole-machine memory per job in resources.json; passes if the three fit a line in cells and the line gives < 450 GB at 2.1 M."
 }
