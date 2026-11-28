@@ -11,6 +11,12 @@ Marks (fixed before the first run, 2026-11-28): for every tested number and ever
 within 10 % of the rebuilt one (or within 2 % of the largest of the three |values| for that f, for a number
 that barely moves the body), and the same sign. 10 % allows for the 1 mm build grid, the milling and the
 inactive (rule-cut) points; a wrong frame, unit, sign, normal or chain would be off by far more.
+
+Amendment (2026-11-28 14:35, after gene 7's result only; genes 19 and 33 unseen): gene 7 came out 1.30 / 1.36 / 1.46
+x the rebuilt values. Diagnosis: a third of its predicted change sat on the spine (|y| < 13, z 24-43 mm), where the
+fitted field lies on the chamber wall and the halo pocket and the build's hard masks hold the surface in both
+directions (per-point displacements). The link now excludes points a mask holds (link.Masks, link.build_masks), with
+the hold distance set on gene 7 alone. Genes 19 and 33 are the held-out check of that fix, under the same marks.
 """
 from __future__ import annotations
 
@@ -87,9 +93,11 @@ def main():
     print(f"base body {time.time() - t0:.0f} s, {len(base.vertices)} vertices, watertight {base.is_watertight}", flush=True)
     fs = {"V": None, "x": lambda P: P[:, 0], "z": lambda P: P[:, 2]}
     # the half solid's cap on y = 0 is inside the body: its points are inactive (phi < level), as they must be
+    masks = link.build_masks(d)                                   # the build's hard masks (amendment)
     pred = {}
     for name, f in fs.items():
-        _, co, info = link.predicted_moment(base, seed, frame, f=f, seed=seed, v=np.zeros(n), amp=AMP_MM, coarse=COARSE)
+        _, co, info = link.predicted_moment(base, seed, frame, f=f, seed=seed, v=np.zeros(n), amp=AMP_MM, coarse=COARSE,
+                                            masks=masks)
         pred[name] = 2 * co                                     # half -> whole body
     print("active vertices", info, flush=True)
     rows = []

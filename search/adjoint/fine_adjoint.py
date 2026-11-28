@@ -46,6 +46,12 @@ from pathlib import Path
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
+EVO_ROOT = HERE.parents[1]
+# with the shared core (batch.py CORE_REF): lift too, unconverged solves recorded (and refused here), DAFoam's mesh-quality
+# limits relaxed (the mesh is the one the score solved on: the production mesh stopped at 'Mesh quality error!' with
+# the defaults, carhybrid run 46147225148), GMRES up to 6000 iterations (coarse solves needed 1290 to > 2000)
+CORE_ENV = {"DAF_FUNCS": "D,L", "DAF_KEEP_UNCONVERGED": "1", "DAF_MAX_SKEW": "1000", "DAF_MAX_NONORTH": "89",
+            "DAF_MAX_ASPECT": "1e6", "DAF_GMRES_ITERS": "6000"}
 DAFOAM_DEFAULT_ENV = {                       # the coarse settings that converged on runners (adjoint repo, coarse_dafoam.yml)
     "DAF_ADJ": "Krylov", "DAF_PC_FILL": "0", "DAF_PC_LEVEL": "1", "DAF_GMRES_ITERS": "2000",
     "DAF_GMRES_RESTART": "200", "DAF_GMRES_TOL": "1e-6"}
@@ -127,7 +133,11 @@ def step_dafoam(job, st: dict, work: Path, adjoint_root: Path, n_proc: int) -> d
     d = job.get("dafoam", {})
     subprocess.run([sys.executable, str(dd / "make_case.py"), "--src", st["state"], "--out", str(case),
                     "--iters", str(int(d.get("primal_iters", 300)))], check=True)
-    env = dict(os.environ, **DAFOAM_DEFAULT_ENV, **{k: str(v) for k, v in (d.get("env") or {}).items()})
+    core = _core(job)
+    if core:                                     # the shared core's DAFoam patch (idempotent)
+        subprocess.run([sys.executable, str(core / "patch_daf.py"), str(adjoint_root)], check=True)
+    env = dict(os.environ, **DAFOAM_DEFAULT_ENV, **(CORE_ENV if core else {}),
+               **{k: str(v) for k, v in (d.get("env") or {}).items()})
     t0 = time.time()
     if os.environ.get("DAFOAM_RUNNER", "docker") == "native":
         shutil.copy(dd / "runScript.py", case / "runScript.py")
@@ -141,12 +151,15 @@ mpirun -np {n_proc} python runScript.py > log.dafoam 2>&1"""
         with open(case / "log.dafoam", "w") as f:
             r = subprocess.run(["bash", str(dd / "run_docker.sh"), str(case), str(n_proc)], env=env, stdout=f, stderr=subprocess.STDOUT)
     txt = (case / "log.dafoam").read_text(errors="replace") if (case / "log.dafoam").exists() else ""
-    rec = {"returncode": r.returncode, "dafoam_s": round(time.time() - t0), "env": {k: env[k] for k in DAFOAM_DEFAULT_ENV},
-           **dafoam_health(txt)}
+    rec = {"returncode": r.returncode, "dafoam_s": round(time.time() - t0),
+           "env": {k: env[k] for k in list(DAFOAM_DEFAULT_ENV) + (list(CORE_ENV) if core else [])}, **dafoam_health(txt)}
     sj = case / "dafoam_sens.json"
-    rec["ok"] = r.returncode == 0 and (case / "dafoam_sens.npz").exists() and not rec["failed"]
     if sj.exists():
         rec.update(json.loads(sj.read_text()))
+    gm = rec.get("gmres") or {}                  # the core's per-solve record: a drag solve that missed its tolerance
+    rec["converged_D"] = (gm.get("D") or {}).get("converged") if gm else None    # is saved flagged; never used here
+    rec["ok"] = (r.returncode == 0 and (case / "dafoam_sens.npz").exists() and rec["converged_D"] is not False
+                 and not (rec["failed"] and rec["converged_D"] is None))
     rec["sens"] = str((case / "dafoam_sens.npz").resolve())
     dj.write_text(json.dumps(rec, indent=1, default=float))
     return rec
@@ -164,10 +177,42 @@ def step_link(job, lc: dict, daf: dict, work: Path) -> dict:
     p = job.get("parametrisation") or {}
     seed = fr.Freeform.from_dict(p["freeform_seed"]) if p.get("freeform_seed") else None
     z = np.load(daf["sens"])
+    tol = float((job.get("link") or {}).get("tol_mm", link.TOL_MM))
+    masks = link.build_masks(d)                  # surface the build's rule masks hold does not move with the numbers
     g = link.gradient(z["dD_dXs"], z["Xs"], ff, frame, seed=seed, v=p.get("v"), amp=p.get("amp_mm"),
-                      coarse=p.get("coarse"), tol_mm=float((job.get("link") or {}).get("tol_mm", link.TOL_MM)))
+                      coarse=p.get("coarse"), tol_mm=tol, masks=masks)
+    if "dL_dXs" in z.files:
+        gl = link.gradient(z["dL_dXs"], z["Xs"], ff, frame, seed=seed, v=p.get("v"), amp=p.get("amp_mm"),
+                           coarse=p.get("coarse"), tol_mm=tol, masks=masks)
+        g["lift"] = {k: gl[k] for k in gl if k.startswith(("fine_", "coarse_"))}
+    core = _core(job)
+    if core and seed is not None and "coarse_car_mN_per_unit" in g:
+        # the map of record: the core's grad.py (drag, lift, mass, race time) on the same file; link.py's drag must agree
+        n = len(g["coarse_car_mN_per_unit"])
+        u = json.dumps([float(t) for t in (p.get("v") or [0.0] * n)[:n]])
+        cj = work / "grad_core.json"
+        r = subprocess.run([sys.executable, "-W", "ignore", str(core / "grad.py"), str(EVO_ROOT), str(work / "car" / "layout_car.json"),
+                            daf["sens"], u, str(cj), "--body", str(work / "car"),
+                            "--grid", ",".join(str(t) for t in p["coarse"])], capture_output=True, text=True)
+        if cj.exists():
+            c = json.loads(cj.read_text())
+            a, b = np.asarray(g["coarse_car_mN_per_unit"]), 1e3 * np.asarray(c["dD_du_N"])
+            # Until the core's grad.py excludes surface held by the build's rule masks (its |phi| < 1 mm test counts the
+            # spine's chamber wall and halo pocket: test_link.py, a top number 1.30-1.46 x the rebuilt body), the
+            # masked link is the map of record and the core's numbers are kept beside it (NOTE_FOR_CARHYBRID.md).
+            g["core"] = {"file": "grad_core.json", "cos_dD_link_vs_core": float(a @ b / max(np.linalg.norm(a) * np.linalg.norm(b), 1e-30)),
+                         "dD_du_N": c.get("dD_du_N"), "dT_du_s": c.get("dT_du_s"), "dL_du_N": c.get("dL_du_N"),
+                         "dm_du_g": c.get("dm_du_g"), "masked": False}
+        else:
+            g["core"] = {"error": (r.stdout + r.stderr)[-600:]}
     gj.write_text(json.dumps(g, indent=1))
     return g
+
+
+def _core(job):
+    """The packaged shared core (batch.py CORE_PATHS), or None."""
+    c = Path(job.get("_dir", ".")) / "core" / "carhybrid"
+    return c if (c / "patch_daf.py").exists() else None
 
 
 def main():

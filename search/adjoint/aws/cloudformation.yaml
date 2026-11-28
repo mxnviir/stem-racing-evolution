@@ -1,0 +1,231 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Fine adjoint on AWS Batch (stem-racing-evolution search/adjoint/aws): an S3 bucket for job inputs and results, an
+  ECR repository for the container, a managed EC2 compute environment of large-memory instances, a job queue and a
+  job definition. Optional: a role GitHub Actions can assume (OIDC) to submit jobs and read results.
+
+Parameters:
+  VpcSubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Subnets for the instances (must reach S3, ECR and the internet, e.g. the default VPC's public subnets).
+  SecurityGroupIds:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: Security group(s) for the instances (outbound only is enough).
+  InstanceTypes:
+    Type: CommaDelimitedList
+    Default: "r7i.16xlarge,r7i.24xlarge,r6i.16xlarge,r6i.24xlarge"
+    Description: >-
+      Memory-optimised instances. A 2.1 M-cell DAFoam Krylov adjoint is estimated at ~300 GB (PC fill 0) to ~500 GB
+      (fill 1) from >150 kB/cell measured on the coarse mesh: 512-768 GB instances. Extrapolated, not measured.
+  MaxVcpus:
+    Type: Number
+    Default: 192
+    Description: The compute environment's ceiling (192 = three 64-vCPU jobs at once). Also your EC2 vCPU quota.
+  JobVcpus:
+    Type: Number
+    Default: 64
+  JobMemoryMiB:
+    Type: Number
+    Default: 480000
+    Description: Below the instance's memory (Batch and the ECS agent keep some; 512 GiB -> 480000 MiB fits).
+  RootVolumeGiB:
+    Type: Number
+    Default: 400
+    Description: The instance's disk (the container, the 2.1 M-cell case and its states, DAFoam's files).
+  ImageTag:
+    Type: String
+    Default: v1
+  GitHubRepo:
+    Type: String
+    Default: ""
+    Description: "owner/repo allowed to assume the GitHub role (empty: no GitHub role). e.g. mxnviir/stem-racing-evolution"
+  GitHubOidcProviderArn:
+    Type: String
+    Default: ""
+    Description: ARN of an existing token.actions.githubusercontent.com OIDC provider (empty: one is created if GitHubRepo is set).
+
+Conditions:
+  WithGitHub: !Not [!Equals [!Ref GitHubRepo, ""]]
+  CreateOidc: !And [!Condition WithGitHub, !Equals [!Ref GitHubOidcProviderArn, ""]]
+
+Resources:
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault: { SSEAlgorithm: AES256 }
+      LifecycleConfiguration:
+        Rules:
+          - Id: expire-states
+            Status: Enabled
+            Prefix: fine-adjoint/
+            ExpirationInDays: 90
+
+  Repository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: stem-adjoint
+      ImageScanningConfiguration: { ScanOnPush: true }
+
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/batch/fine-adjoint
+      RetentionInDays: 30
+
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Service: ec2.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles: [!Ref InstanceRole]
+
+  JobRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Service: ecs-tasks.amazonaws.com }
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: bucket
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: [s3:GetObject, s3:PutObject]
+                Resource: !Sub "${Bucket.Arn}/*"
+              - Effect: Allow
+                Action: s3:ListBucket
+                Resource: !GetAtt Bucket.Arn
+
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        BlockDeviceMappings:
+          - DeviceName: /dev/xvda
+            Ebs: { VolumeSize: !Ref RootVolumeGiB, VolumeType: gp3, Throughput: 500, Iops: 6000, DeleteOnTermination: true }
+        MetadataOptions: { HttpTokens: required }
+
+  ComputeEnvironment:
+    Type: AWS::Batch::ComputeEnvironment
+    Properties:
+      Type: MANAGED
+      State: ENABLED
+      ComputeResources:
+        Type: EC2
+        AllocationStrategy: BEST_FIT_PROGRESSIVE
+        MinvCpus: 0
+        DesiredvCpus: 0
+        MaxvCpus: !Ref MaxVcpus
+        InstanceTypes: !Ref InstanceTypes
+        Subnets: !Ref VpcSubnetIds
+        SecurityGroupIds: !Ref SecurityGroupIds
+        InstanceRole: !GetAtt InstanceProfile.Arn
+        LaunchTemplate:
+          LaunchTemplateId: !Ref LaunchTemplate
+          Version: !GetAtt LaunchTemplate.LatestVersionNumber
+        Ec2Configuration:
+          - ImageType: ECS_AL2023
+
+  JobQueue:
+    Type: AWS::Batch::JobQueue
+    Properties:
+      Priority: 1
+      State: ENABLED
+      ComputeEnvironmentOrder:
+        - Order: 1
+          ComputeEnvironment: !Ref ComputeEnvironment
+
+  JobDefinition:
+    Type: AWS::Batch::JobDefinition
+    Properties:
+      Type: container
+      PlatformCapabilities: [EC2]
+      RetryStrategy: { Attempts: 1 }
+      Timeout: { AttemptDurationSeconds: 172800 }
+      ContainerProperties:
+        Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/stem-adjoint:${ImageTag}"
+        JobRoleArn: !GetAtt JobRole.Arn
+        ResourceRequirements:
+          - { Type: VCPU, Value: !Ref JobVcpus }
+          - { Type: MEMORY, Value: !Ref JobMemoryMiB }
+        LinuxParameters:
+          SharedMemorySize: 65536
+        Ulimits:
+          - { Name: memlock, SoftLimit: -1, HardLimit: -1 }
+          - { Name: nofile, SoftLimit: 65536, HardLimit: 65536 }
+          - { Name: stack, SoftLimit: -1, HardLimit: -1 }
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group: !Ref LogGroup
+            awslogs-stream-prefix: job
+
+  GitHubOidc:
+    Type: AWS::IAM::OIDCProvider
+    Condition: CreateOidc
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList: [sts.amazonaws.com]
+
+  GitHubRole:
+    Type: AWS::IAM::Role
+    Condition: WithGitHub
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !If [CreateOidc, !Ref GitHubOidc, !Ref GitHubOidcProviderArn]
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals: { "token.actions.githubusercontent.com:aud": sts.amazonaws.com }
+              StringLike: { "token.actions.githubusercontent.com:sub": !Sub "repo:${GitHubRepo}:*" }
+      Policies:
+        - PolicyName: submit-and-read
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: [batch:SubmitJob, batch:DescribeJobs, batch:TerminateJob]
+                Resource: "*"
+              - Effect: Allow
+                Action: [s3:GetObject, s3:PutObject]
+                Resource: !Sub "${Bucket.Arn}/*"
+              - Effect: Allow
+                Action: [ecr:GetAuthorizationToken]
+                Resource: "*"
+              - Effect: Allow
+                Action: [ecr:BatchCheckLayerAvailability, ecr:InitiateLayerUpload, ecr:UploadLayerPart,
+                         ecr:CompleteLayerUpload, ecr:PutImage, ecr:BatchGetImage, ecr:GetDownloadUrlForLayer]
+                Resource: !GetAtt Repository.Arn
+
+Outputs:
+  Bucket: { Value: !Ref Bucket }
+  RepositoryUri: { Value: !GetAtt Repository.RepositoryUri }
+  JobQueue: { Value: !Ref JobQueue }
+  JobDefinition: { Value: !Ref JobDefinition }
+  GitHubRoleArn:
+    Condition: WithGitHub
+    Value: !GetAtt GitHubRole.Arn

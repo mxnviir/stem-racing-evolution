@@ -33,6 +33,12 @@ EVO = HERE.parents[2]                                       # the evolution repo
 EVO_PATHS = ["car", "search", "cfd", "repo_paths.py", "requirements.txt"]
 ADJ_PATHS = ["part2-simulation", "part4-simulation", "research/sidepod_opt/dafoam"]
 ADJ_TOP = "research/sidepod_opt"                            # its top-level files only (the pipeline's scripts)
+# The shared fine-adjoint core (owner 2026-11-28: "one core, two users"): the whole-car hybrid's DAFoam patch (lift,
+# per-solve GMRES record, mesh-quality limits by env) and its gradient map (drag, lift, mass, race time), taken from
+# that branch at a pinned commit -- no copy lives here. link.py reproduces grad.py's drag map (cosine 1.0000 on the
+# p0 team-car adjoint, search/adjoint/xcheck) and stays as the per-job cross-check.
+CORE_REF = "3101248d08aeabaa9f1d8a2c7aca7cea994a08d9"     # claude/wizardly-brahmagupta-1edalc, 2026-11-28 14:08
+CORE_PATHS = ["carhybrid/patch_daf.py", "carhybrid/grad.py"]
 
 
 def cfg_load(p):
@@ -45,15 +51,17 @@ def _git(repo, *a):
     return subprocess.run(["git", "-C", str(repo), *a], check=True, capture_output=True, text=True).stdout
 
 
-def _archive(repo: Path, paths, prefix: str, tf: tarfile.TarFile, allow_dirty: bool):
-    if not allow_dirty and _git(repo, "status", "--porcelain", "--", *paths).strip():
+def _archive(repo: Path, paths, prefix: str, tf: tarfile.TarFile, allow_dirty: bool, ref="HEAD"):
+    if ref == "HEAD" and not allow_dirty and _git(repo, "status", "--porcelain", "--", *paths).strip():
         raise SystemExit(f"{repo}: uncommitted changes under {paths}; commit them (or --allow-dirty)")
-    data = subprocess.run(["git", "-C", str(repo), "archive", "--format=tar", f"--prefix={prefix}/", "HEAD", "--", *paths],
+    if ref != "HEAD" and subprocess.run(["git", "-C", str(repo), "cat-file", "-e", f"{ref}^{{commit}}"]).returncode != 0:
+        subprocess.run(["git", "-C", str(repo), "fetch", "-q", "--depth", "1", "origin", ref], check=True)
+    data = subprocess.run(["git", "-C", str(repo), "archive", "--format=tar", f"--prefix={prefix}/", ref, "--", *paths],
                           check=True, capture_output=True).stdout
     with tarfile.open(fileobj=io.BytesIO(data)) as src:
         for m in src.getmembers():
             tf.addfile(m, src.extractfile(m) if m.isfile() else None)
-    return _git(repo, "rev-parse", "HEAD").strip()
+    return _git(repo, "rev-parse", ref).strip()
 
 
 def package(job_path: Path, out: Path, adjoint_repo: Path, allow_dirty=False) -> dict:
@@ -63,6 +71,8 @@ def package(job_path: Path, out: Path, adjoint_repo: Path, allow_dirty=False) ->
         code = {"evolution": _archive(EVO, EVO_PATHS, "evolution", tf, allow_dirty)}
         top = [p for p in _git(adjoint_repo, "ls-files", ADJ_TOP).split() if p.count("/") == 2]
         code["adjoint"] = _archive(adjoint_repo, ADJ_PATHS + top, "adjoint", tf, allow_dirty)
+        if not job.get("no_core"):
+            code["core"] = _archive(EVO, CORE_PATHS, "core", tf, allow_dirty, ref=job.get("core_ref", CORE_REF))
         if car.get("cfd_car_dir"):                          # a car built elsewhere travels with the job
             tf.add(car["cfd_car_dir"], arcname="car/cfd_car")
             car["cfd_car_dir"] = "car/cfd_car"

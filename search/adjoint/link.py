@@ -140,13 +140,74 @@ def basis(ff, P):
     return mat(ff.nu, ff.nv, u, v), mat(ff.nu, ff.nw, u, w)
 
 
+# ------------------------------------------------------------------ the rule masks
+HOLD_CELLS = 0.6         # a point within this many build cells of a mask cell is held by the rule (a held surface sits
+                         # half a cell from the mask's cell centres; set on test_link's gene 7: 1.01-1.05 x rebuilt)
+
+
+@dataclasses.dataclass
+class Masks:
+    """The build's hard masks (unified_phi: required air -- halo pocket, chamber bore, wheel zones, T8.5.1 ... -- and
+    required solid -- chamber walls, cargo, halo floor ...) on the build grid (mm). A surface point next to one is
+    made by the rule, not by the free-form field: no body number moves it (test_link.py found a third of a top
+    number's predicted volume change on the spine, where the fitted field lies on the chamber wall and the halo
+    pocket and the build holds the surface in both directions)."""
+    origin_mm: np.ndarray
+    h_mm: float
+    air: np.ndarray
+    solid: np.ndarray
+
+    def __post_init__(self):
+        from scipy import ndimage
+        self._da = ndimage.distance_transform_edt(~self.air).astype(np.float32) * self.h_mm
+        self._ds = ndimage.distance_transform_edt(~self.solid).astype(np.float32) * self.h_mm
+
+    def distances(self, P):
+        """Distance (mm) from each point (folded to y >= 0: the masks are symmetric) to required air and solid."""
+        from scipy import ndimage
+        Q = np.c_[P[:, 0], np.abs(P[:, 1]), P[:, 2]]
+        c = ((Q - self.origin_mm) / self.h_mm).T
+        return (ndimage.map_coordinates(self._da, c, order=1, mode="nearest"),
+                ndimage.map_coordinates(self._ds, c, order=1, mode="nearest"))
+
+    def held(self, P, n=None, cells=HOLD_CELLS):
+        da, ds = self.distances(P)
+        return (da < cells * self.h_mm) | (ds < cells * self.h_mm)
+
+    def save(self, path):
+        np.savez_compressed(path, origin_mm=self.origin_mm, h_mm=self.h_mm, air=self.air, solid=self.solid)
+
+    @classmethod
+    def load(cls, path):
+        z = np.load(path)
+        return cls(z["origin_mm"], float(z["h_mm"]), z["air"], z["solid"])
+
+
+def build_masks(d, spacing_mm=1.0) -> Masks:
+    """The hard masks of a decoded layout's body, as param_body.build makes them (its first step)."""
+    import unified_phi as up
+    from coarse import use_spacing
+    use_spacing(spacing_mm)
+    ugk = {"with_cargo": True, "cargo_placement": d.get("cargo")}
+    if d.get("rear") is not None:
+        from dataclasses import replace as _replace
+        from bounding_volumes import default_rule_envelope
+        ugk["rule_envelope"] = _replace(default_rule_envelope(), rearpod_max_length_m=(d["rear"] - 16.0) / 1e3)
+    g = up.build_unified_geometry(d["W"], d["x_front"], d["d_halo"], init_mode="full", **ugk)
+    g.phi.apply_hard_constraints()
+    return Masks(np.asarray(g.region.origin_m, float) * 1e3, up.GRID_SPACING_M * 1e3,
+                 np.asarray(g.phi.hard_mask_air, bool), np.asarray(g.phi.hard_mask_solid, bool))
+
+
 # ------------------------------------------------------------------ the link
-def fine_weights(ff, P_mm, frame, tol_mm=TOL_MM):
+def fine_weights(ff, P_mm, frame, tol_mm=TOL_MM, masks: Masks | None = None):
     """Per point: active mask, phi, grad phi and dphi/dc for every fine control point (top | bottom | side)."""
     phi, G, surf = phi_and_grad(ff, P_mm, frame)
     off = phi - level(P_mm, frame)
     g2 = (G * G).sum(1)
     act = (np.abs(off) < tol_mm) & (g2 > 0.04)
+    if masks is not None:
+        act &= ~masks.held(P_mm)
     dT, dB, dS = surface_partials(ff, P_mm[act], frame, tuple(s[act] for s in surf))
     Buv, Buw = basis(ff, P_mm[act])
     J = np.hstack([dT[:, None] * Buv, dB[:, None] * Buv, dS[:, None] * Buw])      # (n_active, 720) dphi/dc
@@ -173,12 +234,12 @@ def coarse_jacobian(seed, v, amp, coarse, h=1e-3):
     return Jc
 
 
-def gradient(dD_dX_SI, X_SI, ff, frame, seed=None, v=None, amp=None, coarse=None, tol_mm=TOL_MM):
+def gradient(dD_dX_SI, X_SI, ff, frame, seed=None, v=None, amp=None, coarse=None, tol_mm=TOL_MM, masks=None):
     """DAFoam's (X_i [m], dD/dX_i [N/m], half car) -> gradients. ff: the body that was solved (Freeform);
     seed/v/amp/coarse: stage 2's parametrisation (seed + from_unit(v)), for the coarse gradient."""
     P = np.asarray(X_SI, float) * 1e3
     g = np.asarray(dD_dX_SI, float)                     # N/m = mN/mm
-    fw = fine_weights(ff, P, frame, tol_mm)
+    fw = fine_weights(ff, P, frame, tol_mm, masks)
     act = fw["active"]
     w = normal_weights(g[act], fw["grad"][act])          # mN per mm of phi
     fine_half = w @ fw["J"]                               # mN per mm of control point, half car
@@ -207,12 +268,12 @@ def area_vectors(mesh):
     return A
 
 
-def predicted_moment(mesh_mm, ff, frame, f=None, seed=None, v=None, amp=None, coarse=None, tol_mm=TOL_MM):
+def predicted_moment(mesh_mm, ff, frame, f=None, seed=None, v=None, amp=None, coarse=None, tol_mm=TOL_MM, masks=None):
     """d/dc of  integral_V f dV  (f = 1: the volume), through the same chain as the drag: 'dD/dX_i' = f(x_i)
     A_i n_i (mm^3 per mm). Returns (fine, coarse or None, info)."""
     P = np.asarray(mesh_mm.vertices, float)
     A = area_vectors(mesh_mm) * (np.ones(len(P)) if f is None else f(P))[:, None]
-    fw = fine_weights(ff, P, frame, tol_mm)
+    fw = fine_weights(ff, P, frame, tol_mm, masks)
     act = fw["active"]
     w = normal_weights(A[act], fw["grad"][act])
     fine = w @ fw["J"]
