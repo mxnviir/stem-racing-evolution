@@ -89,7 +89,9 @@ jobs:
           set -e
           tail -c 2500 out/${{ matrix.case.name }}/make_car.log
           cp /tmp/car/rec.json /tmp/car/cfd/adapt.json out/${{ matrix.case.name }}/ 2>/dev/null || true
-          cp /tmp/car/evo/summary.json /tmp/car/evo/run_car.log out/${{ matrix.case.name }}/ 2>/dev/null || true
+          cp /tmp/car/evo/summary.json /tmp/car/evo/run_car.log /tmp/car/evo/report.md out/${{ matrix.case.name }}/ 2>/dev/null || true
+          echo "=== verdict"; python3 -c "import json; r=json.load(open('/tmp/car/rec.json')); print(json.dumps({k: r.get(k) for k in ('legal','failed','why','mass','build_s')}, default=float)[:1500])" || true
+          if [ "${{ matrix.case.type }}" = "build" ]; then exit 0; fi       # build-only cases: the verdict is the result
           exit $RC
       - name: score (audit protocol; fresh wall-resolved mesh, production scheme, 1000 its)
         if: matrix.case.type == 'score'
@@ -138,7 +140,7 @@ jobs:
           R=carhybrid/results/${{ needs.init.outputs.batch }}
           mkdir -p $R
           for d in /tmp/res/*/; do n=$(basename $d); mkdir -p $R/$n
-            find $d -maxdepth 1 \( -name "*.json" -o -name "*.log" -o -name "*.out" -o -name "*.npz" \) -size -5M -exec cp {} $R/$n/ \;
+            find $d -maxdepth 1 \( -name "*.json" -o -name "*.log" -o -name "*.out" -o -name "*.npz" -o -name "*.md" \) -size -5M -exec cp {} $R/$n/ \;
           done
           git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add carhybrid/results
