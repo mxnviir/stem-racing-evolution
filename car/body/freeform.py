@@ -52,6 +52,8 @@ class Freeform:
     blend_mm: float = 1.5       # rounding where two surfaces meet
     x_tip_mm: float = 0.0       # the fields run from the nose tip ...
     x_rear_mm: float = 240.0    # ... to the rear face (car frame, mm): the layout they were drawn for
+    nose_foam: bool = False     # owner 2026-11-28: the nose zone ahead of Ref A may be foam (milled with the body,
+                                # inside the block) instead of a printed nose
 
     def grids(self):
         return (np.asarray(self.top, float).reshape(self.nu, self.nv),

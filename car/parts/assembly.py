@@ -302,7 +302,16 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
     # -- front wing --------------------------------------------------------
     # -- nose cone (printed, ahead of Ref A) --------------------------------
     nm = None
-    if nose is not None:
+    foam_nose = freeform is not None and getattr(freeform, "nose_foam", False)
+    if foam_nose:
+        import numpy as np
+        # the nose zone is foam, milled with the body (owner 2026-11-28): no printed nose; the front wing holds to the
+        # body's own nose ahead of Ref A, and its pylons (if any) are the printed wing mount
+        ra = cc.ref_plane_A(x_front_mm) * 1e-3
+        b_ = body.slice_plane([ra + 2e-3, 0.0, 0.0], [-1.0, 0.0, 0.0], cap=True)
+        nm = {"nose": b_, "_full": b_ + b_.copy().apply_transform(np.diag([1.0, -1.0, 1.0, 1.0]))} if len(b_.faces) else None
+        info["foam_nose"] = True
+    elif nose is not None:
         if freeform is not None:
             # the free-form car's nose: its own surfaces ahead of Ref A (car/body/freeform.py)
             import freeform as fr
@@ -329,7 +338,11 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
         res = fwe.build(front, nm["nose"], x_front_mm, (x_front_mm, FY, R), body)
         gates.update({f"P4.{k}" if not k.startswith("P4.") else k: v for k, v in res["gates"].items()})
         info["front_wing_engine"] = {k: v for k, v in res["info"].items()}
-        if res["pylons"] is not None:
+        if res["pylons"] is not None and foam_nose:          # the printed wing mount on the foam nose
+            _export_half(res["pylons"], out / "nose.stl")
+            surfaces.append({"name": "nose", "stl": str(out / "nose.stl"), "rotating": None})
+            parts_mass["nose"] = _full_mass_com([res["pylons"]], cc.DENSITY_G_CM3[PART_MATERIAL])
+        elif res["pylons"] is not None:
             nose_with = _union_closed([nm["nose"], res["pylons"]])
             _export_half(nose_with, out / "nose.stl")
             parts_mass["nose"] = _full_mass_com([nose_with], cc.DENSITY_G_CM3[PART_MATERIAL])

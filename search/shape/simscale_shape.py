@@ -86,7 +86,8 @@ class ShapeCampaign(SL.Campaign):
         n = self.fr.n_genes(*self.coarse)
         ff = self.fr.from_unit(self.seed, v[:n], self.amp, *self.coarse)
         sh = SL.LG.shape_from_unit(v[n:], stage1=self.base)      # the layout search's wing numbers kept
-        return {"x": self.base.tolist(), "v": v.tolist(), "freeform": ff.as_dict(),
+        ffd = dict(ff.as_dict(), nose_foam=sh["nose_foam"])
+        return {"x": self.base.tolist(), "v": v.tolist(), "freeform": ffd,
                 "support": sh["support"], "fwing": sh["fwing"], "rwing": sh["rwing"]}
 
     def batch_done(self, ids):

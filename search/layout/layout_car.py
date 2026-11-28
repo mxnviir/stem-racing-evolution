@@ -322,7 +322,8 @@ def export_cfd(out: Path, d, pitch_mm: float | None = None) -> dict:
     # behind the rear face -- an 18 mm body, an 8.7 mm neck, the shoulder between
     whole += cyl(rear_face + CARTRIDGE_OUT_MM - CARTRIDGE_LEN_MM - 0.5, rear_face - 0.3, CARTRIDGE_R_MM + 0.5)
     whole += cartridge(rear_face)
-    whole += parts["nose"]
+    if "nose" in parts:                                         # (a foam nose is part of the body)
+        whole += parts["nose"]
     # the wheel supports (support_engine.py): the saddle is the body's own underside, so it adds only where
     # the arm and the transition leave the body; inside the wheel's cylinder the CFD wheel is solid, so the
     # disc, the axle and the hubcap are inside it and the transition's end section runs on into the wheel

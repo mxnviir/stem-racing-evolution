@@ -164,6 +164,7 @@ def decode(x) -> dict:
                tethers=tethers, support=support, skin_mm=float(v["skin_mm"]), legal_layout=layout_legal(W, rear, halo_rear))
     ff = organic_freeform(out)
     if ff is not None:
+        ff["nose_foam"] = bool(float(v["nose_foam"]) >= 0.5)
         out["freeform"] = ff
     return out
 
@@ -260,7 +261,8 @@ def shape_from_unit(u, z_fw=None, rw_x_le=None, stage1=None) -> dict:
         v.update(fw_pieces=1.0 if fw["pieces"] == 2 else 0.0, fw_chord=fw["chord_mm"], fw_te_gap=fw["te_gap_mm"],
                  fw_z=fw["z_mm"], fw_tip_y=fw["tip_y_mm"], fw_root_y=fw["root_y_mm"], rw_chord=rw["chord_mm"],
                  rw_half_span=rw["half_span_mm"], rw_x_le=rw["x_le_mm"], rw_lift=rw["lift_mm"])
-    return {"support": support_design(v), "fwing": front_wing_design(v), "rwing": rear_wing_design(v)}
+    return {"support": support_design(v), "fwing": front_wing_design(v), "rwing": rear_wing_design(v),
+            "nose_foam": bool(float(v["nose_foam"]) >= 0.5)}
 
 
 def support_from_unit(u) -> dict:

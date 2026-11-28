@@ -120,6 +120,9 @@ def _superellipse_phi(y, z, b, zc, h, p):
     return (r ** (1.0 / p) - 1.0) * np.minimum(b, h)
 
 
+FOAM_NOSE_OVERHANG_MM = 39.7   # T8.2's 40 mm less a margin: how far a foam nose may run ahead of Ref A
+
+
 def phi_mm(bp: BodyParams, X, Y, Z, x_ref_a: float, x_rear: float, skin_mm: float = 0.0):
     """Signed distance field (mm, negative inside) on grids X, Y, Z (mm).
 
@@ -327,7 +330,9 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
         import freeform as fr
         phi0 = fr.field(freeform, X, Y, Z, freeform.x_tip_mm, freeform.x_rear_mm,
                         axles=(x_front_mm, x_front_mm + W_mm, None))
-        phi0 = np.maximum(phi0, np.maximum(x_ref_a - X, X - x_rear_mm))      # the milled body: Ref A .. rear face
+        x_front_cut = (x_ref_a - FOAM_NOSE_OVERHANG_MM if getattr(freeform, "nose_foam", False) else x_ref_a)
+        phi0 = np.maximum(phi0, np.maximum(x_front_cut - X, X - x_rear_mm))   # the milled body: Ref A (or, with a
+        #   foam nose, T8.2's 40 mm ahead of it) .. rear face; T8.5.1's cap ahead of Ref A is forced in apply_build_rules
     else:
         phi0 = phi_mm(bp, X, Y, Z, x_ref_a, x_rear_mm)
     if lattice:
