@@ -1,0 +1,21 @@
+[run_car 14:30:30] 1-2 BODY + PARTS: parametric body sized against the manufactured parts [peak 0.0 GB]
+[run_car 14:30:34]   nose: printed ahead of x 39.40 mm (block), foam 0.00 mm to Ref A, tenon yes [peak 0.4 GB]
+[run_car 14:34:19]   pass 1: body 24.142 g, car 47.867 g (-0.333); joints ; supports each [np.float64(2.38), np.float64(1.92)] [peak 5.5 GB]
+[run_car 14:34:19]   fixed skin, not sized: car 47.867 g as built [peak 5.5 GB]
+[run_car 14:34:19] 3 LEGAL [peak 5.5 GB]
+Traceback (most recent call last):
+  File "/home/runner/work/stem-racing-evolution/stem-racing-evolution/evo/car/build/run_car.py", line 505, in <module>
+    main()
+  File "/home/runner/work/stem-racing-evolution/stem-racing-evolution/evo/car/build/run_car.py", line 492, in main
+    chk = legality.check(str(out / "body_half.stl"), asm_ref, S["mass"], S["body"]["field_bodies"],
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-evolution/stem-racing-evolution/evo/car/build/legality.py", line 1294, in check
+    r.update(nose_joint_checks(assembly, mm(body), mm(parts["nose"]), mm(parts["fwing"]) if "fwing" in parts else None))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-evolution/stem-racing-evolution/evo/car/build/legality.py", line 191, in nose_joint_checks
+    cz, cy = float(np.abs(z - zc).max()), float(np.abs(y).max())
+                   ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/site-packages/numpy/_core/_methods.py", line 41, in _amax
+    return umr_maximum(a, axis, None, out, keepdims, initial, where)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: zero-size array to reduction operation maximum which has no identity

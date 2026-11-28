@@ -1,0 +1,6 @@
+[run_car 14:30:33] 1-2 BODY + PARTS: parametric body sized against the manufactured parts [peak 0.0 GB]
+[run_car 14:30:44]   nose: printed ahead of x 38.75 mm (thin), foam 0.65 mm to Ref A, tenon yes [peak 0.6 GB]
+[run_car 14:34:55]   pass 1: body 21.923 g, car 49.543 g (+1.343); joints ; supports each [np.float64(2.36), np.float64(1.88)] [peak 6.5 GB]
+[run_car 14:34:55]   fixed skin, not sized: car 49.543 g as built [peak 6.5 GB]
+[run_car 14:34:55] 3 LEGAL [peak 6.5 GB]
+[run_car 14:36:17] done: {'n_checks': 188, 'n_failed': 0, 'failed': []} [peak 6.5 GB]

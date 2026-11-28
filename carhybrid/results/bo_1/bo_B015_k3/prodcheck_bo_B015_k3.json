@@ -1,0 +1,21 @@
+{
+ "D20_half_N": 0.2548538118035587,
+ "wall_s": 9781.3,
+ "converged": true,
+ "residual_p": 0.0031533437931972963,
+ "force_osc": 0.09118970200803792,
+ "force_drift": 0.007251075225960538,
+ "run_dir": "",
+ "force_mean_stderr": 0.0031484760128623404,
+ "morph_fallback": false,
+ "folder": "/tmp/car/cfd",
+ "scheme": "production linearUpwind",
+ "mesh": "fresh",
+ "resolution": "resolved",
+ "iterations": 1000,
+ "n_proc": 4,
+ "y_plus_min": 0.06385082617298124,
+ "y_plus_max": 56.68153841974844,
+ "n_cells": 2130513,
+ "run_dir_kept": "/home/runner/work/stem-racing-evolution/stem-racing-evolution/out/bo_B015_k3/state"
+}

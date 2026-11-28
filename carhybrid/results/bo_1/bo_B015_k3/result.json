@@ -1,0 +1,73 @@
+{
+ "case": {
+  "name": "bo_B015_k3",
+  "design": "folder:/tmp/car/cfd",
+  "k": 3,
+  "bg_div": 12.889
+ },
+ "converged": true,
+ "adjoint_repo_sha": "9ab9092debd0e0297b290d886bf45a765045448c",
+ "protocol": "fresh wall-resolved mesh, production linearUpwind, cold, 1000 its, score its 200-1000",
+ "wall_s": 9783.6,
+ "prodcheck": {
+  "D20_half_N": 0.2548538118035587,
+  "wall_s": 9781.3,
+  "converged": true,
+  "residual_p": 0.0031533437931972963,
+  "force_osc": 0.09118970200803792,
+  "force_drift": 0.007251075225960538,
+  "run_dir": "",
+  "force_mean_stderr": 0.0031484760128623404,
+  "morph_fallback": false,
+  "folder": "/tmp/car/cfd",
+  "scheme": "production linearUpwind",
+  "mesh": "fresh",
+  "resolution": "resolved",
+  "iterations": 1000,
+  "n_proc": 4,
+  "y_plus_min": 0.06385082617298124,
+  "y_plus_max": 56.68153841974844,
+  "n_cells": 2130513,
+  "run_dir_kept": "/home/runner/work/stem-racing-evolution/stem-racing-evolution/out/bo_B015_k3/state"
+ },
+ "cells": 2130513,
+ "y_plus_min": 0.06385082617298124,
+ "y_plus_max": 56.68153841974844,
+ "solver_converged": true,
+ "iterations_run": 1000,
+ "drag_mN": 256.04374235681587,
+ "drag_block_se_mN": 0.4812585606193828,
+ "drag_blocks_mN": [
+  256.798015736793,
+  256.8529912620115,
+  255.6701506249002,
+  254.85381180355864
+ ],
+ "lift_mN": 97.55371834492539,
+ "steady_drag": {
+  "iterations": 500,
+  "block": 100,
+  "block_means_mN": [
+   256.69028443811766,
+   255.1851586087679,
+   256.15514264103257,
+   254.62479125377413,
+   255.08283235334312
+  ],
+  "span_mN": 2.0654931843435236
+ },
+ "steady_lift": {
+  "iterations": 500,
+  "block": 100,
+  "block_means_mN": [
+   99.20456110766942,
+   93.40373658855282,
+   96.65846844137278,
+   98.92312953929961,
+   96.59502134063848
+  ],
+  "span_mN": 5.800824519116603
+ },
+ "body_drag_mN": 104.11100614377382,
+ "wheels_drag_mN": 151.93273621304206
+}
