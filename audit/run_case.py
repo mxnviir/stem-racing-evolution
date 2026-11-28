@@ -55,6 +55,8 @@ def main(adj, case, out):
             rec["error"] = "build: " + (r.stdout + r.stderr)[-400:]
             (out / "result.json").write_text(json.dumps(rec, indent=1)); return 1
         folder = car / "car"
+    elif design.startswith("folder:"):                       # an already-built car folder (seedhybrid confirm stage)
+        folder = Path(design.split(":", 1)[1])
     elif design.startswith("legal:"):                        # a morphed design put back through the legal builder
         src = {"hybrid_final": sp / "hybrid" / "final_design" / "car_half.stl"}[design.split(":", 1)[1]]
         r = subprocess.run([py, "-W", "ignore", str(Path(__file__).resolve().parents[1] / "seedhybrid" / "legalise.py"),

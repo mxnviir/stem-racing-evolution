@@ -65,8 +65,14 @@ Seeds (`config.json`): `team` = the team pod's legal field rebuild (174.75 mN on
   - Reported: how much of each lineage's steady-model gain survives legalisation and fresh meshes; adjoint-led vs
     random accepted steps per lineage.
 
+## Built since: confirm and robust stages (2026-11-28)
+
+- **confirm** runs automatically when every lineage has stopped (PROTOCOL.md "How the stages map to the
+  experiments"); `seedhybrid/legalise.py` puts a morphed design back through the legal builder; results land in
+  `seedhybrid/confirm/` and `state.json` `confirm`.
+- **robust** follows: the best legal final and its seed on the finer mesh and with the transition model.
+
 ## Not built yet (next)
 
-- **confirm stage** (legalise final designs + audit-protocol scoring) for mark F.
 - **re-meshing** ("phase B"): a morph reaches ~2 mm in total; when every child folds, the lineage stops. Re-meshing the
   current parent and continuing would let lineages travel further.

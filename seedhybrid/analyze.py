@@ -66,6 +66,121 @@ def metrics(adj, S, geomdir):
         cache_p.write_text(json.dumps(cache, indent=1))
 
 
+def paired(C, a, b, frames):
+    """a, b: (art, chain, legal, bg_div, turb). Paired by frame: mean and SE of a - b over the frames both have."""
+    def get(key):
+        return {c["k"]: c["drag_mN"] for c in C.values() if (c["art"], c["chain"], c["legal"], c["bg_div"], c["turb"]) == key
+                and c.get("drag_mN") is not None and c["k"] in frames}
+    A, B = get(a), get(b)
+    ks = sorted(set(A) & set(B))
+    if not ks:
+        return None
+    d = np.array([A[k] - B[k] for k in ks])
+    se = float(d.std(ddof=1) / np.sqrt(len(d))) if len(d) > 1 else float("nan")
+    return float(d.mean()), se, len(d), float(np.mean([A[k] for k in ks])), float(np.mean([B[k] for k in ks]))
+
+
+def claims(S, L):
+    C = S.get("confirm") or {}
+    if not C:
+        L.append("\n## Claims (E2-E6)\n\nNot yet: the confirm stage runs when every lineage has stopped.")
+        return
+    U, LG = 12, "kOmegaSST"
+    K4, K2 = (0, 1, 2, 3), (0, 1)
+    L.append("\n## Claims (fresh meshes, production scheme; the audit protocol)\n")
+    rows, finals = [], {}
+    # E3: yardstick fidelity
+    xs, ys, steps = [], [], []
+    for name, Ls in S["lineages"].items():
+        if not Ls.get("generations") or Ls["status"] in ("skipped_by_rule", "failed_setup", "pending"):
+            continue
+        art, levels = Ls["art"], [l for l in Ls["parent"].split("|") if l]
+        cum, inside = 0.0, [0.0]
+        for kk in sorted(Ls["generations"], key=int):
+            r = Ls["generations"][kk].get("result") or {}
+            if r.get("accepted"):
+                cum += r["best_change_mN"]; inside.append(cum)
+        prev = None
+        for i in range(1, len(levels) + 1):
+            ch = "|".join(levels[:i])
+            fr = paired(C, (art, ch, False, U, LG), (art, "", False, U, LG), K2)
+            if fr and i < len(inside):
+                xs.append(inside[i]); ys.append(fr[0])
+                if prev is not None or i == 1:
+                    step_in = inside[i] - inside[i - 1]
+                    step_fr = fr[0] - (prev if prev is not None else 0.0)
+                    steps.append((step_in, step_fr))
+                prev = fr[0]
+        fin_u = paired(C, (art, Ls["parent"], False, U, LG), (art, "", False, U, LG), K4)
+        fin_l = paired(C, (art, Ls["parent"], True, U, LG), (art, "", True, U, LG), K4)
+        leg = paired(C, (art, Ls["parent"], True, U, LG), (art, Ls["parent"], False, U, LG), K4)
+        finals[name] = (art, Ls["parent"], fin_l)
+        f1 = fin_l and fin_l[0] <= -1.4 and abs(fin_l[0]) >= 3 * fin_l[1]
+        kept = (fin_l[0] / fin_u[0]) if (fin_l and fin_u and fin_u[0] < 0) else None
+        rows.append(f"| {name} | {fmt(fin_u[0] if fin_u else None)} | {fmt(fin_l[0] if fin_l else None)} +- "
+                    f"{fmt(fin_l[1] if fin_l else None)} | {fmt(leg[0] if leg else None)} | "
+                    f"{'-' if kept is None else f'{100 * kept:.0f} %'} | {'pass' if f1 else 'not met'} |")
+    L.append("| lineage | final vs seed, unlegalised (frames 0-3) | final vs seed, legal (F1) | legalisation's own change | gain kept (E4, mark >= 70 %) | F1 |")
+    L.append("|---|---|---|---|---|---|")
+    L += rows
+    if len(xs) >= 3:
+        from scipy.stats import spearmanr
+        rho = float(spearmanr(xs, ys)[0])
+        big = [(a, b) for a, b in steps if a <= -1.0]
+        agree = sum(np.sign(a) == np.sign(b) for a, b in big)
+        L.append(f"\n- **E3a** Spearman (inside-loop cumulative change vs fresh-mesh change, {len(xs)} parents): {rho:+.2f} "
+                 f"(mark >= 0.8): **{'pass' if rho >= 0.8 else 'fail'}**.")
+        L.append(f"- **E3b** accepted steps <= -1.0 mN inside the loop that keep their sign on fresh meshes: {agree}/{len(big)} "
+                 f"(mark >= 80 %): **{'pass' if big and agree / len(big) >= 0.8 else 'fail' if big else 'n/a'}**.")
+    # E2
+    for name, Ls in S["lineages"].items():
+        if Ls.get("guides", True) or name not in finals:
+            continue
+        twin = Ls["base_of"]
+        if twin not in finals:
+            continue
+        a, b = finals[twin], finals[name]
+        d = paired(C, (a[0], a[1], True, U, LG), (b[0], b[1], True, U, LG), K4)
+        ok = bool(d) and d[0] < 0 and d[1] > 0 and abs(d[0]) >= 3 * d[1]      # a real, clear difference
+        L.append(f"- **E2** {twin} (guided) minus {name} (no adjoint), legal finals, frames 0-3: "
+                 f"{fmt(d[0] if d else None)} +- {fmt(d[1] if d else None)} mN: **{'pass' if ok else 'not met'}**.")
+    # F2 and E6
+    best = min((v for v in finals.items() if v[1][2]), key=lambda kv: kv[1][2][3], default=None)
+    if best:
+        name, (art, ch, fl) = best
+        d7 = paired(C, (art, ch, True, U, LG), ("d7", "", True, U, LG), K4)
+        L.append(f"- **F2** best legal design: {name} ({fl[3]:.2f} mN mean). Against d7's legal seed re-scored here: "
+                 f"{fmt(d7[0] if d7 else None)} +- {fmt(d7[1] if d7 else None)} mN; against 171.44 (before): {fl[3] - 171.44:+.2f}. "
+                 f"**{'pass' if d7 and d7[0] < 0 and abs(d7[0]) >= 3 * d7[1] else 'not met'}**.")
+    gl = [(n, v) for n, v in finals.items() if S["lineages"][n].get("guides", True) and v[2]]
+    if len(gl) >= 2:
+        L.append("- **E6** legal finals (mean of frames 0-3): " + ", ".join(f"{n} {v[2][3]:.2f}" for n, v in gl))
+    # E5 robustness
+    W = S.get("winner")
+    if W:
+        art, ch = W["art"], W["chain"]
+        base = paired(C, (art, ch, True, U, LG), (art, "", True, U, LG), K2)
+        fine = paired(C, (art, ch, True, 15.12, LG), (art, "", True, 15.12, LG), K2)
+        lm = paired(C, (art, ch, True, U, "kOmegaSSTLM"), (art, "", True, U, "kOmegaSSTLM"), (0,))
+        b0 = paired(C, (art, ch, True, U, LG), (art, "", True, U, LG), (0,))
+        if base and fine:
+            tol = 0.25 * abs(base[0]) if abs(base[0]) >= 10 else 2.65
+            ok = np.sign(base[0]) == np.sign(fine[0]) and abs(fine[0] - base[0]) <= tol
+            L.append(f"- **E5 finer mesh** (winner {W['lineage']} vs its seed, frames 0-1): scoring mesh {base[0]:+.2f}, finer "
+                     f"{fine[0]:+.2f} (tolerance {tol:.2f}): **{'pass' if ok else 'fail'}**.")
+        if lm and b0:
+            ok = np.sign(lm[0]) == np.sign(b0[0]) and 0.5 <= lm[0] / b0[0] <= 2
+            L.append(f"- **E5 transition model** (frame 0): SST {b0[0]:+.2f}, SSTLM {lm[0]:+.2f}: **{'same answer' if ok else 'different'}**.")
+    # flow-state flags: a frame whose body drag sits > 1.0 mN from the design's median body drag
+    by = {}
+    for c in C.values():
+        if c.get("body_mN") is not None and c["bg_div"] == U and c["turb"] == LG:
+            by.setdefault((c["art"], c["chain"], c["legal"]), []).append((c["k"], c["body_mN"]))
+    flags = [f"{a}/{'legal' if lg else 'morphed'}/{(ch[-30:] or 'seed')} frame {k}" for (a, ch, lg), v in by.items() if len(v) >= 3
+             for k, b in v if abs(b - np.median([x for _, x in v])) > 1.0]
+    L.append(f"- **Flow-state flags** (body drag > 1.0 mN from the design's median): {', '.join(flags) or 'none'}.")
+
+
 def boot_mean(groups, n=4000):
     """Mean over all values, with a 95 % interval from resampling the groups (generations), not the values."""
     groups = [np.asarray(g, float) for g in groups if len(g)]
@@ -204,6 +319,7 @@ def main(adj, geomdir):
         n_d = len(list((LIN / name).glob("dafoam_g*.npz")))
         L.append(f"| {name} | {n_ch} | {n_d} |")
     L.append("\nSetup: one base state (fresh mesh, ~4.5 h) per seed, shared by an ablation arm and its guided twin.")
+    claims(S, L)
     (HERE / "RESULTS.md").write_text("\n".join(L) + "\n")
     print("RESULTS.md written", flush=True)
 

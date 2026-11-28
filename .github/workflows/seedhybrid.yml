@@ -186,6 +186,32 @@ jobs:
             tail -3 $O/esi_after.log
           fi
           exit $RC
+      - name: score (confirm stage; the audit protocol - fresh mesh, production scheme, 1000 its)
+        if: matrix.case.type == 'score'
+        timeout-minutes: 330
+        env: { CHAIN: "${{ matrix.case.chain }}", NAME: "${{ matrix.case.name }}", LEGAL: "${{ matrix.case.legal }}" }
+        run: |
+          source /usr/lib/openfoam/openfoam2412/etc/bashrc || true
+          O=$GITHUB_WORKSPACE/out/$NAME; mkdir -p $O
+          cd $SP
+          if [ -z "$CHAIN" ]; then
+            if [ "$LEGAL" = "true" ]; then F=$PWD/gate/original; else F=$PWD/gate/original_rm; fi
+          else
+            CHAIN_DRY=1 STEP_REGION=1 STEP_EDGE_MASK_MM=0 STEP_NORMAL_SIGMA_MM=1.5 STEP_ZMIN_MM=1.5 GATE_RES=resolved \
+              GATE_RESULTS=/tmp/gr python -W ignore -u hybrid/chain_solve.py cdesign "$CHAIN" zero 0 > $O/chain_dry.log 2>&1 || true
+            test -f gate/bump_cdesign/car_half.stl || { tail -20 $O/chain_dry.log; exit 1; }
+            F=$PWD/gate/bump_cdesign
+            if [ "$LEGAL" = "true" ]; then
+              python -W ignore $GITHUB_WORKSPACE/seedhybrid/legalise.py $GITHUB_WORKSPACE/adj $F/car_half.stl /tmp/legal "$NAME" 2>&1 | tail -1
+              cp /tmp/legal/legalise.json $O/ 2>/dev/null || true
+              test -f /tmp/legal/car/car_half.stl || exit 1
+              F=/tmp/legal/car
+            fi
+          fi
+          cd $GITHUB_WORKSPACE
+          python3 -c "import json,os; print(json.dumps({'name': os.environ['NAME'], 'design': 'folder:$F', 'k': ${{ matrix.case.k || 0 }}, 'bg_div': ${{ matrix.case.bg_div || 12 }}, 'turb': '${{ matrix.case.turb || 'kOmegaSST' }}'}))" > /tmp/case.json
+          python -W ignore audit/run_case.py adj /tmp/case.json $O | tail -1
+          cat $O/result.json | head -c 600
       - uses: actions/upload-artifact@v4
         if: always()
         with: { name: "out-${{ matrix.case.name }}", path: out/, retention-days: 60 }

@@ -52,4 +52,18 @@ t = t.replace(old, "         * MS.smoothstep((V[:, 1] - MS.Y0) / MS.TAPER)) * MS
 # load them only when present and skip predictions that cannot be mapped
 t = t.replace("G = {k: np.load(p) for k, p in GRADS.items()}", "G = {k: np.load(p) for k, p in GRADS.items() if p.exists()}", 1)
 pc.write_text(t)
-print("patched", ms, pc)
+# opt-in hooks used by the confirm stage (same as the drag audit's workflow; defaults reproduce the original exactly):
+# P2_BG_DIV = background-cell divisor (12 = the scoring mesh), PRODCHECK_TURB = turbulence model
+oc = adj / "part2-simulation" / "openfoam_case.py"
+t = oc.read_text()
+for a in ("max(lx / 12.0, 1e-4)", "max(ref_len / 12.0, 1e-4)"):
+    assert t.count(a) == 1, a
+    t = t.replace(a, a.replace("12.0", 'float(os.environ.get("P2_BG_DIV", "12"))'))
+oc.write_text(t)
+pk = sp / "prodcheck.py"
+t = pk.read_text()
+a = 'extra["stage_timeout_s"] = int(os.environ.get("PRODCHECK_TIMEOUT", 18000))\n'
+assert a in t
+t = t.replace(a, a + 'if os.environ.get("PRODCHECK_TURB", "kOmegaSST") != "kOmegaSST":\n    extra["turbulence_model"] = os.environ["PRODCHECK_TURB"]\n', 1)
+pk.write_text(t)
+print("patched", ms, pc, oc, pk)

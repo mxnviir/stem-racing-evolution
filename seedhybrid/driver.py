@@ -61,6 +61,66 @@ def new_lineage(cfg, L):
             "generations": {}, "base": None}
 
 
+def score_case(store, lineage, art, chain, legal, k, role, bg_div=12, turb="kOmegaSST"):
+    """One fresh-mesh production score (the audit protocol); identical designs are scored once (key: art, chain,
+    legal, frame, mesh, model) and credited to every lineage that reaches them."""
+    key = (art, chain, legal, k, bg_div, turb)
+    if key in store:
+        if lineage not in store[key]["lineages"]:
+            store[key]["lineages"].append(lineage)
+        store[key]["role"] = sorted(set(store[key]["role"].split("+")) | {role})
+        store[key]["role"] = "+".join(store[key]["role"])
+        return
+    import hashlib
+    tag = f"{art}_{'L' if legal else 'U'}{hashlib.md5(chain.encode()).hexdigest()[:8]}_k{k}" + ("" if bg_div == 12 else f"_bg{bg_div:g}") + \
+          ("" if turb == "kOmegaSST" else "_lm")
+    store[key] = {"type": "score", "name": f"c_{tag}", "lineage": lineage, "lineages": [lineage], "art": art,
+                  "chain": chain, "legal": legal, "k": k, "bg_div": bg_div, "turb": turb, "role": role}
+
+
+def confirm_cases(S):
+    """PROTOCOL.md E3-E6: every accepted parent (and the seed) unlegalised on frames 0-1 (E3); each final unlegalised
+    and legalised on frames 0-3 (E4); each legal seed on frames 0-3 (E5, F1)."""
+    store = {}
+    for name, Ls in S["lineages"].items():
+        if not Ls.get("generations") or Ls["status"] in ("skipped_by_rule", "failed_setup", "pending"):
+            continue
+        levels = [l for l in Ls["parent"].split("|") if l]
+        prefixes = ["|".join(levels[:i]) for i in range(len(levels) + 1)]
+        for ch in prefixes:
+            for k in (0, 1):
+                score_case(store, name, Ls["art"], ch, False, k, "E3")
+        for k in (2, 3):                                  # the unlegalised seed on all four frames too (E4's gain kept)
+            score_case(store, name, Ls["art"], "", False, k, "E4")
+        for k in (0, 1, 2, 3):
+            score_case(store, name, Ls["art"], Ls["parent"], False, k, "E4")
+            score_case(store, name, Ls["art"], Ls["parent"], True, k, "E4+E5")
+            score_case(store, name, Ls["art"], "", True, k, "seed")
+    return list(store.values())
+
+
+def robust_cases(S):
+    """PROTOCOL.md E5 robustness: the best legal final and its legal seed on the finer mesh (frames 0-1) and with the
+    transition model (frame 0)."""
+    C = S.get("confirm", {})
+    finals = {}
+    for n, c in C.items():
+        if c["legal"] and c["chain"] and c.get("drag_mN") and c["bg_div"] == 12 and c["turb"] == "kOmegaSST":
+            finals.setdefault((c["art"], c["chain"]), []).append(c["drag_mN"])
+    full = {key: np.mean(v) for key, v in finals.items() if len(v) == 4}
+    if not full:
+        return []
+    art, chain = min(full, key=full.get)
+    win = next(l for l, Ls in S["lineages"].items() if Ls.get("art") == art and Ls["parent"] == chain)
+    S["winner"] = {"lineage": win, "art": art, "chain": chain, "legal_mean_mN": float(full[(art, chain)])}
+    store = {}
+    for ch, role in ((chain, "winner"), ("", "winner_seed")):
+        for k in (0, 1):
+            score_case(store, win, art, ch, True, k, role, bg_div=15.12)
+        score_case(store, win, art, ch, True, 0, role, turb="kOmegaSSTLM")
+    return list(store.values())
+
+
 def child_result(R, name):
     """(mean of the last 404 iterations, whole-signal SE) of a child, as hybrid/loop.py reads it, or None."""
     j, f = R / f"bump_{name}.json", R / "forces" / f"bump_{name}" / "forces.dat"
@@ -97,6 +157,24 @@ def advance(results, run_id, adj):
         S["lineages"][L["name"]].setdefault("guides", L.get("guides", True))
     for name in S["lineages"]:
         (LIN / name).mkdir(parents=True, exist_ok=True)     # empty folders are not in git
+    if stage in ("confirm", "robust"):
+        C = S.setdefault("confirm", {})
+        (HERE / "confirm").mkdir(exist_ok=True)
+        for c in req["cases"]:
+            r = load(results / c["name"] / "result.json")
+            if r is not None:
+                save(HERE / "confirm" / f"{c['name']}.json", r)
+            C[c["name"]] = {**{k: c[k] for k in ("lineages", "art", "chain", "legal", "k", "bg_div", "turb", "role")},
+                            "drag_mN": (r or {}).get("drag_mN"), "body_mN": (r or {}).get("body_drag_mN"),
+                            "wheels_mN": (r or {}).get("wheels_drag_mN"), "lift_mN": (r or {}).get("lift_mN"),
+                            "error": (r or {}).get("error", None if r else "no result")}
+        S["confirm_runs"] = S.get("confirm_runs", []) + [int(run_id)]
+        nxt = robust_cases(S) if stage == "confirm" else []
+        S["stage"] = "robust" if nxt else "stopped"
+        save(ST, S)
+        save(REQ, {"stage": S["stage"], "gen": k, "setup_run": S["setup_run"], "lineages": cfg["lineages"], "cases": nxt})
+        print(f"{stage} ingested; next: {S['stage']} ({len(nxt)} cases)")
+        return bool(nxt)
     if stage == "setup":
         S["setup_run"] = int(run_id)
         for name, Ls in S["lineages"].items():
@@ -222,6 +300,13 @@ def advance(results, run_id, adj):
             cases.append({"type": "dafoam", "lineage": name, "art": Ls["art"], "name": f"{name}_daf_g{k1}",
                           "parent": Ls["parent"], "tag": f"g{k1}"})
             Ls["dafoam_at"] = Ls["parent"]
+    if not cases and not S.get("confirm"):
+        cc = confirm_cases(S)
+        S["stage"], S["gen"] = "confirm", k
+        save(ST, S)
+        save(REQ, {"stage": "confirm", "gen": k, "setup_run": S["setup_run"], "lineages": cfg["lineages"], "cases": cc})
+        print(f"all lineages stopped; confirm stage: {len(cc)} cases")
+        return True
     S["stage"], S["gen"] = ("gen", k1) if cases else ("stopped", k)
     save(ST, S)
     if cases:

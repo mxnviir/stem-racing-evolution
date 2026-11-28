@@ -131,5 +131,19 @@ These cannot be closed inside this campaign. Each says what would close it.
 | G6 | Few lineages | Two ablation pairs at most: the lineage-level comparison has n <= 2 | More seeds per arm; E1's within-generation pairs carry most of the statistical weight meanwhile |
 | G7 | Frame-to-frame flow-state flips | Fresh-mesh scores switch between states ~1.9 mN apart (audit T3) | Label states per run (E5); URANS for the winner |
 
+## How the stages map to the experiments
+
+| Stage | Runs | Feeds |
+|---|---|---|
+| setup | per seed: geometry, base state, DAFoam at the seed | E0 |
+| generations 1..6 | per lineage: 6-7 children (+ a DAFoam gradient where the parent moved) | E1, E2 trajectory, E7 |
+| confirm (when every lineage has stopped) | every accepted parent unlegalised, frames 0-1; the unlegalised seed frames 0-3; each final unlegalised and legalised frames 0-3; each legal seed frames 0-3; identical designs scored once | E2, E3, E4, E5 (F1, F2), E6 |
+| robust | the best legal final and its legal seed: finer mesh frames 0-1, transition model frame 0 | E5 robustness |
+
+`analyze.py` applies every mark mechanically after each stage and writes `RESULTS.md`.
+
 ## Change log
 - 2026-11-28 06:30 UTC: protocol written (before any generation result).
+- 2026-11-28 07:40 UTC (before any generation result): the unlegalised seed is scored on frames 0-3 (not only 0-1), so
+  E4's "gain kept" uses the same four frames on both sides. Flow-state flag made concrete: a frame whose body drag is
+  more than 1.0 mN from the median body drag of that design's frames.

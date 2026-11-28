@@ -92,7 +92,8 @@ flowchart TD
     HALF --> NEXT
     NEXT -->|no: dispatch generation k+1| GEN
     NEXT -->|6 generations, amplitude below 0.125 mm, or every child folds the mesh| END[lineage stops]
-    END --> CONF[confirm stage, not built yet: legalise the final shape, score on fresh meshes vs its seed]
+    END --> CONF[confirm: legalise every final, score parents, finals and seeds on fresh meshes]
+    CONF --> ROB[robust: the best legal design on a finer mesh and with the transition model]
 ```
 
 ## 5. Stage by stage
@@ -125,6 +126,19 @@ For each active lineage, up to 7 jobs at once:
 
 Each child: build the move, bend the lineage's base mesh through the parent's levels and then the child's move, start
 from the base flow, run 1000 steady-model iterations, and record drag as the mean of the last 404 with its SE.
+
+### Confirm and robust (after every lineage has stopped, about 2-3 runs of waves)
+
+The loop's own numbers are a yardstick, not a claim. The confirm stage measures every result the way the audit did:
+fresh meshes, production scheme, four meshing frames.
+- Every accepted parent of every lineage, as the loop left it (frames 0-1): does the loop's yardstick track fresh-mesh
+  results (E3)?
+- Each final design as the loop left it, and **legalised** (`legalise.py`: back through the 3-axis milling and wall
+  rules; frames 0-3): how much of the gain survives legality (E4), and does the legal design beat its legal seed (F1)?
+- Each legal seed (frames 0-3): the reference for F1, and for "does the campaign beat d7" (F2).
+- Then **robust**: the best legal design and its seed on a finer mesh and with the transition turbulence model (E5).
+
+Identical designs (for example, a seed shared by a guided lineage and its no-adjoint twin) are scored once.
 
 ## 6. One generation's decision, worked through
 
@@ -195,7 +209,6 @@ that repository is changed.
 
 - **About 2 mm of total travel per lineage.** Bending a mesh further folds its cells. When every child folds, the
   lineage stops. Re-meshing the current parent and continuing ("phase B") is not built yet.
-- **No confirm stage yet.** Until it exists, results are internal numbers only.
 - **DAFoam may fail on seeds unlike the team pod.** Those lineages then run on random and recombined moves only.
 - **One car, one sidepod region, drag only.** Race time is not used yet.
 
