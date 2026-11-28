@@ -1,0 +1,65 @@
+{
+ "E1": {
+  "dafoam_ok": false,
+  "steady": true,
+  "scheme": "linearUpwind",
+  "primal_vs_openfoam_pct": 0.00012656407489242287,
+  "primal_within_2pct": true,
+  "n_gradients": 0,
+  "pass": false
+ },
+ "E2": {
+  "verdict": "INCOMPLETE",
+  "pass": false
+ },
+ "fd": [],
+ "PASS": false,
+ "reported": {
+  "production": {
+   "D_half_mN": 229.19992092768732,
+   "D_half_se_mN": 0.0012677610548690432,
+   "L_half_mN": 74.509171132418,
+   "cells": 93932,
+   "y_plus_max": 224.8157633796633,
+   "cfd_s": 182
+  },
+  "steady": {
+   "steady": true,
+   "scheme": "linearUpwind",
+   "D_half_mN": 229.198601520343,
+   "span_mark_mN": 0.02,
+   "span_mN": 0.0001678288971334041
+  },
+  "dafoam": {
+   "ok": false,
+   "failed": true,
+   "D_half_N": 0.22919889160343268,
+   "primal_D_half_N": 0.229199,
+   "adjoint_s": 3672.9694056510925,
+   "primal_s": 43.70523810386658,
+   "dafoam_s": 3731,
+   "n_surface_points": 3115,
+   "first_residual": 0.0,
+   "last_residual": 0.00208698118404,
+   "env": {
+    "DAF_ADJ": "Krylov",
+    "DAF_PC_FILL": "0",
+    "DAF_PC_LEVEL": "1",
+    "DAF_GMRES_ITERS": "2000",
+    "DAF_GMRES_RESTART": "200",
+    "DAF_GMRES_TOL": "1e-6",
+    "DAF_FUNCS": "D,L",
+    "DAF_KEEP_UNCONVERGED": "1",
+    "DAF_MAX_SKEW": "1000",
+    "DAF_MAX_NONORTH": "89",
+    "DAF_MAX_ASPECT": "1e6"
+   },
+   "primal_vs_openfoam_pct": 0.00012656407489242287
+  },
+  "wall_s": 4438,
+  "n_active": null,
+  "n_points": null,
+  "active_share_of_dD": null,
+  "error": "DAFoam adjoint failed (log: dafoam_case/log.dafoam)"
+ }
+}

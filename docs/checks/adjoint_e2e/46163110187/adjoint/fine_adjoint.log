@@ -1,0 +1,29 @@
+[fine_adjoint 16:13:59] 1 car
+[fine_adjoint 16:17:52] 2 production
+[fine_adjoint 16:20:54] 3 steady
+{"scheme": "linearUpwind", "from_time": 1000, "iterations": 2000, "span_mN": 0.0001678288971334041, "block_means_mN": [229.199, 229.199, 229.199, 229.199, 229.199, 229.199, 229.199, 229.199, 229.199, 229.199], "D_half_mN_last1000": 229.198601520343, "state": "/scratch/job/run/steady/steady_linearUpwind"}
+STEADY_PASS linearUpwind 0.0002
+[fine_adjoint 16:25:46] 4 DAFoam
+case /scratch/job/run/dafoam_case from /scratch/job/run/steady/steady_linearUpwind/2000; schemes kept:
+ddtSchemes      { default steadyState; }
+// Limited: one bad cell at a wing-to-nose junction blew the unlimited solve up to
+gradSchemes     { default Gauss linear; grad(U) cellLimited Gauss linear 1; }
+    default         none;
+    div(pc)         bounded Gauss upwind;
+    div(phi,U)      bounded Gauss linearUpwind grad(U);
+    div(phi,k)      bounded Gauss upwind;
+    div(phi,omega)  bounded Gauss upwind;
+    div(phi,ReThetat) bounded Gauss upwind;
+    div(phi,gammaInt) bounded Gauss upwind;
+    div((nuEff*dev2(T(grad(U))))) Gauss linear;
+laplacianSchemes { default Gauss linear limited corrected 0.5; }
+interpolationSchemes { default linear; }
+snGradSchemes   { default limited corrected 0.5; }
+D1_functions_D_and_L: applied
+D1b_function_list: applied
+D2_gmres_record: applied
+D3_totals_per_function: applied
+D4_mesh_check_env: applied
+R1_ranks_shm_env: applied
+R1b_shm_funcs: applied
+[fine_adjoint 17:27:57] done: usable=False DAFoam adjoint failed (log: dafoam_case/log.dafoam)

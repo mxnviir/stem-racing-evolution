@@ -1,0 +1,74 @@
+{
+ "returncode": 0,
+ "dafoam_s": 3731,
+ "env": {
+  "DAF_ADJ": "Krylov",
+  "DAF_PC_FILL": "0",
+  "DAF_PC_LEVEL": "1",
+  "DAF_GMRES_ITERS": "2000",
+  "DAF_GMRES_RESTART": "200",
+  "DAF_GMRES_TOL": "1e-6",
+  "DAF_FUNCS": "D,L",
+  "DAF_KEEP_UNCONVERGED": "1",
+  "DAF_MAX_SKEW": "1000",
+  "DAF_MAX_NONORTH": "89",
+  "DAF_MAX_ASPECT": "1e6"
+ },
+ "failed": true,
+ "first_residual": 0.0,
+ "last_residual": 0.00208698118404,
+ "primal_D_half_N": 0.229199,
+ "D_half_N": 0.22919889160343268,
+ "L_half_N": 0.07451817968948249,
+ "functions": [
+  "D",
+  "L"
+ ],
+ "gradients": [
+  "D",
+  "L"
+ ],
+ "adjoint_method": "Krylov",
+ "n_surface_points": 3115,
+ "primal_s": 43.70523810386658,
+ "adjoint_s": 3672.9694056510925,
+ "adjoint_s_per_function": {
+  "D": 2595.357773542404,
+  "L": 1077.5991003513336
+ },
+ "nproc": 4,
+ "gmres_rel_tol": 1e-06,
+ "gmres": {
+  "D": {
+   "seconds": 2554.0,
+   "error": "AnalysisError('Adjoint solution failed!')",
+   "iterations": 2000,
+   "reason": -3,
+   "residual_norm": 0.02119338262727549,
+   "converged": false,
+   "gradient_kept_unconverged": true
+  },
+  "L": {
+   "seconds": 1007.1,
+   "error": "AnalysisError('Adjoint solution failed!')",
+   "iterations": 2000,
+   "reason": -3,
+   "residual_norm": 0.05208698118404136,
+   "converged": false,
+   "gradient_kept_unconverged": true
+  }
+ },
+ "sum_dD_dXs": [
+  0.052620121250883584,
+  4.271667408167411,
+  -0.1640739993704817
+ ],
+ "sum_dL_dXs": [
+  0.7584087824304272,
+  0.24267321075309317,
+  -2.918581336923551
+ ],
+ "converged_D": false,
+ "ok": false,
+ "sens": "/scratch/job/run/dafoam_case/dafoam_sens.npz"
+}
