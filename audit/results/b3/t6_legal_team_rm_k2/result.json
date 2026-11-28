@@ -1,0 +1,78 @@
+{
+ "case": {
+  "name": "t6_legal_team_rm_k2",
+  "design": "legal:team_rm",
+  "k": 2,
+  "bg_div": 12
+ },
+ "converged": true,
+ "adjoint_repo_sha": "9ab9092debd0e0297b290d886bf45a765045448c",
+ "protocol": "fresh wall-resolved mesh, production linearUpwind, cold, 1000 its, score its 200-1000",
+ "legalise": {
+  "source": "/home/runner/work/stem-racing-evolution/stem-racing-evolution/adj/research/sidepod_opt/gate/original_rm/car_half.stl",
+  "accepted": true,
+  "check": {
+   "pieces": 1,
+   "changed_outside_region_mm3": 0.0,
+   "foam_in_forced_air_mm3": 0.0,
+   "cargo_inside": true,
+   "track_clearance_mm": 2.0,
+   "thin_foam_mm3": 0.0,
+   "ok": true
+  },
+  "rules_changed_in_region_mm3": 670.0,
+  "outside_region_differs_mm3_before_reset": 40.0,
+  "pod_cm3": 67.47,
+  "mass": {
+   "foam_g": 25.70105776683641,
+   "lead_g": 0.0,
+   "lead_min_g": 0.0,
+   "lead_cap_g": 15.762599999999999,
+   "car_g": 48.22490348863334,
+   "legal": true,
+   "race_mass_g": 69.37490348863334,
+   "com_x_car_mm": 165.2345114166366,
+   "com_z_mm": 22.432792407448684,
+   "mass_suspect": false
+  },
+  "full_body_volume_cm3": 157.50346502884454
+ },
+ "wall_s": 7822.4,
+ "prodcheck": {
+  "D20_half_N": 0.17606830968301043,
+  "wall_s": 7822.0,
+  "converged": true,
+  "residual_p": 0.002824587181729531,
+  "force_osc": 0.10424252026214326,
+  "force_drift": 0.002574982966597324,
+  "run_dir": "",
+  "force_mean_stderr": 0.005141955747529177,
+  "morph_fallback": false,
+  "folder": "/home/runner/work/stem-racing-evolution/stem-racing-evolution/out/t6_legal_team_rm_k2/legal/car",
+  "scheme": "production linearUpwind",
+  "mesh": "fresh",
+  "resolution": "resolved",
+  "iterations": 1000,
+  "n_proc": 4,
+  "y_plus_min": 0.06311759144693528,
+  "y_plus_max": 53.69617410811488,
+  "n_cells": 2127283,
+  "run_dir_kept": "/home/runner/work/stem-racing-evolution/stem-racing-evolution/out/t6_legal_team_rm_k2/state"
+ },
+ "cells": 2127283,
+ "y_plus_min": 0.06311759144693528,
+ "y_plus_max": 53.69617410811488,
+ "solver_converged": true,
+ "iterations_run": 1000,
+ "drag_mN": 176.4242975185185,
+ "drag_block_se_mN": 0.17477475214606897,
+ "drag_blocks_mN": [
+  176.89654251476782,
+  176.43707037899557,
+  176.29526749730022,
+  176.06830968301037
+ ],
+ "lift_mN": 92.28212352915918,
+ "body_drag_mN": 26.424340209360935,
+ "wheels_drag_mN": 149.99995730915757
+}
