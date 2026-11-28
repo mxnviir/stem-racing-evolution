@@ -1,0 +1,551 @@
+{
+ "stations": 38,
+ "rectangularity_median": 0.705125367782621,
+ "rectangularity_max": 0.8275984227846881,
+ "rectangularity_by_x": [
+  [
+   44.4,
+   0.625
+  ],
+  [
+   49.4,
+   0.718
+  ],
+  [
+   54.4,
+   0.738
+  ],
+  [
+   59.4,
+   0.752
+  ],
+  [
+   64.4,
+   0.777
+  ],
+  [
+   69.4,
+   0.79
+  ],
+  [
+   74.4,
+   0.811
+  ],
+  [
+   79.4,
+   0.817
+  ],
+  [
+   84.4,
+   0.828
+  ],
+  [
+   89.4,
+   0.693
+  ],
+  [
+   94.4,
+   0.624
+  ],
+  [
+   99.4,
+   0.683
+  ],
+  [
+   104.4,
+   0.721
+  ],
+  [
+   109.4,
+   0.776
+  ],
+  [
+   114.4,
+   0.746
+  ],
+  [
+   119.4,
+   0.736
+  ],
+  [
+   124.4,
+   0.692
+  ],
+  [
+   129.4,
+   0.689
+  ],
+  [
+   134.4,
+   0.672
+  ],
+  [
+   139.4,
+   0.626
+  ],
+  [
+   144.4,
+   0.608
+  ],
+  [
+   149.4,
+   0.589
+  ],
+  [
+   154.4,
+   0.573
+  ],
+  [
+   159.4,
+   0.58
+  ],
+  [
+   164.4,
+   0.616
+  ],
+  [
+   169.4,
+   0.678
+  ],
+  [
+   174.4,
+   0.801
+  ],
+  [
+   179.4,
+   0.818
+  ],
+  [
+   184.4,
+   0.793
+  ],
+  [
+   189.4,
+   0.762
+  ],
+  [
+   194.4,
+   0.746
+  ],
+  [
+   199.4,
+   0.782
+  ],
+  [
+   204.4,
+   0.793
+  ],
+  [
+   209.4,
+   0.488
+  ],
+  [
+   214.4,
+   0.478
+  ],
+  [
+   219.4,
+   0.479
+  ],
+  [
+   224.4,
+   0.481
+  ],
+  [
+   229.4,
+   0.484
+  ]
+ ],
+ "box_sections": [],
+ "flat_patches": [
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 0.0,
+   "area_mm2": 4960.1,
+   "label": "centre plane (closing face)",
+   "bbox_mm": [
+    [
+     36.8,
+     0.0,
+     8.1
+    ],
+    [
+     256.4,
+     0.0,
+     50.1
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 8.1,
+   "area_mm2": 215.1,
+   "label": "official block underside slot (6 x 6 mm, kept unmachined)",
+   "bbox_mm": [
+    [
+     44.8,
+     0.1,
+     8.1
+    ],
+    [
+     191.0,
+     2.9,
+     8.1
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 24.0,
+   "area_mm2": 142.3,
+   "label": "halo pocket floor",
+   "bbox_mm": [
+    [
+     65.0,
+     0.3,
+     24.0
+    ],
+    [
+     110.2,
+     27.0,
+     24.0
+    ]
+   ]
+  },
+  {
+   "axis": "x",
+   "normal_sign": 1,
+   "at_mm": 207.0,
+   "area_mm2": 129.8,
+   "label": "cartridge chamber end (52 mm bore, internal)",
+   "bbox_mm": [
+    [
+     207.0,
+     0.2,
+     23.0
+    ],
+    [
+     207.0,
+     6.1,
+     40.1
+    ]
+   ]
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 36.75,
+   "area_mm2": 114.9,
+   "label": "nose glued face at x_cut (foam meets print; covered by the print)",
+   "bbox_mm": [
+    [
+     36.8,
+     0.1,
+     4.0
+    ],
+    [
+     36.8,
+     8.2,
+     19.1
+    ]
+   ]
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 3.0,
+   "area_mm2": 109.9,
+   "label": "official block underside slot (6 x 6 mm, kept unmachined)",
+   "bbox_mm": [
+    [
+     44.8,
+     3.0,
+     6.7
+    ],
+    [
+     184.8,
+     3.0,
+     8.1
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 17.65,
+   "area_mm2": 109.7,
+   "label": "ballast container floor (App. ix, internal)",
+   "bbox_mm": [
+    [
+     91.3,
+     2.1,
+     17.6
+    ],
+    [
+     104.6,
+     6.3,
+     17.6
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.1,
+   "area_mm2": 103.4,
+   "label": "halo rim, body flush with the seat (T4.4.2, owner 2026-11-23)",
+   "bbox_mm": [
+    [
+     103.4,
+     0.3,
+     27.1
+    ],
+    [
+     112.7,
+     24.6,
+     27.1
+    ]
+   ]
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 4.0,
+   "area_mm2": 69.0,
+   "label": "wheel zone face (T7.9 clearance round a wheel)",
+   "bbox_mm": [
+    [
+     36.9,
+     4.0,
+     6.3
+    ],
+    [
+     88.0,
+     4.0,
+     21.7
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 9.8,
+   "area_mm2": 50.7,
+   "label": "UNEXPLAINED",
+   "bbox_mm": [
+    [
+     104.7,
+     19.3,
+     9.8
+    ],
+    [
+     130.7,
+     22.7,
+     9.8
+    ]
+   ]
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 6.35,
+   "area_mm2": 50.3,
+   "label": "ballast container side wall (App. ix, internal)",
+   "bbox_mm": [
+    [
+     92.7,
+     6.3,
+     19.8
+    ],
+    [
+     100.5,
+     6.4,
+     21.9
+    ]
+   ]
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 112.8,
+   "area_mm2": 46.0,
+   "label": "halo rear face seat (body backs the halo, team rule)",
+   "bbox_mm": [
+    [
+     112.8,
+     0.0,
+     28.0
+    ],
+    [
+     112.8,
+     12.6,
+     33.4
+    ]
+   ]
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 9.1,
+   "area_mm2": 45.3,
+   "label": "UNEXPLAINED",
+   "bbox_mm": [
+    [
+     207.4,
+     9.1,
+     30.5
+    ],
+    [
+     242.1,
+     9.1,
+     31.6
+    ]
+   ]
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 112.75,
+   "area_mm2": 41.4,
+   "label": "halo rear face seat (body backs the halo, team rule)",
+   "bbox_mm": [
+    [
+     112.8,
+     0.3,
+     27.1
+    ],
+    [
+     112.8,
+     16.4,
+     30.6
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.2,
+   "area_mm2": 35.7,
+   "label": "sidepod-top cap 27.175 mm (hard-coded in freeform.field)",
+   "bbox_mm": [
+    [
+     113.3,
+     19.7,
+     27.2
+    ],
+    [
+     130.7,
+     23.6,
+     27.2
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 9.85,
+   "area_mm2": 35.0,
+   "label": "UNEXPLAINED",
+   "bbox_mm": [
+    [
+     104.4,
+     20.3,
+     9.8
+    ],
+    [
+     130.7,
+     23.6,
+     9.9
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 34.35,
+   "area_mm2": 33.5,
+   "label": "halo-canister loft deck (required body behind the halo)",
+   "bbox_mm": [
+    [
+     114.1,
+     0.0,
+     34.3
+    ],
+    [
+     121.8,
+     11.0,
+     34.4
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 12.4,
+   "area_mm2": 32.0,
+   "label": "tenon pocket (nose joint, internal)",
+   "bbox_mm": [
+    [
+     39.4,
+     1.3,
+     12.4
+    ],
+    [
+     42.1,
+     2.7,
+     12.4
+    ]
+   ]
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 40.15,
+   "area_mm2": 27.6,
+   "label": "UNEXPLAINED",
+   "bbox_mm": [
+    [
+     207.0,
+     0.0,
+     40.2
+    ],
+    [
+     241.6,
+     0.6,
+     40.2
+    ]
+   ]
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 44.75,
+   "area_mm2": 20.4,
+   "label": "official block underside slot end",
+   "bbox_mm": [
+    [
+     44.8,
+     0.1,
+     3.5
+    ],
+    [
+     44.8,
+     3.9,
+     11.0
+    ]
+   ]
+  }
+ ],
+ "unexplained_flat_mm2": 158.6,
+ "cap_area_mm2": 35.7,
+ "halo_rim_area_mm2": 103.4,
+ "crease_length_mm": 398.8,
+ "body_area_mm2": 19719.1,
+ "flags": [
+  "unexplained flat patches 158.6 mm2",
+  "hard-coded sidepod-top cap 35.7 mm2"
+ ]
+}
