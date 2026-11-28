@@ -46,8 +46,14 @@ Functions:
    - rows the numbers can meet become hard constraints, so the search never enters them;
    - rows they cannot meet are SHARP features: the builder's mask stays in charge there, and the gradient holds that
      surface (the held-surface fix the other agent found for `grad.py`).
-   - The result of this split, and the builder check of projected numbers, is being run now. This note will be
-     updated with the numbers.
+   - **Result (720 numbers, team car):** 1,823 of 26,481 rows (7 %) are sharp; 24,658 can be met together (the
+     L1 program finds a u meeting all of them). By family, the sharp rows are: air above the top 597, top over
+     required solid 610, empty air columns 454 (the wheel zones, x 72-257), required side 95 (x 94-134, beside the
+     cargo), air below 36, bottom under solid 31.
+   - **Open: the projection.** `project()`'s ADMM does not converge on this set: it is 203 mm off after 4,000
+     iterations, ill-conditioned with 720 numbers and 24 k rows, although the set is feasible. Next: a proper QP
+     solver (OSQP, or HiGHS' QP), started from the L1 program's feasible u. Then `check()` of projected numbers and
+     real builds.
 
 ## Not covered (stays in the builder, measured)
 

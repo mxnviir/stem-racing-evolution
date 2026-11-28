@@ -86,8 +86,11 @@ It waits on the constraints (section 5), the `grad.py` fix, and DAFoam convergin
     required solid left empty. That is the origin of the flats.
   - No set of numbers meets every rule: the smallest worst violation is 12.8 mm on 45 numbers and 11.3 mm on 720.
     Some rule features are sharper than the height-map surfaces can draw.
-  - Being run now: the split into reachable rules (hard constraints, the search never enters them) and sharp
-    features (the mask stays, the gradient holds the surface), with the builder check of projected numbers.
+  - The split into reachable rules (hard constraints, the search never enters them) and sharp features (the mask
+    stays, the gradient holds the surface): 24,658 rows reachable together, 1,823 sharp (7 %, mostly the wheel
+    zones and the halo and cargo edges).
+  - Open: the projection onto the reachable set (ADMM does not converge; next, a proper QP solver), then the builder
+    check of projected numbers.
 - **Wing supports as a CFD-designed field** (`evo_patches/wing_field/WING_FIELD.md`):
   - Done: the support field, evolution's growth move, ball-millable pockets, 3.175 mm rolling-ball fillets, exact
     foam/plastic complements, the 3 mm chamber keep, the strength limit.
