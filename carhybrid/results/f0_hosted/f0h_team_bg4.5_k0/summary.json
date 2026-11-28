@@ -224,7 +224,7 @@
     "body_targets_g": [
       25.95205626680353
     ],
-    "car_mass_error_g": 2.4840575833793705,
+    "car_mass_error_g": 2.483915703071042,
     "sized": false,
     "mass_converged": null
   },
@@ -247,15 +247,15 @@
   "parts_mass_g": {
     "nose": 4.82290389463821,
     "fwing": 1.4961606310083944,
-    "rwing": 3.7048839930491235,
+    "rwing": 3.7047421127407936,
     "tethers": 0.15019700297690264
   },
   "mass": {
-    "total_g": 71.83405758337936,
-    "competition_mass_g": 50.684057583379364,
-    "com_x_mm": 158.64467795520426,
-    "com_z_mm": 23.337005597834505,
-    "manufactured_mass_g": 50.68405758337937
+    "total_g": 71.83391570307103,
+    "competition_mass_g": 50.68391570307103,
+    "com_x_mm": 158.64455156085785,
+    "com_z_mm": 23.336897083133586,
+    "manufactured_mass_g": 50.683915703071044
   },
   "manufactured": {},
   "mass_report": {
@@ -322,7 +322,7 @@
         "note": "73.0 mm"
       },
       "T3.5_height": {
-        "margin": 13.88260269165039,
+        "margin": 13.88455581665039,
         "pass": true,
         "note": "51.1 mm"
       },
@@ -347,7 +347,7 @@
         "note": "22.8 mm ahead of Ref A (nose)"
       },
       "T9.4.2_rear_overhang": {
-        "margin": 18.526525878906256,
+        "margin": 18.526632690429693,
         "pass": true,
         "note": "rear wing and support end 21.47 mm behind Ref B"
       },
@@ -657,7 +657,7 @@
         "note": "100.0% of the 3 mm annulus is solid"
       },
       "T3.6_mass": {
-        "margin": 2.6840575833793707,
+        "margin": 2.683915703071044,
         "pass": true,
         "note": "50.68 g incl. 0.00 g ballast (as manufactured)"
       },
@@ -772,7 +772,7 @@
         "note": "6.33 mm to nose"
       },
       "T9.6_rear_wing_clear_air_all_parts": {
-        "margin": 0.16887075476845226,
+        "margin": 0.16791898890013623,
         "pass": true,
         "note": "5.17 mm to rwing_support_0"
       },
@@ -1037,9 +1037,9 @@
         "note": "margin +19.877"
       },
       "P4.nose_foam_inside_block": {
-        "margin": 2.8000000000000114,
+        "margin": 0.970001220703125,
         "pass": true,
-        "note": "margin +2.800"
+        "note": "margin +0.970"
       },
       "P4.nose_foam_not_thin": {
         "margin": 19.25,
@@ -1142,17 +1142,17 @@
         "note": "margin +3.981"
       },
       "P4.P4.T9.4.2_rw_overhang": {
-        "margin": 18.521658325195318,
+        "margin": 18.521765136718756,
         "pass": true,
         "note": "margin +18.522"
       },
       "P4.P4.T9.4.3_rw_height": {
-        "margin": 13.879451751708984,
+        "margin": 13.881404876708984,
         "pass": true,
-        "note": "margin +13.879"
+        "note": "margin +13.881"
       },
       "P4.P4.T3.4_rw_width": {
-        "margin": 11.362943649291992,
+        "margin": 11.363197326660156,
         "pass": true,
         "note": "margin +11.363"
       },
@@ -1182,14 +1182,14 @@
         "note": "margin +3.691"
       },
       "P4.P4.T9.6_rw_clear_air": {
-        "margin": 0.06601071599740216,
+        "margin": 0.06506455599289929,
         "pass": true,
-        "note": "margin +0.066"
+        "note": "margin +0.065"
       },
       "P4.P4.T9.7_rw_seen_from_front": {
-        "margin": 5.481349945068359,
+        "margin": 5.479396820068359,
         "pass": true,
-        "note": "margin +5.481"
+        "note": "margin +5.479"
       },
       "P4.P4.rw_T7.9_zones": {
         "margin": 1.0,
@@ -1202,14 +1202,14 @@
         "note": "margin +1.000"
       },
       "P4.P4.team_rw_no_centre_strut": {
-        "margin": 8.14415340423584,
+        "margin": 8.144096183776856,
         "pass": true,
         "note": "margin +8.144"
       },
       "P4.P4.rw_support_wheel_clear": {
-        "margin": 15.427733438232224,
+        "margin": 15.552420002105762,
         "pass": true,
-        "note": "margin +15.428"
+        "note": "margin +15.552"
       },
       "P4.P4.rw_support_T7.9_zones": {
         "margin": 1.0,
