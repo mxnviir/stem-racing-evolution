@@ -14,7 +14,7 @@
  ],
  "bg_div": 12.889,
  "_domain_note": "the trial car's frame (-0.005..0.265 m) is too short for whole cars (team layout: x 16.5..270.2 mm); background cell kept at the audited 22.5 mm: 12 x 0.290/0.270",
- "launch": "bo_1",
+ "launch": "sweep5r",
  "batches": {
   "p0": [
    {
@@ -1415,6 +1415,29 @@
     "layout": "[0.211653, 0.222839, 0.490352, 0.354204, 0.0, 0.463967, 0.175381, 0.074699, 0.952813, 0.735973, 0.904317, 0.260783]",
     "k": 3
    }
+  ],
+  "sweep5r": [
+   {
+    "name": "sw_L06",
+    "type": "build",
+    "layout": "[0.36456, 0.364702, 0.06442, 0.247945, 0.013772, 0.801577, 0.965449, 0.610386, 0.06489, 0.900416, 0.994028, 0.615349]"
+   },
+   {
+    "name": "sw_L16",
+    "type": "build",
+    "layout": "[0.767785, 0.156003, 0.829571, 0.198775, 0.554831, 0.832181, 0.209564, 0.177482, 0.292474, 0.714954, 0.750335, 0.150326]"
+   },
+   {
+    "name": "sw_L21",
+    "type": "build",
+    "layout": "[0.186113, 0.874088, 0.882173, 0.347122, 0.047435, 0.170994, 0.638831, 0.313493, 0.16593, 0.551571, 0.738661, 0.723648]"
+   },
+   {
+    "name": "sw_S02",
+    "type": "build",
+    "layout": "team",
+    "u": "[-0.1693, -0.4177, 0.0413, -0.3747, -0.5245, 0.4587, -0.1537, 1.1084, -0.1235, 0.3064, 0.3606, -0.0216, -0.4683, -0.0063, -0.1896, -0.3239, 0.0105, 0.0916, -0.3718, -0.5043, 0.3157, -0.2391, -0.5257, 0.082, 1.0219, 0.5214, -0.0959, -0.6321, -0.0063, -0.2315, 0.7758, 0.5091, -0.7542, -0.1964, 0.8523, 0.3534, -0.0464, 0.173, -0.1193, 0.4941, -0.4357, -0.4689, 0.2149, -0.062, 0.4265]"
+   }
   ]
  },
  "_sweep1_note": "readiness sweep, build only (no CFD): 24 scrambled-Sobol layouts over the 12 stage-1 genes (seed 20261128) and 8 stage-2 perturbations of the team layout (45 free-form numbers ~ N(0, 0.5), clipped +-2, as CMA's sigma 0.5)",
@@ -1434,5 +1457,6 @@
  "_aws_scaling_note": "How DAFoam's time scales with MPI ranks (the instance-size question), measured: the team car, frame 0, bg_div 10.23 (~1.24 M cells), the same score each time (128 ranks), DAFoam on 128 / 64 / 32 ranks. Run on a 128-core machine (TYPE=m7a.32xlarge) with STOP_ON_FAIL=0; resources.json gives each phase's wall time and dafoam_gmres.json the seconds per GMRES iteration and the iteration count at each rank count. About 3-5 h, a few USD on spot.",
  "_aws_scaling_aws_max_hours": 10,
  "_sweep5_note": "sweep4's 32 layouts with evo_patches/legality_fixes.py (L1 rear wing ahead of the body's back, L2 body clamped to the official block, L3 wheel-support variants, L4 front-wing segment); sweep4: 16/32 legal",
- "_bo_note": "P3 (carhybrid/bo.py, carhybrid/BO.md): batches bo_<n> and bo_confirm are written by bo.py advance; its state is carhybrid/bo/state.json and designs.jsonl"
+ "_bo_note": "P3 (carhybrid/bo.py, carhybrid/BO.md): batches bo_<n> and bo_confirm are written by bo.py advance; its state is carhybrid/bo/state.json and designs.jsonl",
+ "_sweep5r_note": "the 4 cars still illegal in sweep5, with legality_fixes L5 (rear wing forward when unsupported) and L3 v2 (deeper saddles)"
 }

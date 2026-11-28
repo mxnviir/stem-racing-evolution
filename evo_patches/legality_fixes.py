@@ -132,7 +132,10 @@ def export_body(geom, path: Path) -> dict:
     variants = [sd]
     for kw in (dict(chord_mm=sd.chord_mm * 0.85), dict(chord_mm=sd.chord_mm * 1.15),
                dict(saddle_h_mm=sd.saddle_h_mm * 1.5), dict(saddle_h_mm=sd.saddle_h_mm * 0.75),
-               dict(chord_mm=sd.chord_mm * 0.7)):
+               dict(chord_mm=sd.chord_mm * 0.7),
+               # L3 v2 (sweep5 L21: foam over the slot 0.24 mm short of the 3 mm wall at a thin tail): a saddle
+               # deep enough to cut through, so no foam is left over it (the gate's "or absent")
+               dict(saddle_h_mm=sd.saddle_h_mm * 2.5), dict(saddle_h_mm=sd.saddle_h_mm * 4.0)):
         variants.append(dataclasses.replace(sd, **kw))
     best = None
     for i, v in enumerate(variants):
@@ -192,6 +195,31 @@ def build(sd: SupportDesign, body_half_m, axles, out_dir=None, keep_out_mm=None)
             break                                          # no better: keep the first
         r = r2
     return r
+''',
+    ),
+    dict(
+        id="L5_rear_wing_forward_if_unsupported",
+        file=RW,
+        old='''def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of=(), forward_parts=()):
+''',
+        new='''def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of=(), forward_parts=()):
+    """evo_patches L5: _build_at, and if none of the wing's supports could be placed, again further forward (the
+    x_le gene halved, then at Ref B): the first supported wing is kept, else the first."""
+    first = _build_at(d, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of, forward_parts)
+    if first["info"].get("supported"):
+        return first
+    for x_le in (0.5 * d.x_le_mm, 0.0):
+        if x_le >= d.x_le_mm - 1e-6:
+            continue
+        r = _build_at(dataclasses.replace(d, x_le_mm=x_le), body_half_m, x_front_mm, W_mm, wheel_rear, clear_of,
+                      forward_parts)
+        if r["info"].get("supported"):
+            r["info"]["moved_forward_for_supports_mm"] = float(d.x_le_mm - x_le)
+            return r
+    return first
+
+
+def _build_at(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of=(), forward_parts=()):
 ''',
     ),
 ]
