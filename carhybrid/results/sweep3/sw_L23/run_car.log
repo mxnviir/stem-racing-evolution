@@ -1,0 +1,6 @@
+[run_car 11:06:36] 1-2 BODY + PARTS: parametric body sized against the manufactured parts [peak 0.0 GB]
+[run_car 11:06:44]   nose: printed ahead of x 31.25 mm (block), foam 8.15 mm to Ref A, tenon yes [peak 0.5 GB]
+[run_car 11:10:08]   pass 1: body 24.474 g, car 50.854 g (+2.654); joints ; supports each [np.float64(2.38), np.float64(1.88)] [peak 5.7 GB]
+[run_car 11:10:08]   fixed skin, not sized: car 50.854 g as built [peak 5.7 GB]
+[run_car 11:10:08] 3 LEGAL [peak 5.7 GB]
+[run_car 11:11:36] done: {'n_checks': 188, 'n_failed': 3, 'failed': ['T5.1_diameter_min', 'T5.5_chamber_clear', 'block_body_inside_official_block']} [peak 5.7 GB]

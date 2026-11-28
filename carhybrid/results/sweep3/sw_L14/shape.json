@@ -1,0 +1,265 @@
+{
+ "stations": 32,
+ "rectangularity_median": 0.7589278086805307,
+ "rectangularity_max": 0.8720199591610504,
+ "rectangularity_by_x": [
+  [
+   44.4,
+   0.676
+  ],
+  [
+   49.4,
+   0.759
+  ],
+  [
+   54.4,
+   0.761
+  ],
+  [
+   59.4,
+   0.769
+  ],
+  [
+   64.4,
+   0.759
+  ],
+  [
+   69.4,
+   0.756
+  ],
+  [
+   74.4,
+   0.768
+  ],
+  [
+   79.4,
+   0.744
+  ],
+  [
+   84.4,
+   0.833
+  ],
+  [
+   89.4,
+   0.771
+  ],
+  [
+   94.4,
+   0.78
+  ],
+  [
+   99.4,
+   0.813
+  ],
+  [
+   104.4,
+   0.811
+  ],
+  [
+   109.4,
+   0.748
+  ],
+  [
+   114.4,
+   0.741
+  ],
+  [
+   119.4,
+   0.74
+  ],
+  [
+   124.4,
+   0.764
+  ],
+  [
+   129.4,
+   0.766
+  ],
+  [
+   134.4,
+   0.657
+  ],
+  [
+   139.4,
+   0.629
+  ],
+  [
+   144.4,
+   0.658
+  ],
+  [
+   149.4,
+   0.714
+  ],
+  [
+   154.4,
+   0.803
+  ],
+  [
+   159.4,
+   0.872
+  ],
+  [
+   164.4,
+   0.848
+  ],
+  [
+   169.4,
+   0.863
+  ],
+  [
+   174.4,
+   0.821
+  ],
+  [
+   179.4,
+   0.56
+  ],
+  [
+   184.4,
+   0.559
+  ],
+  [
+   189.4,
+   0.557
+  ],
+  [
+   194.4,
+   0.546
+  ],
+  [
+   199.4,
+   0.513
+  ]
+ ],
+ "box_sections": [],
+ "flat_patches": [
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 0.0,
+   "area_mm2": 3406.2,
+   "label": "centre plane (closing face)"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.1,
+   "area_mm2": 291.9,
+   "label": "halo rim, body flush with the seat (T4.4.2, owner 2026-11-23)"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 24.0,
+   "area_mm2": 236.9,
+   "label": "halo pocket floor"
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 36.75,
+   "area_mm2": 153.1,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 17.65,
+   "area_mm2": 109.6,
+   "label": "ballast container floor (App. ix, internal)"
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 4.0,
+   "area_mm2": 79.4,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "x",
+   "normal_sign": 1,
+   "at_mm": 176.85,
+   "area_mm2": 75.2,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 8.0,
+   "area_mm2": 54.3,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 6.35,
+   "area_mm2": 50.3,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 131.8,
+   "area_mm2": 46.2,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 3.0,
+   "area_mm2": 45.3,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 131.75,
+   "area_mm2": 36.3,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 9.8,
+   "area_mm2": 36.1,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 14.0,
+   "area_mm2": 32.0,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 44.75,
+   "area_mm2": 26.8,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 8.2,
+   "area_mm2": 25.8,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 26.3,
+   "area_mm2": 22.5,
+   "label": "UNEXPLAINED"
+  }
+ ],
+ "unexplained_flat_mm2": 683.3,
+ "cap_area_mm2": 0,
+ "halo_rim_area_mm2": 291.9,
+ "crease_length_mm": 305.6,
+ "body_area_mm2": 16266.0,
+ "flags": [
+  "unexplained flat patches 683.3 mm2"
+ ]
+}

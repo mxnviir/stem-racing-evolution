@@ -1,0 +1,311 @@
+{
+ "stations": 38,
+ "rectangularity_median": 0.7633365198195642,
+ "rectangularity_max": 0.8805372391054751,
+ "rectangularity_by_x": [
+  [
+   44.4,
+   0.633
+  ],
+  [
+   49.4,
+   0.758
+  ],
+  [
+   54.4,
+   0.767
+  ],
+  [
+   59.4,
+   0.772
+  ],
+  [
+   64.4,
+   0.787
+  ],
+  [
+   69.4,
+   0.805
+  ],
+  [
+   74.4,
+   0.837
+  ],
+  [
+   79.4,
+   0.866
+  ],
+  [
+   84.4,
+   0.881
+  ],
+  [
+   89.4,
+   0.752
+  ],
+  [
+   94.4,
+   0.688
+  ],
+  [
+   99.4,
+   0.733
+  ],
+  [
+   104.4,
+   0.79
+  ],
+  [
+   109.4,
+   0.848
+  ],
+  [
+   114.4,
+   0.806
+  ],
+  [
+   119.4,
+   0.808
+  ],
+  [
+   124.4,
+   0.806
+  ],
+  [
+   129.4,
+   0.798
+  ],
+  [
+   134.4,
+   0.754
+  ],
+  [
+   139.4,
+   0.697
+  ],
+  [
+   144.4,
+   0.684
+  ],
+  [
+   149.4,
+   0.673
+  ],
+  [
+   154.4,
+   0.669
+  ],
+  [
+   159.4,
+   0.683
+  ],
+  [
+   164.4,
+   0.714
+  ],
+  [
+   169.4,
+   0.766
+  ],
+  [
+   174.4,
+   0.851
+  ],
+  [
+   179.4,
+   0.761
+  ],
+  [
+   184.4,
+   0.757
+  ],
+  [
+   189.4,
+   0.787
+  ],
+  [
+   194.4,
+   0.811
+  ],
+  [
+   199.4,
+   0.812
+  ],
+  [
+   204.4,
+   0.806
+  ],
+  [
+   209.4,
+   0.492
+  ],
+  [
+   214.4,
+   0.486
+  ],
+  [
+   219.4,
+   0.499
+  ],
+  [
+   224.4,
+   0.498
+  ],
+  [
+   229.4,
+   0.501
+  ]
+ ],
+ "box_sections": [],
+ "flat_patches": [
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 0.0,
+   "area_mm2": 4312.4,
+   "label": "centre plane (closing face)"
+  },
+  {
+   "axis": "y",
+   "normal_sign": 1,
+   "at_mm": 27.3,
+   "area_mm2": 123.2,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 9.75,
+   "area_mm2": 123.0,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 39.4,
+   "area_mm2": 119.2,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.1,
+   "area_mm2": 113.5,
+   "label": "halo rim, body flush with the seat (T4.4.2, owner 2026-11-23)"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 17.65,
+   "area_mm2": 109.6,
+   "label": "ballast container floor (App. ix, internal)"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 24.0,
+   "area_mm2": 108.2,
+   "label": "halo pocket floor"
+  },
+  {
+   "axis": "y",
+   "normal_sign": 1,
+   "at_mm": 27.25,
+   "area_mm2": 97.0,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "x",
+   "normal_sign": 1,
+   "at_mm": 207.05,
+   "area_mm2": 94.1,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 4.0,
+   "area_mm2": 80.6,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 27.15,
+   "area_mm2": 77.3,
+   "label": "sidepod-top cap 27.175 mm (hard-coded in freeform.field)"
+  },
+  {
+   "axis": "x",
+   "normal_sign": -1,
+   "at_mm": 112.8,
+   "area_mm2": 63.4,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "y",
+   "normal_sign": -1,
+   "at_mm": 6.35,
+   "area_mm2": 50.3,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 34.35,
+   "area_mm2": 49.7,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 23.75,
+   "area_mm2": 49.0,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 9.8,
+   "area_mm2": 37.5,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 13.75,
+   "area_mm2": 32.0,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 9.65,
+   "area_mm2": 28.0,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": -1,
+   "at_mm": 9.7,
+   "area_mm2": 26.5,
+   "label": "UNEXPLAINED"
+  },
+  {
+   "axis": "z",
+   "normal_sign": 1,
+   "at_mm": 23.8,
+   "area_mm2": 26.2,
+   "label": "halo pocket floor"
+  }
+ ],
+ "unexplained_flat_mm2": 1112.5,
+ "cap_area_mm2": 77.3,
+ "halo_rim_area_mm2": 113.5,
+ "crease_length_mm": 257.0,
+ "body_area_mm2": 18133.4,
+ "flags": [
+  "unexplained flat patches 1112.5 mm2",
+  "hard-coded sidepod-top cap 77.3 mm2"
+ ]
+}
