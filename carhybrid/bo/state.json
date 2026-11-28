@@ -177,5 +177,6 @@
    "mode": "sobol",
    "n": 8
   }
- ]
+ ],
+ "paused": "owner 2026-11-28: BO runs on the newer car later (rear_wing_shape, no team sidepod cap); bo_1/bo_2 are older-builder data"
 }

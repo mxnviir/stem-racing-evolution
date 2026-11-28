@@ -24,3 +24,10 @@ until `bo_confirm` is ingested (exit 3). State: `carhybrid/bo/state.json`, one r
 
 Tested offline (simulated scores, a known optimum): Sobol start, model batches that close in on the optimum
 (distance of gene 0 from it 0.29 -> 0.01 after one model batch), budget stop, confirm with the paired mark.
+
+## Paused (2026-11-28)
+
+The owner: the Bayesian search will run on the newer car later. `state.json` carries `"paused"`, so when bo_2
+finishes, `advance` ingests it and stops (exit 3) instead of dispatching bo_3. bo_1 and bo_2 were built before
+`rear_wing_shape` and the sidepod cap drop. Their race times describe the older car and should not be mixed with the
+newer car's in one GP. Restart: `bo.py init` on a fresh state, after the fixes before compute tests.

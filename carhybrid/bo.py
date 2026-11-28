@@ -237,6 +237,11 @@ def advance(results, run_id, evo="evo"):
     timed = [r for r in rows() if r.get("T") is not None]
     print(f"bo: {P['batch']}: {sum(r.get('T') is not None for r in new)} timed, "
           f"{sum(r.get('legal') is False for r in new)} illegal, {len(new)} cars; {len(timed)} timed in all")
+    if st.get("paused"):                # owner, 2026-11-28: the search waits for the newer car; keep the data, ask nothing
+        st["pending"], st["status"] = None, "paused"
+        save(ROOT / "state.json", st)
+        print(f"bo: paused ({st['paused']}); {P['batch']} ingested, no next batch")
+        return EXIT_DONE
     spent = st["n_cars"]
     if spent >= st["budget"]:
         cases, lays = confirm_cases(st)
