@@ -142,7 +142,7 @@ drawn nose, masses, info); `legality.py` (_foam_nose_half_width for T8.7/T8.8, n
 
 32 cars with the patch (carhybrid/results/sweep3): the legal count fell from 17 to 11. What was the patch's:
 
-1. **Foam outside the block the referee places** (`block_body_inside_official_block` on L01, L03, L07, L11, L13, L19,
+1. **Foam outside the block the referee places** (`block_body_inside_official_block` on L01, L07, L11, L13, L19,
    L21, L23, S03, S07: a full-section slab 0.2-1.2 mm thick just ahead of `x_cut`, 48-286 mm3). The plan put the block's
    front at the design rear face - 223 (+1.0 mm). The referee (legality.manufactured_checks) puts the block's rear face
    at the MEASURED bore end + 52 mm (`chamber_measures`: depth gauged at 0.6 r from the rim). On the 1 mm build grid that
@@ -155,18 +155,29 @@ drawn nose, masses, info); `legality.py` (_foam_nose_half_width for T8.7/T8.8, n
    (`decided_by: "block_referee"`, `moved_for_referee_block_mm`). The fitted plan replaces `nose_split.json`, the body's
    `landmarks` (its mass) and what `assembly.build` reads (the print). No margin is guessed: the foam is inside the
    referee's block by construction, on any grid.
-2. **S05 `P4.machining_rear_slot_cut_from_below` -10.04** (x_cut = Ref A, no foam). Not the nose: the column check
-   (support_engine.column_check) samples the rear support's slot on a 0.25 mm grid of vertical rays; at x 196.4,
-   y 11.0 the body has a 1 mm foam ledge (z 15.6-16.6) under the slot, between the saddle's own faces. Shifting that
-   grid by under 0.05 mm turns the margin from +0.20 to -10.1/-10.2 (2 of 12 offsets, the same body). S05 rebuilt with
-   the patch reads +0.20 (legal). The patch did change the body's triangulation everywhere (the cut body was
-   re-meshed through `simplify(0.01)`), which can move such a ray verdict; it no longer does: `_closed` first keeps the
-   Boolean's own mesh (dropping only the zero-volume two-face slivers an STL's rounding leaves at the pocket), so the
-   body is untouched away from the cut (41870 faces -> 41960 on the team body).
+2. **S05 `P4.machining_rear_slot_cut_from_below` -10.04** (x_cut = Ref A, no foam): NOT the nose. The same car built
+   from the same checkout with the split turned off (`EVO_NOSE_SPLIT=0`) fails it the same way (-10.042). The check
+   (support_engine.column_check) casts vertical rays on a 0.25 mm grid through the rear support's slot; at x 196.1-196.4,
+   y 11.0 the body has a 1 mm foam ledge (z 15.6-16.7) under the slot, wrapped by the saddle. Whether a ray lands on it
+   is luck: shifting the grid by under 0.05 mm gives -10.1 to -10.2 on 3 of 12 offsets of the same body (+0.2 on the
+   rest). An intermediate build of this fix, whose body was re-meshed whole, happened to read +0.20. Owner: the
+   support engine / body at the rear axle.
+   What did change here: the patch re-meshed the whole cut body through `simplify(0.01)`; `_closed` now keeps the
+   Boolean's own mesh first (dropping only the zero-volume two-face slivers an STL's rounding leaves at the pocket),
+   so the body is untouched away from the cut (team body 41870 faces -> 41960).
 3. **L19 `T4.4.4_halo_fits_pocket`** (5.1 mm3, a 0.28 mm skin on the pocket floor, x 103-149): nothing in the patch
-   acts there (the T8.5.1 cap and the milling relief only at x <= Ref A + 1 mm; the 0.01-0.05 mm re-mesh could not make
-   0.28 mm). See the rebuild below.
+   acts there (the T8.5.1 cap and the milling relief only at x <= Ref A + 1 mm; the old 0.01-0.05 mm re-mesh could not
+   make 0.28 mm). Rebuilt with soft_cap v2.1 and this fix it passes (0.0 mm3).
 
 Rebuilt with the fixes (soft_cap v2.1, apply.py, this patch; one at a time):
 
-@@REBUILDS@@
+| car | sweep3 (patch as committed) | rebuilt (fix) | x_cut: plan -> fitted (referee block front) | foam / print |
+|---|---|---|---|---|
+| L01 | illegal: block (179 mm3 at x 32.5-33.3) | LEGAL | 32.5 -> 34.0 (33.33; design 31.3) | 0.235 g / 1.672 g |
+| S03 | illegal: block (199 mm3 at x 35.2-36.0) | LEGAL | 35.25 -> 36.75 (36.03; design 34.2) | 0.133 g / 1.511 g |
+| L19 | illegal: T8.6.1, halo_fits_pocket, block, team_halo_face_joined | illegal: T8.6.1 only (24.58 mm segments; the same in sweep2, before the patch) | 36.25 -> 37.75 (37.03; design 35.2) | 0.075 g / 7.069 g |
+| S05 | illegal: rear slot gate | illegal: rear slot gate (-10.04), also with the split off (-10.04) | Ref A (thin) | 0 / 4.720 g |
+
+In every rebuilt car the only `block_body_inside_official_block` volume left is the waived 1 mm-grid bore
+(x 204-257), as before the patch. Tests: `test_car_foam_inside_the_referees_block`,
+`test_fit_to_block_moves_the_cut_and_the_tenon` (with CAR_DIR) pass on the rebuilt L01 and S03.

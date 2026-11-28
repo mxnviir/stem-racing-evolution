@@ -20,6 +20,15 @@ every `fine_adjoint` case there (unless the case says `"runner": "hosted"`); eve
 | network | a security group with **no inbound rules** except SSH from your own IP (the runner only makes outbound HTTPS to GitHub) | |
 | shutdown behaviour | **Stop** (the default for EBS-backed instances) | the idle timer powers the machine off; Stop keeps the disk |
 
+Budget for the 2.1 M-cell adjoint (extrapolated from the coarse 105 k-cell runs; F0 replaces these with measurements):
+- adjoint states ~10 per cell (coarse: 1.04 M states for 105 k cells) -> ~21 M;
+- Jacobian colouring + preconditioner: ~150 kB/cell -> ~315 GB;
+- GMRES Krylov basis: (restart + 1) x states x 8 B = ~34 GB at restart 200 (the default), ~51 GB at 300; it is part
+  of the measured peak, and `resources.json` prints its estimate (`estimate_GB_krylov_basis`);
+- time: coarse GMRES ran 0.77 s per iteration on 4 ranks; at 20x the states on 64 ranks expect ~1 s per iteration,
+  so 6000 iterations (the default cap; coarse solves needed 1,300 to more than 2,000) x 2 functions ~3.5 h, plus the
+  colouring (40 min on 4 ranks at 105 k cells) and the 2 h score: the job allows 1400 minutes.
+
 Memory headroom: gate F0 measures the real law first (team car, three mesh sizes, batch `f0`); the line it fits
 must extrapolate to < 450 GB at 2.1 M cells before anything relies on the production-mesh adjoint.
 
