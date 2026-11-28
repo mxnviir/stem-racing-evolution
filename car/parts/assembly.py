@@ -159,9 +159,21 @@ def _printed_minus_body(part_m, body_m):
     import manifold3d as mf
     import support_engine as se
     import wing_loft as wl
+    import trimesh
     p = part_m.copy(); p.apply_scale(1e3); b = body_m.copy(); b.apply_scale(1e3)
-    pcs = sorted((se._to_manifold(p) - se._to_manifold(b)).decompose(), key=lambda q: -q.volume())
-    t = wl.to_trimesh(mf.Manifold.batch_boolean([q for q in pcs if q.volume() > 1e-3 * pcs[0].volume()], mf.OpType.Add)) if pcs else p
+    t = None
+    try:
+        pcs = sorted((se._to_manifold(p) - se._to_manifold(b)).decompose(), key=lambda q: -q.volume())
+        if pcs:
+            t = wl.to_trimesh(mf.Manifold.batch_boolean([q for q in pcs if q.volume() > 1e-3 * pcs[0].volume()], mf.OpType.Add))
+    except ValueError:                                     # a half part cut on the centre plane: not a manifold there
+        try:
+            p.merge_vertices(); b.merge_vertices(); trimesh.repair.fill_holes(p); trimesh.repair.fill_holes(b)
+            t = trimesh.boolean.difference([p, b], engine="manifold")
+        except Exception:                                  # noqa: BLE001  (the referee still measures the part)
+            t = None
+    if t is None or t.is_empty:
+        t = p
     t.apply_scale(1e-3)
     return t
 
