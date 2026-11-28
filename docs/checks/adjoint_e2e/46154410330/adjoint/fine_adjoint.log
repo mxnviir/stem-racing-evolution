@@ -1,0 +1,16 @@
+[fine_adjoint 14:37:59] 1 car
+[fine_adjoint 14:43:46] 2 production
+[fine_adjoint 14:48:00] 3 steady
+{"scheme": "linearUpwind", "from_time": 1000, "iterations": 2000, "span_mN": 0.0005295894865184891, "block_means_mN": [229.841, 229.841, 229.841, 229.841, 229.841, 229.841, 229.841, 229.841, 229.841, 229.841], "D_half_mN_last1000": 229.8409779934464, "state": "/scratch/job/run/steady/steady_linearUpwind"}
+STEADY_PASS linearUpwind 0.0005
+[fine_adjoint 14:54:59] 4 DAFoam
+Traceback (most recent call last):
+  File "/scratch/job/in/evolution/search/adjoint/fine_adjoint.py", line 262, in <module>
+    main()
+  File "/scratch/job/in/evolution/search/adjoint/fine_adjoint.py", line 241, in main
+    log("4 DAFoam"); daf = step_dafoam(job, st, work, adj, a.np)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/job/in/evolution/search/adjoint/fine_adjoint.py", line 134, in step_dafoam
+    subprocess.run([sys.executable, str(dd / "make_case.py"), "--src", st["state"], "--out", str(case),
+                    ^^^
+NameError: name 'sys' is not defined. Did you mean: '_sys'? Or did you forget to import 'sys'?
