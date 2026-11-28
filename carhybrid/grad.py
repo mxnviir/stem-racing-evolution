@@ -71,6 +71,13 @@ def main(evo, rec_p, sens_p, u_s, out_p, body_dir=None):
         b = trimesh.load(Path(body_dir) / "body_half.stl", force="mesh")
         if b.bounds[1][0] < 1.0:                             # metres -> mm
             b.apply_scale(1e3)
+        nose_p = Path(body_dir) / "parts" / "nose.stl"      # the printed nose ahead of Ref A moves with the same field
+        if nose_p.exists():
+            nz = trimesh.load(nose_p, force="mesh")
+            if nz.bounds[1][0] < 1.0:
+                nz.apply_scale(1e3)
+            nz = nz.slice_plane([0, 0, 0], [0, 1, 0]) if nz.bounds[0][1] < -1.0 else nz     # one side, as body_half
+            b = trimesh.util.concatenate([b, nz])
         c, A = b.triangles_center, b.area_faces
         keep = (np.abs(c[:, 1]) > 1e-3) & (np.abs(phi(u, c)) < PHI_TOL_MM)       # not the closing face at y = 0
         c, A = c[keep], A[keep]

@@ -77,6 +77,7 @@ jobs:
           bash adj/.github/scripts/install_openfoam.sh
           pip install $PY_DEPS
           python seedhybrid/patch_adj.py adj
+          python evo_patches/apply.py evo                     # this branch's fixes to the pinned builder (evo_patches/README.md)
           if [ "${{ matrix.case.type }}" = "dafoam" ]; then for i in 1 2 3; do docker pull dafoam/opt-packages:v5.1.1 && break; sleep 30; done; fi
       - name: build the car (evolution builder) and adapt it for OpenFOAM
         timeout-minutes: 90
