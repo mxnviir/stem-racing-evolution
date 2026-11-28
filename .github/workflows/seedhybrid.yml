@@ -148,7 +148,12 @@ jobs:
           python dafoam/make_case.py --src gate/refA_hyb --out gate/dafoam_case --iters 300 | tail -1
           env DAF_ADJ=Krylov DAF_PC_FILL=0 DAF_PC_LEVEL=1 DAF_GMRES_ITERS=2000 DAF_GMRES_RESTART=200 \
             dafoam/run_docker.sh gate/dafoam_case 4 > $O/dafoam.out 2>&1 || true
-          grep -E "DAFOAM|Killed|Maximum resident" $O/dafoam.out || tail -30 $O/dafoam.out
+          grep -E "DAFOAM|Killed|Maximum resident" $O/dafoam.out || true
+          # always readable from the job log (artifacts are not reachable from every reader): the adjoint's convergence
+          # and the end of its output; setup run 46113354235 lost all three gradients with nothing here to say why
+          echo "=== adjoint convergence"; grep -iE "gmres|residual|tolerance|converge|mpirun|signal|error|traceback|nan" $O/dafoam.out | tail -40 || true
+          echo "=== dafoam.out tail"; tail -60 $O/dafoam.out || true
+          echo "=== resources"; free -g || true; df -h . | tail -1 || true
           cp gate/dafoam_case/dafoam_sens.npz gate/dafoam_case/dafoam_sens.json $O/ 2>/dev/null || echo "no gradient"
       - name: child (chained explicit morph of the lineage's base mesh, warm start, 1000 steady iterations)
         if: matrix.case.type == 'child'

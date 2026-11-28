@@ -149,3 +149,13 @@ Times are commit times (UTC); the commit history is the authoritative record of 
 - 2026-11-28 06:18 UTC (commit 390cd6a; before any generation result): the unlegalised seed is scored on frames 0-3 (not only 0-1), so
   E4's "gain kept" uses the same four frames on both sides. Flow-state flag made concrete: a frame whose body drag is
   more than 1.0 mN from the median body drag of that design's frames.
+- 2026-11-28 10:58 (deviation, before any generation ran): setup run 46113354235 built all three bases (team and
+  window steady; d7 not steady: block span 0.10 mN over the last 1,000 iterations) but **no DAFoam gradient** on any
+  seed. The primal ran (team 0.2268 N half car, coarse); the adjoint then ran about 75 min and wrote nothing, while the job
+  reported success (the step printed only "no gradient"). The logged line did not say why, and the artifact with
+  `dafoam.out` is not readable from the agent's sandbox. Generation 1 as dispatched (run 46135523467) would have had
+  random children only in every arm, so the adjoint and no-adjoint arms would be the same method: cancelled before it
+  started. Fix: the DAFoam step now prints the adjoint's convergence lines and the end of its output to the job log;
+  `driver.py redaf` re-runs only the three g0 gradients (bases kept), then generation 1 is drawn from the rule as
+  pre-registered (E2: d7_noadj / window_noadj enabled by which seeds have a gradient). If the re-run fails again
+  the cause is read from the log before anything else runs.

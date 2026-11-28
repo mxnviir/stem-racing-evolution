@@ -52,6 +52,42 @@ def init():
     print(f"setup request: {len(cases)} cases")
 
 
+def enable_ablation(S, log):
+    """Ablation arms: enabled by the rule in PROTOCOL.md E2, from which lineages have an adjoint gradient."""
+    for name, Ls in S["lineages"].items():
+        if not Ls.get("base_of"):
+            continue
+        B = S["lineages"][Ls["base_of"]]
+        Ls["base"], Ls["geom"] = B.get("base"), B.get("geom")
+        cond = Ls.get("enable_if") or {}
+        has = lambda n: bool(S["lineages"].get(n, {}).get("dafoam_latest"))
+        ok = (B["status"] == "active" and (not cond.get("dafoam") or has(cond["dafoam"]))
+              and (not cond.get("no_dafoam") or not has(cond["no_dafoam"])))
+        Ls["status"] = "active" if ok else "skipped_by_rule"
+        log["lineages"][name] = {"base_of": Ls["base_of"], "enabled": ok, "rule": cond}
+
+
+def redaf_request():
+    """Re-run only the setup's DAFoam gradients (the bases are kept), before generation 1 has run: setup run
+    46113354235 produced no gradient on any seed, which would have left every lineage random-only and the
+    adjoint-vs-no-adjoint ablation empty. Generation 1's unrun children are dropped and drawn again after."""
+    cfg, S = load(CFG), load(ST)
+    assert S["stage"] in ("gen", "redaf") and int(S["gen"]) <= 1, "only before generation 1 has run"
+    cases = []
+    for name, Ls in S["lineages"].items():
+        Ls["generations"].pop("1", None)
+        Ls["next_seed"] = 1000
+        if Ls.get("base_of"):
+            Ls["status"] = "pending"                     # re-decided by the rule once the gradients are in
+            continue
+        if Ls["status"] == "active" and Ls["guides"] and not Ls.get("dafoam_latest"):
+            cases.append({"type": "dafoam", "lineage": name, "name": f"{name}_daf_g0", "parent": "", "tag": "g0"})
+    S["stage"], S["gen"] = "redaf", 0
+    save(ST, S)
+    save(REQ, {"stage": "redaf", "gen": 0, "setup_run": S["setup_run"], "lineages": cfg["lineages"], "cases": cases})
+    print(f"redaf request: {len(cases)} cases")
+
+
 def new_lineage(cfg, L):
     """A lineage's state. base_of: shares that lineage's seed, geometry, base mesh and base state (an ablation arm);
     guides: false = no adjoint (random and recombined moves only)."""
@@ -191,17 +227,17 @@ def advance(results, run_id, adj):
             Ls["status"] = "active" if ok else "failed_setup"
             log["lineages"][name] = {"base_ok": ok, "steady_pass": (b or {}).get("steady_pass"),
                                      "base_D20_mN": (b or {}).get("D20_half_N", 0) * 1e3, "dafoam": daf.exists()}
-        for name, Ls in S["lineages"].items():          # ablation arms: enabled by the rule in PROTOCOL.md E2
-            if not Ls.get("base_of"):
+        enable_ablation(S, log)
+    elif stage == "redaf":                              # the setup's adjoint gradients again (redaf_request); bases kept
+        for name, Ls in S["lineages"].items():
+            if Ls.get("base_of") or Ls["status"] != "active":
                 continue
-            B = S["lineages"][Ls["base_of"]]
-            Ls["base"], Ls["geom"] = B.get("base"), B.get("geom")
-            cond = Ls.get("enable_if") or {}
-            has = lambda n: bool(S["lineages"].get(n, {}).get("dafoam_latest"))
-            ok = (B["status"] == "active" and (not cond.get("dafoam") or has(cond["dafoam"]))
-                  and (not cond.get("no_dafoam") or not has(cond["no_dafoam"])))
-            Ls["status"] = "active" if ok else "skipped_by_rule"
-            log["lineages"][name] = {"base_of": Ls["base_of"], "enabled": ok, "rule": cond}
+            daf = results / f"{name}_daf_g0" / "dafoam_sens.npz"
+            if daf.exists():
+                dst = LIN / name / "dafoam_g0.npz"; shutil.copy(daf, dst)
+                Ls["dafoam_latest"] = f"{REL}/{name}/dafoam_g0.npz"
+            log["lineages"][name] = {"dafoam": daf.exists()}
+        enable_ablation(S, log)
     else:
         for name, Ls in S["lineages"].items():
             gen = Ls["generations"].get(str(k))
@@ -321,5 +357,7 @@ def advance(results, run_id, adj):
 if __name__ == "__main__":
     if sys.argv[1] == "init":
         init()
+    elif sys.argv[1] == "redaf":
+        redaf_request()
     elif sys.argv[1] == "advance":
         sys.exit(0 if advance(*sys.argv[2:5]) else 3)

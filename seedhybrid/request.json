@@ -1,6 +1,6 @@
 {
- "stage": "gen",
- "gen": 1,
+ "stage": "redaf",
+ "gen": 0,
  "setup_run": 46113354235,
  "lineages": [
   {
@@ -52,220 +52,25 @@
  ],
  "cases": [
   {
-   "type": "child",
+   "type": "dafoam",
    "lineage": "team",
-   "art": "team",
-   "name": "team_g1_zero",
-   "chainparent": "",
-   "field": "zero",
-   "amp": "0"
+   "name": "team_daf_g0",
+   "parent": "",
+   "tag": "g0"
   },
   {
-   "type": "child",
-   "lineage": "team",
-   "art": "team",
-   "name": "team_g1_rnd1000",
-   "chainparent": "",
-   "field": "rnd1000",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "team",
-   "art": "team",
-   "name": "team_g1_rnd1001",
-   "chainparent": "",
-   "field": "rnd1001",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "team",
-   "art": "team",
-   "name": "team_g1_rnd1002",
-   "chainparent": "",
-   "field": "rnd1002",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "team",
-   "art": "team",
-   "name": "team_g1_rnd1003",
-   "chainparent": "",
-   "field": "rnd1003",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "team",
-   "art": "team",
-   "name": "team_g1_rnd1004",
-   "chainparent": "",
-   "field": "rnd1004",
-   "amp": "1"
-  },
-  {
-   "type": "child",
+   "type": "dafoam",
    "lineage": "d7",
-   "art": "d7",
-   "name": "d7_g1_zero",
-   "chainparent": "",
-   "field": "zero",
-   "amp": "0"
+   "name": "d7_daf_g0",
+   "parent": "",
+   "tag": "g0"
   },
   {
-   "type": "child",
-   "lineage": "d7",
-   "art": "d7",
-   "name": "d7_g1_rnd1000",
-   "chainparent": "",
-   "field": "rnd1000",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "d7",
-   "art": "d7",
-   "name": "d7_g1_rnd1001",
-   "chainparent": "",
-   "field": "rnd1001",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "d7",
-   "art": "d7",
-   "name": "d7_g1_rnd1002",
-   "chainparent": "",
-   "field": "rnd1002",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "d7",
-   "art": "d7",
-   "name": "d7_g1_rnd1003",
-   "chainparent": "",
-   "field": "rnd1003",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "d7",
-   "art": "d7",
-   "name": "d7_g1_rnd1004",
-   "chainparent": "",
-   "field": "rnd1004",
-   "amp": "1"
-  },
-  {
-   "type": "child",
+   "type": "dafoam",
    "lineage": "window",
-   "art": "window",
-   "name": "window_g1_zero",
-   "chainparent": "",
-   "field": "zero",
-   "amp": "0"
-  },
-  {
-   "type": "child",
-   "lineage": "window",
-   "art": "window",
-   "name": "window_g1_rnd1000",
-   "chainparent": "",
-   "field": "rnd1000",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "window",
-   "art": "window",
-   "name": "window_g1_rnd1001",
-   "chainparent": "",
-   "field": "rnd1001",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "window",
-   "art": "window",
-   "name": "window_g1_rnd1002",
-   "chainparent": "",
-   "field": "rnd1002",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "window",
-   "art": "window",
-   "name": "window_g1_rnd1003",
-   "chainparent": "",
-   "field": "rnd1003",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "window",
-   "art": "window",
-   "name": "window_g1_rnd1004",
-   "chainparent": "",
-   "field": "rnd1004",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "team_noadj",
-   "art": "team",
-   "name": "team_noadj_g1_zero",
-   "chainparent": "",
-   "field": "zero",
-   "amp": "0"
-  },
-  {
-   "type": "child",
-   "lineage": "team_noadj",
-   "art": "team",
-   "name": "team_noadj_g1_rnd1000",
-   "chainparent": "",
-   "field": "rnd1000",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "team_noadj",
-   "art": "team",
-   "name": "team_noadj_g1_rnd1001",
-   "chainparent": "",
-   "field": "rnd1001",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "team_noadj",
-   "art": "team",
-   "name": "team_noadj_g1_rnd1002",
-   "chainparent": "",
-   "field": "rnd1002",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "team_noadj",
-   "art": "team",
-   "name": "team_noadj_g1_rnd1003",
-   "chainparent": "",
-   "field": "rnd1003",
-   "amp": "1"
-  },
-  {
-   "type": "child",
-   "lineage": "team_noadj",
-   "art": "team",
-   "name": "team_noadj_g1_rnd1004",
-   "chainparent": "",
-   "field": "rnd1004",
-   "amp": "1"
+   "name": "window_daf_g0",
+   "parent": "",
+   "tag": "g0"
   }
  ]
 }
