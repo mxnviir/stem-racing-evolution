@@ -85,8 +85,9 @@ class Constraints:
 
 
 # ------------------------------------------------------------------ masks
-def masks_of(d, spacing_mm=1.0):
-    """(xs, ys, zs, solid, clip, fixed) on the builder's grid (mm), y >= 0 half, as param_body.build makes them."""
+def masks_of(d, spacing_mm=1.0, cap=True):
+    """(xs, ys, zs, solid, clip, fixed) on the builder's grid (mm), y >= 0 half, as param_body.build makes them.
+    cap=False leaves out the halo region's 27.175 mm (freeform.field's own soft compression, not a mask)."""
     import unified_phi as up
     import freeform as fr
     from coarse import use_spacing
@@ -125,8 +126,9 @@ def masks_of(d, spacing_mm=1.0):
     # (owner, 2026-11-28; evo_patches/sidepod_rules.py S1): only rules bound the sidepods
     T = fr.CAP_TAPER_MM
     xa, xh0, xh1, hw = fr.halo_span(g.landmarks["ref_plane_A_m"] * 1e3, d["d_halo"])
-    cap = (X >= xa - T) & (X <= xh1) & ((np.abs(Y) <= hw + T) | (X >= xh0 - T)) & (Z > fr.SIDEPOD_TOP_MM)
-    air |= cap & ~solid
+    cap_air = (X >= xa - T) & (X <= xh1) & ((np.abs(Y) <= hw + T) | (X >= xh0 - T)) & (Z > fr.SIDEPOD_TOP_MM)
+    if cap:
+        air |= cap_air & ~solid
     clip = air & ~fixed
     # border cells: the region's edge (clipping)
     j0 = int(np.searchsorted(ys, -1e-9))

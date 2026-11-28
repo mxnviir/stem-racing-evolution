@@ -4,7 +4,7 @@ decision 4; carhybrid/FINE_ADJOINT.md).
     python carhybrid/grad.py <evolution checkout> <car record json> <dafoam_sens.npz>[,<frame 2 npz>,...]
          <u json or "zero"> <out json>
          [--body <car folder with body_half.stl>] [--d20 <N>] [--l20 <N>] [--grid gu,gv,gw,gb] [--smooth <mm>]
-         [--method lin|fd]
+         [--method lin|fd] [--no-hold]
 
 car record: layout_car.build's record (genes, decoded layout incl. "freeform" = the stage-2 seed, mass).
 u: the free-form numbers on the grid --grid (default simscale_shape.COARSE = 5,2,3,4: 45 numbers = top 5x2 + bottom
@@ -19,6 +19,10 @@ only through the three interpolated surfaces (top, bottom, side heights at the p
 the grid is linear in u (freeform.from_unit, up to its clip of the side at 0); so dphi/du_j = (dphi/ds) (ds/du_j),
 dphi/ds by a finite difference of the field in the surface (3 x 2 field calls), ds/du_j by interpolating the grid
 response to u_j (one interpolation per number): 720 numbers on 10^5 points run in about a minute.
+Held surface (default on; --no-hold switches it off for comparison): DAFoam points within HOLD_CELLS (0.6) build cells
+of a rule mask (carhybrid/constraints.masks_of: hard air and solid, build_rule_masks, fixed cuts; the region's faces)
+are made by the rule, not by the field, and carry no speed. Fixes the defect the other agent's test_link found (a
+top number's predicted change 1.30-1.46 x the rebuilt body; a third of it on the spine, chamber wall, halo pocket).
 --method fd: the original finite difference of the whole field per number (one field call per number; kept as the
 reference the tests compare lin against).
 Drag: dD/du_j = 2 * sum_i (G_i . n_i) V_ij (half car -> whole car), over DAFoam's surface points on the body or
@@ -108,6 +112,41 @@ def cos(a, b):
     return float(a @ b / d) if d > 0 else None
 
 
+HOLD_CELLS = 0.6    # a point within this many build cells of a rule mask is held by the rule (the other agent's link.py
+                    # value, set on its test_link gene 7: 1.30-1.46 x the rebuilt body before, 1.01-1.05 x after)
+
+
+class HeldMasks:
+    """The builder's rule masks (carhybrid/constraints.masks_of: hard air and solid, build_rule_masks, the fixed cuts;
+    the region's faces, i.e. the block and the envelope, count as air). A surface point next to one is made by the
+    rule, not by the free-form field: no body number moves it, so it carries no speed (the defect this fixes: the
+    held surface on the spine, the chamber wall and the halo pocket, was counted as moving)."""
+
+    def __init__(self, d, spacing_mm=1.0):
+        import importlib.util
+        from scipy import ndimage
+        spec = importlib.util.spec_from_file_location("_carhybrid_constraints", Path(__file__).with_name("constraints.py"))
+        C = sys.modules.get(spec.name) or importlib.util.module_from_spec(spec)
+        if spec.name not in sys.modules:
+            sys.modules[spec.name] = C; spec.loader.exec_module(C)
+        xs, ys, zs, solid, clip, fixed, _g, h = C.masks_of(d, spacing_mm, cap=False)
+        air = np.pad(clip | fixed, 1, constant_values=True)
+        air[:, 0, :] = air[:, 1, :]                          # y = 0 is the symmetry plane, not a face
+        sol = np.pad(solid, 1, constant_values=False)
+        self.origin = np.array([xs[0], ys[0], zs[0]]) - h
+        self.h = float(h)
+        self._da = ndimage.distance_transform_edt(~air).astype(np.float32) * self.h
+        self._ds = ndimage.distance_transform_edt(~sol).astype(np.float32) * self.h
+
+    def __call__(self, P, cells=HOLD_CELLS):
+        from scipy import ndimage
+        Q = np.c_[P[:, 0], np.abs(P[:, 1]), P[:, 2]]
+        c = ((Q - self.origin) / self.h).T
+        da = ndimage.map_coordinates(self._da, c, order=1, mode="nearest")
+        ds = ndimage.map_coordinates(self._ds, c, order=1, mode="nearest")
+        return (da < cells * self.h) | (ds < cells * self.h)
+
+
 class FieldMap:
     """The free-form field at numbers u on a grid, and the normal speeds of its surface per number."""
 
@@ -116,6 +155,7 @@ class FieldMap:
         self.n = fr.n_genes(*grid)
         self.ff = fr.from_unit(seed, u, amp, *grid)
         self._resp = None
+        self.held = None                                     # HeldMasks (or any P -> bool) : points the rules hold
 
     def phi(self, ff, P):
         return self.fr.field(ff, P[:, 0], P[:, 1], P[:, 2], ff.x_tip_mm, ff.x_rear_mm, axles=self.axles, **self.hk)
@@ -132,6 +172,8 @@ class FieldMap:
                          for e in np.eye(3)], 1)
         gn = np.linalg.norm(grad, axis=1)
         ok = gn > 1e-6
+        if self.held is not None:                            # surface the rule masks hold does not move with u
+            ok &= ~self.held(Q)
         mask = np.zeros(len(P), bool); mask[idx[ok]] = True
         return mask, Q[ok], grad[ok] / gn[ok, None], gn[ok]
 
@@ -227,7 +269,7 @@ def load_u(u_s, n):
 
 
 def main(evo, rec_p, sens_p, u_s, out_p, body_dir=None, d20=None, l20=None, grid=None, smooth=None, method="lin",
-         quiet=False):
+         quiet=False, hold=True):
     t_start = time.time()
     fr, SL, SS = evo_import(evo)
     rec = json.loads(Path(rec_p).read_text())
@@ -244,6 +286,8 @@ def main(evo, rec_p, sens_p, u_s, out_p, body_dir=None, d20=None, l20=None, grid
     # the halo's visibility region (evo_patches/soft_cap.py v2): the builder's field compresses the top there too
     hk = {"halo": fr.halo_span(ref_a, d["d_halo"])} if hasattr(fr, "halo_span") else {}
     F = FieldMap(fr, seed, u, amp, grid, axles, hk)
+    if hold:
+        F.held = HeldMasks(d)
 
     paths = [p for p in (sens_p if isinstance(sens_p, (list, tuple)) else str(sens_p).split(",")) if p]
     frames, dDs, dLs, D_N, L_N = [], [], [], [], []
@@ -324,6 +368,7 @@ def main(evo, rec_p, sens_p, u_s, out_p, body_dir=None, d20=None, l20=None, grid
     gN = float(np.linalg.norm(dT))
     nrm_ = lambda v: float(np.linalg.norm(v))
     out = {"grid": [g for g in grid], "n": n, "method": method, "smooth_mm": float(smooth) if smooth else None,
+           "held_by_rules": bool(hold), "hold_cells": HOLD_CELLS if hold else None,
            "n_points_on_body": int(np.mean([f["n_points_on_body"] for f in frames])),
            "n_points_total": int(np.mean([f["n_points_total"] for f in frames])),
            "n_frames": len(frames), "frames": frames, "cos_dD_frames": pair, "u": u.tolist(),
@@ -350,4 +395,4 @@ if __name__ == "__main__":
         sys.exit(0)
     opt = lambda k: a[a.index(k) + 1] if k in a else None
     main(*a[:5], body_dir=opt("--body"), d20=opt("--d20"), l20=opt("--l20"), grid=opt("--grid"),
-         smooth=opt("--smooth"), method=opt("--method") or "lin")
+         smooth=opt("--smooth"), method=opt("--method") or "lin", hold="--no-hold" not in a)
