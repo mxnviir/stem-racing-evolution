@@ -1,5 +1,10 @@
 # Drag audit b2: the original hybrid's final design, legalised (2026-11-28)
 
+> **Corrected by b3 (`RESULTS_b3.md`, R3):** the "legal team pod" reference below is seed evolution's own rebuild, which
+> is 2.62 +- 0.33 mN away from the team pod legalised by the same path as the hybrid. Against the same-path reference the
+> legal hybrid is **-3.05 +- 0.80 mN** (3.8 SE, post hoc): it keeps about 30 % of its gain. "Does not survive legalisation"
+> below is withdrawn.
+
 `legal:hybrid_final` = `hybrid/final_design/car_half.stl` through the legal builder (`seedhybrid/legalise.py`): accepted;
 the rules changed 1,382 mm3 inside the region and reset 456 mm3 outside it; pod 67.8 cm3; car 48.30 g. Audit protocol,
 frames 0-3. Raw: `audit/results/b2/`.
