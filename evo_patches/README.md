@@ -119,3 +119,26 @@ density; layout_car.mass falls gram for gram with foam above the floor; stage-2 
 and nose. With CAR_DIR: (a) T3.6 = car_g within 0.05 g and passes; supports in both roll-ups and equal to their
 files; printed parts = file volume x 1.04. With CAR_DIR + CAR_DIR_SHRUNK: (b) less foam, lower race mass, no lead,
 one pass at the fixed skin.
+
+## soft_cap (evo_patches/soft_cap.py, called by apply.py): no flat deck, no sharp shelf, no step at the axles
+
+**Why.** Owner 2026-11-28: no extreme squareness or hard-coded shapes. `freeform.field` limits everything outboard of the
+12.5 mm spine between the axles to the team's sidepod top, 27.175 mm, by a hard maximum switched on and off at the
+axle planes. Wherever the seed's top surface rises above 27.175 mm (on the team body and on every sweep car), that
+truncation leaves a flat deck with a sharp edge and a step at each axle (`carhybrid/shape_audit.py`: 140-800 mm2 of
+flat cap on all 32 sweep cars).
+
+**Change.** (1) Outboard of the spine between the axles, the top surface is compressed into the last 6 mm below the
+cap (z0 + s tanh((top - z0)/s), z0 = 21.175, s = 6): monotone, smooth, always below the cap, unchanged well below it.
+(2) The cap itself is applied with the field's own smooth maximum (blend_mm), and (3) faded in over 5 mm outside the
+axle span (fully on between the axles). (2) and (3) only remove material; the limit holds everywhere it held.
+
+**Numbers** (field level, 0.5 x 0.25 x 0.1 mm grid; cap violations counted inside the axle span, outboard of the spine):
+
+| Car | flat deck at the cap, mm2 of plan area | cap violations | half-body volume |
+|---|---|---|---|
+| team layout | 401.8 -> 0.0 | 0 -> 0 | 87,727 -> 85,554 mm3 (about -0.7 g foam, both halves) |
+| sweep sw_L08 | 386.2 -> 0.0 | 0 -> 0 | 79,164 -> 76,741 mm3 (about -0.8 g) |
+
+The height limit itself (nothing outboard of the spine above 27.175 mm between the axles) is the existing design rule
+(the team's sidepod top), not a regulation found in `rules_constants.py`; making it a searched number is the owner's call.
