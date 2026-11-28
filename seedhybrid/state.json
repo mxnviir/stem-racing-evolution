@@ -120,7 +120,7 @@
    "status": "active",
    "parent": "",
    "amp": 1.0,
-   "dafoam_latest": null,
+   "dafoam_latest": "seedhybrid_lineages/window/dafoam_g0.npz",
    "dafoam_at": "",
    "esi_latest": null,
    "next_seed": 1000,
@@ -372,6 +372,29 @@
      }
     }
    }
+  },
+  {
+   "stage": "redaf",
+   "gen": 0,
+   "run": "46137619748",
+   "lineages": {
+    "team": {
+     "dafoam": false
+    },
+    "d7": {
+     "dafoam": false
+    },
+    "window": {
+     "dafoam": true
+    }
+   },
+   "redaf_again": [
+    "team",
+    "d7"
+   ]
   }
+ ],
+ "redaf_runs": [
+  46137619748
  ]
 }

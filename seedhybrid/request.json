@@ -56,21 +56,18 @@
    "lineage": "team",
    "name": "team_daf_g0",
    "parent": "",
-   "tag": "g0"
+   "tag": "g0",
+   "gmres_iters": "6000",
+   "gmres_restart": "300"
   },
   {
    "type": "dafoam",
    "lineage": "d7",
    "name": "d7_daf_g0",
    "parent": "",
-   "tag": "g0"
-  },
-  {
-   "type": "dafoam",
-   "lineage": "window",
-   "name": "window_daf_g0",
-   "parent": "",
-   "tag": "g0"
+   "tag": "g0",
+   "gmres_iters": "6000",
+   "gmres_restart": "300"
   }
  ]
 }
