@@ -62,11 +62,7 @@ Galleries: `results/sweep3/GALLERY.png`, `results/sweep5/GALLERY.png`.
 | P3: Bayesian layout search on OpenFOAM (`bo.py`) | **running**: batch bo_1 (16 Sobol cars) on GitHub; the collect step proposes and dispatches each next batch automatically | `BO.md` |
 | Rules as constraints on the numbers (`constraints.py`) | **in progress** (see section 5) | `CONSTRAINTS.md` |
 
-Decision recorded, not built: **guided CMA** (the other agent's bench) is to replace the trust-region loop as the
-main stage-2 method. The reasons:
-- CMA's selection over about 20 measured cars averages out the noise;
-- with 720 numbers, a random sample is almost orthogonal to downhill, so the gradient is worth more;
-- it needs fewer AWS adjoints.
+**Decision (owner, 2026-11-28 evening): no CMA in this repository.** Guided CMA is the other repository's method; ours is the hybrid trust model (adjoint steps judged by measured CFD, evolution where the adjoint cannot reach, the Bayesian layout search), and the goal is to beat their CMA. The earlier guided-CMA recommendation is withdrawn. Plans for wings, supports, flatness, the chamber wall and hubcaps: [PLAN_WINGS_FLATNESS.md](PLAN_WINGS_FLATNESS.md).
 
 It waits on the constraints (section 5), the `grad.py` fix, and DAFoam converging at non-team shapes on AWS.
 
