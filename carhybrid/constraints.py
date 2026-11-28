@@ -302,6 +302,25 @@ def build(evo, layout="team", grid=None, spacing_mm=1.0) -> Constraints:
 
 # ------------------------------------------------------------------ projection
 def project(C: Constraints, v, rho=1.0, iters=4000, tol=1e-7):
+    """argmin ||u - v|| s.t. A u <= b: OSQP (a QP solver, polished to the active set) when installed, else ADMM."""
+    try:
+        import osqp
+        import scipy.sparse as sp
+        v = np.asarray(v, float)
+        m = osqp.OSQP()
+        m.setup(P=sp.identity(C.n, format="csc"), q=-v, A=sp.csc_matrix(C.A), l=np.full(len(C.b), -np.inf), u=C.b,
+                eps_abs=1e-7, eps_rel=1e-7, max_iter=200000, polishing=True, verbose=False)
+        r = m.solve()
+        if r.x is not None and r.info.status in ("solved", "solved inaccurate"):
+            u = np.asarray(r.x, float)
+            return u, {"solver": "osqp", "status": r.info.status, "iterations": int(r.info.iter),
+                       "max_violation_mm": float(max(0.0, -C.slack(u).min())), "moved": float(np.linalg.norm(u - v))}
+    except ImportError:
+        pass
+    return _project_admm(C, v, rho, iters, tol)
+
+
+def _project_admm(C: Constraints, v, rho=1.0, iters=4000, tol=1e-7):
     """argmin ||u - v|| s.t. A u <= b (ADMM on z = A u; the u-step's matrix factored once)."""
     from scipy.linalg import cho_factor, cho_solve
     A, b = C.A, C.b
